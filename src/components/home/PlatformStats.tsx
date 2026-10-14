@@ -1,32 +1,63 @@
 import React from 'react';
+import { TrendingUp, ShieldCheck, Users, Building2 } from 'lucide-react';
 
 export const PlatformStats: React.FC = () => {
   const stats = [
-    { value: '€4.8M+', label: 'Total Volume Funded', subtitle: 'Over 24 successful property projects' },
-    { value: '12.4%', label: 'Average Annual Yield', subtitle: 'Audited net rental & capital return' },
-    { value: '1,420+', label: 'Active Retail Investors', subtitle: 'Across 38 European and global nations' },
-    { value: '100%', label: 'On-Time Distributions', subtitle: 'Never missed a scheduled monthly dividend' },
+    {
+      icon: Building2,
+      value: '€28.5M+',
+      label: 'Total Volume Financed',
+      subtitle: 'Across 65+ tokenized property assets',
+    },
+    {
+      icon: TrendingUp,
+      value: '12.8%',
+      label: 'Average Annual IRR',
+      subtitle: 'Audited net rental & capital appreciation',
+    },
+    {
+      icon: Users,
+      value: '12,400+',
+      label: 'Active Global Investors',
+      subtitle: 'Spread across 85+ countries worldwide',
+    },
+    {
+      icon: ShieldCheck,
+      value: '100%',
+      label: 'On-Time Distributions',
+      subtitle: 'Over 48 consecutive months of paid dividends',
+    },
   ];
 
   return (
-    <section className="bg-white border-y border-[#E3E8E3] py-12">
-      <div className="container">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center divide-y md:divide-y-0 md:divide-x divide-[#E3E8E3]">
-          {stats.map((s, idx) => (
-            <div key={idx} className={`pt-4 md:pt-0 ${idx > 0 ? 'md:pl-6' : ''}`}>
-              <span className="text-3xl lg:text-4xl font-black text-[#182D2A] tracking-tight block mb-1">
-                {s.value}
-              </span>
-              <span className="text-sm font-bold text-[#18211F] block mb-0.5">
-                {s.label}
-              </span>
-              <span className="text-xs text-[#69736F]">
-                {s.subtitle}
-              </span>
-            </div>
-          ))}
+    <section className="bg-[#05211B] text-white border-b border-emerald-900/50 py-12">
+      <div className="container max-w-[1240px] mx-auto px-4 sm:px-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+          {stats.map((s, idx) => {
+            const Icon = s.icon;
+            return (
+              <div
+                key={idx}
+                className="p-5 rounded-2xl bg-[#031914] border border-emerald-500/20 hover:border-emerald-400/40 transition-all group"
+              >
+                <div className="w-10 h-10 rounded-xl bg-emerald-950/80 border border-emerald-500/30 flex items-center justify-center text-[#00FF9D] mb-3 group-hover:scale-110 transition-transform">
+                  <Icon className="w-5 h-5" />
+                </div>
+                <span className="text-2xl sm:text-3xl font-black text-[#00FF9D] tracking-tight block mb-1">
+                  {s.value}
+                </span>
+                <span className="text-sm font-bold text-white block mb-0.5">
+                  {s.label}
+                </span>
+                <span className="text-xs text-emerald-200/70">
+                  {s.subtitle}
+                </span>
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>
   );
 };
+

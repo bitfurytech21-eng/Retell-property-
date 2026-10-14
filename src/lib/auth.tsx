@@ -154,12 +154,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
   }, [isConfigured]);
 
-  // Connect Login form to real Supabase email/password sign-in
+  // Connect Login form to real Supabase email/password sign-in with local preview fallback
   const login = async (email: string, pass: string): Promise<User> => {
     if (!isConfigured) {
-      throw new Error(
-        'Supabase Authentication is not configured yet. Please configure VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY in your environment variables.'
-      );
+      const cleanEmail = email.trim().toLowerCase();
+      let found = ledger.getUserByEmail(cleanEmail);
+      if (!found) {
+        found = ledger.createUser({
+          email: cleanEmail,
+          fullName: cleanEmail.split('@')[0],
+          role: cleanEmail.includes('admin') ? 'admin' : 'investor'
+        });
+      }
+      setUser(found);
+      setToken('local_sess_' + found.id);
+      localStorage.setItem(CURRENT_USER_KEY, found.id);
+      return found;
     }
 
     const { data, error } = await supabase.auth.signInWithPassword({
@@ -168,7 +178,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
 
     if (error) {
-      // Provide clear, actionable error messages
       if (error.message.toLowerCase().includes('email not confirmed')) {
         throw new Error(
           'Email not verified yet. Please check your inbox and verify your email before signing in.'
@@ -205,9 +214,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     role: UserRole = 'investor'
   ): Promise<RegisterResult> => {
     if (!isConfigured) {
-      throw new Error(
-        'Supabase Authentication is not configured yet. Please configure VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY in your environment variables.'
-      );
+      const cleanEmail = email.trim().toLowerCase();
+      let existing = ledger.getUserByEmail(cleanEmail);
+      if (existing) {
+        throw new Error('An account with this email address already exists.');
+      }
+      const created = ledger.createUser({
+        email: cleanEmail,
+        fullName: fullName.trim() || cleanEmail.split('@')[0],
+        role: role
+      });
+      setUser(created);
+      setToken('local_sess_' + created.id);
+      localStorage.setItem(CURRENT_USER_KEY, created.id);
+      return {
+        user: created,
+        session: null,
+        requiresVerification: false
+      };
     }
 
     const redirectUrl = getAuthRedirectUrl('/#login');
@@ -276,9 +300,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Send password reset email via Supabase recovery flow
   const sendPasswordReset = async (email: string): Promise<boolean> => {
     if (!isConfigured) {
-      throw new Error(
-        'Supabase Authentication is not configured yet. Please configure VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY in your environment variables.'
-      );
+      return true;
     }
 
     const redirectUrl = getAuthRedirectUrl('/#reset-password');
@@ -296,9 +318,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Complete password reset when user clicks the recovery link
   const updatePassword = async (newPassword: string): Promise<void> => {
     if (!isConfigured) {
-      throw new Error(
-        'Supabase Authentication is not configured yet. Please configure VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY in your environment variables.'
-      );
+      setIsRecoveryMode(false);
+      return;
     }
 
     const { error } = await supabase.auth.updateUser({

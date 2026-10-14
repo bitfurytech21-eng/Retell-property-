@@ -6,6 +6,8 @@ export interface NavLink {
 export const MAIN_NAV_LINKS: NavLink[] = [
   { label: 'Home', path: '/' },
   { label: 'Properties', path: '/properties' },
+  { label: 'Team', path: '/team' },
+  { label: 'Reental Wealth', path: '/wealth' },
   { label: 'How It Works', path: '/investing' },
   { label: 'Tokenization', path: '/token' },
   { label: 'FAQ', path: '/faq' },

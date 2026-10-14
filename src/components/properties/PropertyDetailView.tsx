@@ -12,6 +12,7 @@ import {
   AlertTriangle,
   Coins,
   ChevronLeft,
+  ArrowLeft,
   CheckCircle2,
   TrendingUp,
   FileText,
@@ -58,6 +59,7 @@ export const PropertyDetailView: React.FC<PropertyDetailViewProps> = ({
     total: number;
   } | null>(null);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [docNotification, setDocNotification] = useState<string | null>(null);
 
   const fundingPercent = Math.min(
     100,
@@ -121,10 +123,11 @@ export const PropertyDetailView: React.FC<PropertyDetailViewProps> = ({
         {/* Navigation Breadcrumb */}
         <button
           onClick={onBack}
-          className="inline-flex items-center gap-2 text-xs font-bold text-[#69736F] hover:text-[#182D2A] mb-6 transition-colors"
+          title="Back to Properties Marketplace"
+          aria-label="Back"
+          className="w-9 h-9 rounded-xl bg-white border border-[#E3E8E3] text-[#182D2A] hover:bg-[#EEF1EC] transition-all shadow-xs mb-6 cursor-pointer flex items-center justify-center shrink-0"
         >
-          <ChevronLeft className="w-4 h-4" />
-          <span>Back to Properties Marketplace</span>
+          <ArrowLeft className="w-4 h-4 text-[#182D2A]" />
         </button>
 
         {/* Header Title & Status Bar */}
@@ -592,6 +595,13 @@ export const PropertyDetailView: React.FC<PropertyDetailViewProps> = ({
                 </p>
               </div>
 
+              {docNotification && (
+                <div className="p-3.5 bg-green-50 border border-green-200 text-green-800 rounded-xl text-xs font-semibold flex items-center justify-between">
+                  <span>{docNotification}</span>
+                  <button onClick={() => setDocNotification(null)} className="text-gray-400 hover:text-gray-600">✕</button>
+                </div>
+              )}
+
               <div className="divide-y divide-[#E3E8E3]">
                 {property.documents.map((doc) => (
                   <div key={doc.id} className="py-4 flex items-center justify-between gap-4">
@@ -611,17 +621,16 @@ export const PropertyDetailView: React.FC<PropertyDetailViewProps> = ({
                       </div>
                     </div>
 
-                    <a
-                      href="#"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        alert(`Opening official verification document: ${doc.name}`);
+                    <button
+                      onClick={() => {
+                        setDocNotification(`Document prepared: ${doc.name}. Cryptographic SPV notary deed hash verified.`);
+                        setTimeout(() => setDocNotification(null), 4000);
                       }}
                       className="btn btn-secondary btn-sm text-xs font-semibold"
                     >
                       <Download className="w-3.5 h-3.5 mr-1" />
                       Download PDF
-                    </a>
+                    </button>
                   </div>
                 ))}
               </div>
@@ -668,8 +677,13 @@ export const PropertyDetailView: React.FC<PropertyDetailViewProps> = ({
 
       {/* Investment Modal */}
       {isInvestModalOpen && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-[#E3E8E3] relative animate-in fade-in duration-200">
+        <div 
+          className="fixed inset-0 bg-black/30 backdrop-blur-[0.5px] z-50 flex items-center sm:items-end justify-center p-3 sm:p-6 sm:pb-8 overflow-y-auto"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setIsInvestModalOpen(false);
+          }}
+        >
+          <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-[#E3E8E3] relative animate-in slide-in-from-bottom-4 duration-200">
             {!investSuccessCert ? (
               <div>
                 <div className="flex justify-between items-start mb-6">

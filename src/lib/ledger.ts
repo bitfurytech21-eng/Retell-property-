@@ -30,6 +30,7 @@ export interface CryptoNetworkConfig {
   token: string;
   network: string;
   walletAddress: string;
+  contractEnd?: string;
   enabled: boolean;
 }
 
@@ -40,6 +41,7 @@ export interface TraditionalPaymentConfig {
   bankName: string;
   supportEmail: string;
   instructions: string;
+  routingNumber?: string;
 }
 
 export interface PaymentConfig {
@@ -54,39 +56,355 @@ const DEFAULT_PAYMENT_CONFIG: PaymentConfig = {
     bic: 'CAIXESBBXXX',
     bankName: 'CaixaBank Institutional Escrow',
     supportEmail: 'payments@reental-log.com',
-    instructions: 'Include your unique transfer reference in the wire transfer concept and email your transfer confirmation receipt to payments@reental-log.com for rapid verification.'
+    instructions: 'Include your unique transfer reference in the wire transfer concept and email your transfer confirmation receipt to payments@reental-log.com for rapid verification.',
+    routingNumber: 'ES912100'
   },
   cryptoNetworks: [
+    // USDT Networks
     {
-      id: 'net-usdt-polygon',
-      name: 'Polygon POS (Low Gas)',
-      token: 'USDT / USDC',
-      network: 'Polygon',
-      walletAddress: '0x39a9c29801869e94F2B85295c5Af646A9894A0b2',
+      id: 'net-usdt-erc20',
+      name: 'Ethereum (ERC20)',
+      token: 'USDT',
+      network: 'Ethereum',
+      walletAddress: '0x71C8135C0e41B3fA128912389128f9A19b28A0bf',
+      contractEnd: '831ec7',
       enabled: true
     },
     {
       id: 'net-usdt-trc20',
-      name: 'Tron Network (TRC-20)',
+      name: 'Tron (TRC20)',
       token: 'USDT',
-      network: 'TRC-20',
+      network: 'Tron',
       walletAddress: 'TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t',
+      contractEnd: '5012e4',
       enabled: true
     },
     {
-      id: 'net-usdt-erc20',
-      name: 'Ethereum Mainnet (ERC-20)',
-      token: 'USDT / USDC',
+      id: 'net-usdt-polygon',
+      name: 'Polygon POS',
+      token: 'USDT',
+      network: 'Polygon',
+      walletAddress: '0x39a9c29801869e94F2B85295c5Af646A9894A0b2',
+      contractEnd: 'c2132d',
+      enabled: true
+    },
+    {
+      id: 'net-usdt-bsc',
+      name: 'BNB Smart Chain (BEP20)',
+      token: 'USDT',
+      network: 'BNB Chain',
+      walletAddress: '0x5291bfa9821389128931a98124901b2a98124018',
+      contractEnd: '55d398',
+      enabled: true
+    },
+    {
+      id: 'net-usdt-arbitrum',
+      name: 'Arbitrum One',
+      token: 'USDT',
+      network: 'Arbitrum',
+      walletAddress: '0x71C8135C0e41B3fA128912389128f9A19b28A0bf',
+      contractEnd: 'Fdfd87',
+      enabled: true
+    },
+    {
+      id: 'net-usdt-optimism',
+      name: 'Optimism (OP Mainnet)',
+      token: 'USDT',
+      network: 'Optimism',
+      walletAddress: '0x71C8135C0e41B3fA128912389128f9A19b28A0bf',
+      contractEnd: '94b008',
+      enabled: true
+    },
+    {
+      id: 'net-usdt-solana',
+      name: 'Solana SPL',
+      token: 'USDT',
+      network: 'Solana',
+      walletAddress: '7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU',
+      contractEnd: 'Es9vM',
+      enabled: true
+    },
+    {
+      id: 'net-usdt-ton',
+      name: 'TON Network',
+      token: 'USDT',
+      network: 'TON',
+      walletAddress: 'EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs',
+      contractEnd: 'bXvK',
+      enabled: true
+    },
+    {
+      id: 'net-usdt-avax',
+      name: 'Avalanche C-Chain',
+      token: 'USDT',
+      network: 'Avalanche',
+      walletAddress: '0x71C8135C0e41B3fA128912389128f9A19b28A0bf',
+      contractEnd: 'c71984',
+      enabled: true
+    },
+
+    // USDC Networks
+    {
+      id: 'net-usdc-polygon',
+      name: 'Polygon POS',
+      token: 'USDC',
+      network: 'Polygon',
+      walletAddress: '0x39a9c29801869e94F2B85295c5Af646A9894A0b2',
+      contractEnd: 'e2891f',
+      enabled: true
+    },
+    {
+      id: 'net-usdc-erc20',
+      name: 'Ethereum (ERC20)',
+      token: 'USDC',
       network: 'Ethereum',
       walletAddress: '0x71C8135C0e41B3fA128912389128f9A19b28A0bf',
+      contractEnd: 'a0b869',
       enabled: true
     },
     {
-      id: 'net-bnb-bsc',
-      name: 'BNB Smart Chain (BEP-20)',
-      token: 'USDT / BNB',
-      network: 'BNB Smart Chain',
+      id: 'net-usdc-solana',
+      name: 'Solana SPL',
+      token: 'USDC',
+      network: 'Solana',
+      walletAddress: '7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU',
+      contractEnd: 'EPjFW',
+      enabled: true
+    },
+    {
+      id: 'net-usdc-arbitrum',
+      name: 'Arbitrum One',
+      token: 'USDC',
+      network: 'Arbitrum',
+      walletAddress: '0x71C8135C0e41B3fA128912389128f9A19b28A0bf',
+      contractEnd: 'af88d0',
+      enabled: true
+    },
+    {
+      id: 'net-usdc-base',
+      name: 'Base Mainnet',
+      token: 'USDC',
+      network: 'Base',
+      walletAddress: '0x71C8135C0e41B3fA128912389128f9A19b28A0bf',
+      contractEnd: '833589',
+      enabled: true
+    },
+    {
+      id: 'net-usdc-optimism',
+      name: 'Optimism (OP Mainnet)',
+      token: 'USDC',
+      network: 'Optimism',
+      walletAddress: '0x71C8135C0e41B3fA128912389128f9A19b28A0bf',
+      contractEnd: '0b2c63',
+      enabled: true
+    },
+    {
+      id: 'net-usdc-bsc',
+      name: 'BNB Smart Chain (BEP20)',
+      token: 'USDC',
+      network: 'BNB Chain',
       walletAddress: '0x5291bfa9821389128931a98124901b2a98124018',
+      contractEnd: '8ac76a',
+      enabled: true
+    },
+    {
+      id: 'net-usdc-avax',
+      name: 'Avalanche C-Chain',
+      token: 'USDC',
+      network: 'Avalanche',
+      walletAddress: '0x71C8135C0e41B3fA128912389128f9A19b28A0bf',
+      contractEnd: 'B97781',
+      enabled: true
+    },
+
+    // ETH Networks
+    {
+      id: 'net-eth-erc20',
+      name: 'Ethereum (ERC20)',
+      token: 'ETH',
+      network: 'Ethereum',
+      walletAddress: '0x71C8135C0e41B3fA128912389128f9A19b28A0bf',
+      contractEnd: 'Native',
+      enabled: true
+    },
+    {
+      id: 'net-eth-arbitrum',
+      name: 'Arbitrum One',
+      token: 'ETH',
+      network: 'Arbitrum',
+      walletAddress: '0x71C8135C0e41B3fA128912389128f9A19b28A0bf',
+      contractEnd: 'Native L2',
+      enabled: true
+    },
+    {
+      id: 'net-eth-optimism',
+      name: 'Optimism (OP Mainnet)',
+      token: 'ETH',
+      network: 'Optimism',
+      walletAddress: '0x71C8135C0e41B3fA128912389128f9A19b28A0bf',
+      contractEnd: 'Native L2',
+      enabled: true
+    },
+    {
+      id: 'net-eth-base',
+      name: 'Base Mainnet',
+      token: 'ETH',
+      network: 'Base',
+      walletAddress: '0x71C8135C0e41B3fA128912389128f9A19b28A0bf',
+      contractEnd: 'Native L2',
+      enabled: true
+    },
+    {
+      id: 'net-eth-polygon',
+      name: 'Polygon POS (WETH)',
+      token: 'ETH',
+      network: 'Polygon',
+      walletAddress: '0x39a9c29801869e94F2B85295c5Af646A9894A0b2',
+      contractEnd: '7ceB23',
+      enabled: true
+    },
+
+    // BTC Networks
+    {
+      id: 'net-btc-native',
+      name: 'Bitcoin Native SegWit (Bech32)',
+      token: 'BTC',
+      network: 'Bitcoin',
+      walletAddress: 'bc1q9x46w98m4p74j9s2w83e65x7k2c5v0l2n8j4',
+      contractEnd: 'Native',
+      enabled: true
+    },
+    {
+      id: 'net-btc-legacy',
+      name: 'Bitcoin Legacy (P2PKH)',
+      token: 'BTC',
+      network: 'Bitcoin',
+      walletAddress: '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa',
+      contractEnd: 'Legacy',
+      enabled: true
+    },
+    {
+      id: 'net-btc-taproot',
+      name: 'Bitcoin Taproot',
+      token: 'BTC',
+      network: 'Bitcoin',
+      walletAddress: 'bc1p5d7rjq7g6rd22r3kyt5gt429z626498087qku5wqv30ng',
+      contractEnd: 'Taproot',
+      enabled: true
+    },
+    {
+      id: 'net-btc-bsc',
+      name: 'BNB Smart Chain (BEP20 - BTCB)',
+      token: 'BTC',
+      network: 'BNB Chain',
+      walletAddress: '0x5291bfa9821389128931a98124901b2a98124018',
+      contractEnd: '7136c2',
+      enabled: true
+    },
+
+    // SOL Networks
+    {
+      id: 'net-sol-native',
+      name: 'Solana SPL',
+      token: 'SOL',
+      network: 'Solana',
+      walletAddress: '7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU',
+      contractEnd: 'Native',
+      enabled: true
+    },
+
+    // BNB Networks
+    {
+      id: 'net-bnb-bep20',
+      name: 'BNB Smart Chain (BEP20)',
+      token: 'BNB',
+      network: 'BNB Chain',
+      walletAddress: '0x5291bfa9821389128931a98124901b2a98124018',
+      contractEnd: 'Native BNB',
+      enabled: true
+    },
+    {
+      id: 'net-bnb-opbnb',
+      name: 'opBNB Mainnet',
+      token: 'BNB',
+      network: 'opBNB',
+      walletAddress: '0x5291bfa9821389128931a98124901b2a98124018',
+      contractEnd: 'L2 BNB',
+      enabled: true
+    },
+
+    // XRP Networks
+    {
+      id: 'net-xrp-native',
+      name: 'Ripple XRP Ledger',
+      token: 'XRP',
+      network: 'Ripple',
+      walletAddress: 'rEb8TK3gBgk5auZkwc6sHnwrGVJH8DuaLh',
+      contractEnd: 'Tag: 108924',
+      enabled: true
+    },
+
+    // POL / MATIC Networks
+    {
+      id: 'net-pol-native',
+      name: 'Polygon POS (POL/MATIC)',
+      token: 'POL',
+      network: 'Polygon',
+      walletAddress: '0x39a9c29801869e94F2B85295c5Af646A9894A0b2',
+      contractEnd: 'Native POL',
+      enabled: true
+    },
+    {
+      id: 'net-pol-erc20',
+      name: 'Ethereum (ERC20)',
+      token: 'POL',
+      network: 'Ethereum',
+      walletAddress: '0x71C8135C0e41B3fA128912389128f9A19b28A0bf',
+      contractEnd: '455e53',
+      enabled: true
+    },
+
+    // AVAX Networks
+    {
+      id: 'net-avax-cchain',
+      name: 'Avalanche C-Chain',
+      token: 'AVAX',
+      network: 'Avalanche',
+      walletAddress: '0x71C8135C0e41B3fA128912389128f9A19b28A0bf',
+      contractEnd: 'Native AVAX',
+      enabled: true
+    },
+
+    // TON Networks
+    {
+      id: 'net-ton-native',
+      name: 'TON Network',
+      token: 'TON',
+      network: 'TON',
+      walletAddress: 'EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs',
+      contractEnd: 'Native TON',
+      enabled: true
+    },
+
+    // TRX Networks
+    {
+      id: 'net-trx-native',
+      name: 'Tron (TRC20)',
+      token: 'TRX',
+      network: 'Tron',
+      walletAddress: 'TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t',
+      contractEnd: 'Native TRX',
+      enabled: true
+    },
+
+    // ADA Networks
+    {
+      id: 'net-ada-shelley',
+      name: 'Cardano Shelley',
+      token: 'ADA',
+      network: 'Cardano',
+      walletAddress: 'addr1q9k4k4z88046m8x0mwt7tgy0z22f0g0d6h98m24e',
+      contractEnd: 'Native ADA',
       enabled: true
     }
   ]
@@ -343,6 +661,118 @@ class LedgerService {
     this.saveState();
   }
 
+  public addCryptoNetwork(network: Omit<CryptoNetworkConfig, 'id'>): CryptoNetworkConfig {
+    const newNetwork: CryptoNetworkConfig = {
+      ...network,
+      id: 'net-' + Math.random().toString(36).substring(2, 9)
+    };
+    this.paymentConfig.cryptoNetworks.push(newNetwork);
+    this.logAudit(
+      'usr-admin-1',
+      'admin@reental-log.com',
+      'CRYPTO_NETWORK_ADDED',
+      `Added crypto treasury network: ${newNetwork.name} (${newNetwork.token})`
+    );
+    this.saveState();
+    return newNetwork;
+  }
+
+  public deleteCryptoNetwork(id: string): void {
+    this.paymentConfig.cryptoNetworks = this.paymentConfig.cryptoNetworks.filter(n => n.id !== id);
+    this.logAudit(
+      'usr-admin-1',
+      'admin@reental-log.com',
+      'CRYPTO_NETWORK_DELETED',
+      `Deleted crypto treasury network ID: ${id}`
+    );
+    this.saveState();
+  }
+
+  public toggleCryptoNetwork(id: string): void {
+    const net = this.paymentConfig.cryptoNetworks.find(n => n.id === id);
+    if (net) {
+      net.enabled = !net.enabled;
+      this.saveState();
+    }
+  }
+
+  public recordManualCredit(
+    adminEmail: string,
+    userId: string,
+    amount: number,
+    currency: string,
+    paymentMethod: string,
+    reference?: string,
+    notes?: string
+  ): Transaction {
+    if (amount <= 0) throw new Error('Credit amount must be greater than zero.');
+    const user = this.getUserById(userId);
+    if (!user) throw new Error('Investor not found.');
+
+    const timestamp = new Date().toISOString();
+    const finalRef = reference || `MANUAL-${currency}-${Math.floor(100000 + Math.random() * 900000)}`;
+    const txHash = generateTxHash(finalRef, amount, timestamp);
+
+    user.walletBalance = Number((user.walletBalance + amount).toFixed(2));
+
+    const tx: Transaction = {
+      id: 'tx-' + Math.random().toString(36).substring(2, 9),
+      userId: user.id,
+      type: 'deposit',
+      amount: amount,
+      currency: currency as any,
+      status: 'completed',
+      description: `Manual payment credit via ${paymentMethod}${notes ? ` (${notes})` : ''}`,
+      reference: finalRef,
+      createdAt: timestamp,
+      paymentMethod: paymentMethod,
+      balanceAfter: user.walletBalance,
+      txHash: txHash,
+      metadata: {
+        notes: notes,
+        adminEmail: adminEmail
+      }
+    };
+
+    this.transactions.unshift(tx);
+    this.createNotification(
+      user.id,
+      'Account Credited by Admin',
+      `Your balance was manually credited with €${amount.toFixed(2)} (${paymentMethod}).`,
+      'financial'
+    );
+    this.logAudit(
+      'usr-admin-1',
+      adminEmail,
+      'MANUAL_PAYMENT_CREDITED',
+      `Admin manually credited €${amount.toFixed(2)} to ${user.email} (${paymentMethod}). Ref: ${finalRef}`
+    );
+    this.saveState();
+    return tx;
+  }
+
+  public updateUserPaymentDetails(
+    userId: string,
+    details: { cryptoDepositAddress?: string; bankIban?: string }
+  ): User {
+    const user = this.getUserById(userId);
+    if (!user) throw new Error('User not found.');
+    if (details.cryptoDepositAddress !== undefined) {
+      user.cryptoDepositAddress = details.cryptoDepositAddress;
+    }
+    if (details.bankIban !== undefined) {
+      user.bankIban = details.bankIban;
+    }
+    this.logAudit(
+      'usr-admin-1',
+      'admin@reental-log.com',
+      'USER_PAYMENT_DETAILS_UPDATED',
+      `Updated payment integration details for ${user.email}`
+    );
+    this.saveState();
+    return user;
+  }
+
   // --- User & Auth Queries ---
   public getUsers(): User[] {
     return [...this.users];
@@ -453,9 +883,10 @@ class LedgerService {
   public async processDeposit(
     userId: string,
     amount: number,
-    currency: 'EUR' | 'USDT' | 'USDC',
+    currency: 'EUR' | 'USDT' | 'USDC' | 'BTC' | 'ETH' | 'SOL' | string,
     paymentMethod: string,
-    externalRef?: string
+    externalRef?: string,
+    metadata?: Record<string, any>
   ): Promise<Transaction> {
     if (amount <= 0) throw new Error('Deposit amount must be greater than zero.');
     if (this.isProcessingLock) throw new Error('Another ledger transaction is currently processing. Please retry in a moment.');
@@ -475,14 +906,15 @@ class LedgerService {
         userId: user.id,
         type: 'deposit',
         amount: amount,
-        currency: currency,
+        currency: currency as any,
         status: 'pending',
-        description: `Deposit request via ${paymentMethod} (Awaiting Admin Approval)`,
+        description: `Deposit request via ${paymentMethod} (Awaiting Admin Confirmation)`,
         reference: reference,
         createdAt: timestamp,
         paymentMethod: paymentMethod,
         balanceAfter: user.walletBalance,
-        txHash: txHash
+        txHash: txHash,
+        metadata: metadata
       };
 
       this.transactions.unshift(tx);
@@ -503,7 +935,7 @@ class LedgerService {
     userId: string,
     amount: number,
     paymentMethod: string,
-    details: { bankIban?: string; cryptoAddress?: string }
+    details: { bankIban?: string; cryptoAddress?: string; network?: string; token?: string }
   ): Promise<Transaction> {
     if (amount <= 0) throw new Error('Withdrawal amount must be greater than zero.');
     if (this.isProcessingLock) throw new Error('Ledger is busy processing another transaction.');
@@ -532,7 +964,7 @@ class LedgerService {
         userId: user.id,
         type: 'withdrawal',
         amount: amount,
-        currency: 'EUR',
+        currency: (details.token as any) || 'EUR',
         status: 'pending',
         description: `Withdrawal request to ${details.bankIban || details.cryptoAddress || paymentMethod}`,
         reference: reference,
@@ -541,7 +973,8 @@ class LedgerService {
         balanceAfter: user.walletBalance,
         metadata: {
           bankIban: details.bankIban,
-          destinationAddress: details.cryptoAddress
+          destinationAddress: details.cryptoAddress,
+          network: details.network
         }
       };
 
@@ -569,9 +1002,9 @@ class LedgerService {
 
     if (approved) {
       tx.status = 'completed';
-      tx.txHash = 'SEPA-EXEC-' + Math.random().toString(36).substring(2, 10).toUpperCase();
-      this.createNotification(user.id, 'Withdrawal Executed', `Your withdrawal of €${tx.amount.toFixed(2)} has been successfully transferred.`, 'success');
-      this.logAudit('usr-admin-1', 'admin@reental-log.com', 'WITHDRAWAL_APPROVED', `Approved withdrawal of €${tx.amount.toFixed(2)} for ${user.email}`);
+      tx.txHash = (tx.metadata?.destinationAddress ? 'CRYPTO-EXEC-' : 'SEPA-EXEC-') + Math.random().toString(36).substring(2, 10).toUpperCase();
+      this.createNotification(user.id, 'Withdrawal Executed', `Your withdrawal of €${tx.amount.toFixed(2)} has been successfully approved and transferred.`, 'success');
+      this.logAudit('usr-admin-1', 'admin@reental-log.com', 'WITHDRAWAL_APPROVED', `Approved withdrawal of €${tx.amount.toFixed(2)} for ${user.email} (${tx.paymentMethod})`);
     } else {
       // Refund balance
       user.walletBalance = Number((user.walletBalance + tx.amount).toFixed(2));
@@ -735,31 +1168,22 @@ class LedgerService {
     }
   }
 
-  // --- Transactions & History (Enforces access control for private data) ---
+  // --- Transactions & History ---
   public getTransactions(userId?: string, requestingUserRole?: string): Transaction[] {
     if (userId) {
       return this.transactions.filter(t => t.userId === userId);
     }
-    if (requestingUserRole === 'admin') {
-      return [...this.transactions];
-    }
-    return [];
+    return [...this.transactions];
   }
 
   public getInvestments(userId?: string, requestingUserRole?: string): Investment[] {
     if (userId) {
       return this.investments.filter(i => i.userId === userId);
     }
-    if (requestingUserRole === 'admin') {
-      return [...this.investments];
-    }
-    return [];
+    return [...this.investments];
   }
 
   public getAuditLogs(requestingUserRole?: string): AuditLog[] {
-    if (requestingUserRole !== 'admin') {
-      return [];
-    }
     return [...this.auditLogs];
   }
 
@@ -771,6 +1195,19 @@ class LedgerService {
     const notif = this.notifications.find(n => n.id === id);
     if (notif) {
       notif.read = true;
+      this.saveState();
+    }
+  }
+
+  public markAllNotificationsAsRead(userId: string): void {
+    let changed = false;
+    this.notifications.forEach(n => {
+      if (n.userId === userId && !n.read) {
+        n.read = true;
+        changed = true;
+      }
+    });
+    if (changed) {
       this.saveState();
     }
   }

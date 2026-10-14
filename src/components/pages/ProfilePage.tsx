@@ -2,14 +2,54 @@ import React, { useState } from 'react';
 import { useAuth } from '../../lib/auth';
 import { ledger } from '../../lib/ledger';
 import { KYCStatus } from '../../types/user';
-import { ShieldCheck, User as UserIcon, Building2, UploadCloud, CheckCircle2, Clock, XCircle, AlertCircle } from 'lucide-react';
+import { ShieldCheck, User as UserIcon, Building2, UploadCloud, CheckCircle2, Clock, XCircle, AlertCircle, Palette, Check, Sparkles } from 'lucide-react';
 import { ImageUploader } from '../common/ImageUploader';
 
-export const ProfilePage: React.FC = () => {
+export type DashboardThemeId = 'slate' | 'sandstone' | 'titanium' | 'obsidian';
+
+export interface ThemeOption {
+  id: DashboardThemeId;
+  name: string;
+  desc: string;
+  preview: string;
+  border: string;
+}
+
+export const THEME_OPTIONS: ThemeOption[] = [
+  { id: 'slate', name: 'Executive Slate', desc: 'Midnight slate blue & deep graphite (Default dark)', preview: '#0B0F19', border: '#1E293B' },
+  { id: 'sandstone', name: 'Warm Sandstone', desc: 'Luxury cashmere & architectural warm stone tone', preview: '#E7E1D4', border: '#DCD4C6' },
+  { id: 'titanium', name: 'Nordic Titanium', desc: 'Clean cool steel & minimalist titanium aesthetic', preview: '#DCE3EB', border: '#CBD5E1' },
+  { id: 'obsidian', name: 'Obsidian Carbon', desc: 'Ultra-deep pure OLED jet black contrast', preview: '#090A0E', border: '#1D212B' },
+];
+
+interface ProfilePageProps {
+  dashboardTheme?: DashboardThemeId;
+  onSelectTheme?: (theme: DashboardThemeId) => void;
+}
+
+export const ProfilePage: React.FC<ProfilePageProps> = ({
+  dashboardTheme,
+  onSelectTheme
+}) => {
   const { user, refreshUser } = useAuth();
   const [docType, setDocType] = useState('Passport');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const [localTheme, setLocalTheme] = useState<DashboardThemeId>(() => {
+    return (localStorage.getItem('dashboard_theme') as DashboardThemeId) || 'slate';
+  });
+
+  const activeTheme = dashboardTheme || localTheme;
+
+  const handleThemeChange = (newTheme: DashboardThemeId) => {
+    setLocalTheme(newTheme);
+    localStorage.setItem('dashboard_theme', newTheme);
+    if (onSelectTheme) {
+      onSelectTheme(newTheme);
+    }
+    window.dispatchEvent(new CustomEvent('dashboard-theme-changed', { detail: newTheme }));
+    setMessage(`Dashboard background tone updated to ${THEME_OPTIONS.find(t => t.id === newTheme)?.name}!`);
+  };
 
   if (!user) return null;
 
@@ -72,24 +112,24 @@ export const ProfilePage: React.FC = () => {
   };
 
   return (
-    <div className="bg-[#F6F7F4] min-h-screen py-10">
-      <div className="container max-w-4xl space-y-8">
+    <div className="py-4 space-y-8">
+      <div className="space-y-8">
         <div>
-          <h1 className="text-3xl font-black text-[#18211F]">Account & Verification</h1>
-          <p className="text-xs text-[#69736F]">
-            Manage your personal investor profile, compliance status, and security preferences.
+          <h1 className="text-3xl font-black dash-text">Account & Verification</h1>
+          <p className="text-xs dash-muted">
+            Manage your personal investor profile, background color theme, compliance status, and security preferences.
           </p>
         </div>
 
         {message && (
-          <div className="p-4 rounded-2xl bg-green-50 text-green-800 text-xs font-bold border border-green-200">
+          <div className="p-4 rounded-2xl bg-emerald-500/15 text-emerald-400 text-xs font-bold border border-emerald-500/30">
             {message}
           </div>
         )}
 
         {/* Profile Card */}
-        <div className="bg-white p-7 rounded-3xl border border-[#E3E8E3] shadow-sm space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[#E3E8E3]">
+        <div className="dash-card p-7 rounded-3xl border shadow-sm space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-inherit/30">
             <div className="flex items-center gap-4">
               <div className="w-14 h-14 rounded-2xl bg-[#182D2A] text-[#B7E36A] flex items-center justify-center font-bold text-lg overflow-hidden shadow-sm">
                 {user.avatarUrl ? (
@@ -99,8 +139,8 @@ export const ProfilePage: React.FC = () => {
                 )}
               </div>
               <div>
-                <h2 className="text-xl font-bold text-[#18211F]">{user.fullName}</h2>
-                <span className="text-xs text-[#69736F]">{user.email}</span>
+                <h2 className="text-xl font-bold dash-text">{user.fullName}</h2>
+                <span className="text-xs dash-muted">{user.email}</span>
                 <div className="mt-2">{renderKYCBadge(user.kycStatus)}</div>
               </div>
             </div>
@@ -108,7 +148,7 @@ export const ProfilePage: React.FC = () => {
             {user.kycStatus !== 'verified' && (
               <button
                 onClick={handleSimulateInstantVerify}
-                className="btn btn-secondary btn-sm text-xs font-bold text-[#27845D] border-[#27845D]/40 hover:bg-green-50"
+                className="btn btn-secondary btn-sm text-xs font-bold text-emerald-400 border-emerald-500/40 hover:bg-emerald-500/10"
               >
                 Instant Verify (Demo Mode)
               </button>
@@ -117,7 +157,7 @@ export const ProfilePage: React.FC = () => {
 
           {/* Dedicated Image Uploader Component */}
           <div className="pt-2">
-            <h3 className="text-sm font-bold text-[#18211F] mb-3">Custom Profile Photo</h3>
+            <h3 className="text-sm font-bold dash-text mb-3">Custom Profile Photo</h3>
             <ImageUploader
               currentAvatarUrl={user.avatarUrl}
               userName={user.fullName}
@@ -127,37 +167,118 @@ export const ProfilePage: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-            <div className="p-4 rounded-2xl bg-[#F6F7F4] border border-[#E3E8E3]">
-              <span className="text-[#69736F] block mb-0.5">Investor ID</span>
-              <span className="font-mono font-bold text-[#182D2A]">{user.id}</span>
+            <div className="p-4 rounded-2xl dash-inner border">
+              <span className="dash-muted block mb-0.5">Investor ID</span>
+              <span className="font-mono font-bold dash-text">{user.id}</span>
             </div>
-            <div className="p-4 rounded-2xl bg-[#F6F7F4] border border-[#E3E8E3]">
-              <span className="text-[#69736F] block mb-0.5">User Role</span>
-              <span className="font-bold text-[#182D2A] uppercase">{user.role}</span>
+            <div className="p-4 rounded-2xl dash-inner border">
+              <span className="dash-muted block mb-0.5">User Role</span>
+              <span className="font-bold dash-text uppercase">{user.role}</span>
             </div>
-            <div className="p-4 rounded-2xl bg-[#F6F7F4] border border-[#E3E8E3]">
-              <span className="text-[#69736F] block mb-0.5">Assigned Crypto Deposit Address</span>
-              <span className="font-mono font-bold text-[#182D2A] break-all">{user.cryptoDepositAddress}</span>
+            <div className="p-4 rounded-2xl dash-inner border">
+              <span className="dash-muted block mb-0.5">Assigned Crypto Deposit Address</span>
+              <span className="font-mono font-bold dash-text break-all">{user.cryptoDepositAddress}</span>
             </div>
-            <div className="p-4 rounded-2xl bg-[#F6F7F4] border border-[#E3E8E3]">
-              <span className="text-[#69736F] block mb-0.5">Account Registered Since</span>
-              <span className="font-bold text-[#182D2A]">
+            <div className="p-4 rounded-2xl dash-inner border">
+              <span className="dash-muted block mb-0.5">Account Registered Since</span>
+              <span className="font-bold dash-text">
                 {new Date(user.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
               </span>
             </div>
           </div>
         </div>
 
+        {/* Dashboard Appearance & Color Theme Settings Feature */}
+        <div className="dash-card p-7 rounded-3xl border shadow-sm space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-inherit/30">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500/20 to-sky-500/20 text-sky-400 border border-sky-500/30 flex items-center justify-center">
+                <Palette className="w-5 h-5 text-sky-400" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-lg font-bold dash-text">Dashboard Background & Appearance</h3>
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-sky-500/15 text-sky-400 border border-sky-500/30">
+                    Live Tone
+                  </span>
+                </div>
+                <p className="text-xs dash-muted">
+                  Choose your dashboard background color outside the navy green tones. Updates in real-time across the platform.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 text-xs font-semibold dash-muted bg-inherit/10 px-3 py-1.5 rounded-xl border border-inherit/20 self-start sm:self-auto">
+              <span>Active Theme:</span>
+              <span className="text-emerald-400 font-bold">
+                {THEME_OPTIONS.find(t => t.id === activeTheme)?.name}
+              </span>
+            </div>
+          </div>
+
+          {/* Theme Option Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {THEME_OPTIONS.map((opt) => {
+              const isSelected = activeTheme === opt.id;
+              return (
+                <button
+                  key={opt.id}
+                  type="button"
+                  onClick={() => handleThemeChange(opt.id)}
+                  className={`p-4 rounded-2xl border text-left transition-all cursor-pointer relative flex flex-col justify-between ${
+                    isSelected
+                      ? 'border-emerald-500 bg-emerald-500/10 ring-2 ring-emerald-500/20 shadow-md'
+                      : 'dash-inner border-inherit/30 hover:border-inherit/60 hover:bg-white/5'
+                  }`}
+                >
+                  <div className="flex items-start justify-between gap-3 mb-3">
+                    <div className="flex items-center gap-3">
+                      <div
+                        className="w-9 h-9 rounded-xl border shadow-inner flex items-center justify-center shrink-0"
+                        style={{ backgroundColor: opt.preview, borderColor: opt.border }}
+                      >
+                        {isSelected && <Check className="w-4 h-4 text-emerald-400" />}
+                      </div>
+                      <div>
+                        <div className="text-sm font-bold dash-text flex items-center gap-2">
+                          {opt.name}
+                          {isSelected && (
+                            <span className="text-[10px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full font-bold">
+                              Active
+                            </span>
+                          )}
+                        </div>
+                        <div className="text-[11px] dash-muted mt-0.5">{opt.desc}</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Swatch & Preview Bar */}
+                  <div className="pt-2 border-t border-inherit/20 flex items-center justify-between text-[11px]">
+                    <div className="flex items-center gap-1.5">
+                      <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: opt.preview }} />
+                      <span className="font-mono text-[10px] dash-muted">{opt.preview}</span>
+                    </div>
+                    <span className={`text-[10px] font-bold ${isSelected ? 'text-emerald-400' : 'dash-muted'}`}>
+                      {isSelected ? '✓ Currently Applied' : 'Click to Set Tone'}
+                    </span>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
         {/* KYC Submission Section if not verified */}
         {user.kycStatus !== 'verified' && (
-          <div className="bg-white p-7 rounded-3xl border border-[#E3E8E3] shadow-sm space-y-6">
+          <div className="dash-card p-7 rounded-3xl border shadow-sm space-y-6">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-[#EEF1EC] text-[#27845D] flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 flex items-center justify-center">
                 <ShieldCheck className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="text-lg font-bold text-[#18211F]">Submit Identity Verification (KYC)</h3>
-                <p className="text-xs text-[#69736F]">
+                <h3 className="text-lg font-bold dash-text">Submit Identity Verification (KYC)</h3>
+                <p className="text-xs dash-muted">
                   Required by European AML Directive 2018/843 to unlock unlimited property investing and withdrawals.
                 </p>
               </div>
@@ -165,18 +286,18 @@ export const ProfilePage: React.FC = () => {
 
             <form onSubmit={handleKYCSubmit} className="space-y-4">
               <div className="form-field">
-                <label>Document Type</label>
-                <select value={docType} onChange={(e) => setDocType(e.target.value)}>
+                <label className="dash-text">Document Type</label>
+                <select value={docType} onChange={(e) => setDocType(e.target.value)} className="dash-inner border dash-text">
                   <option value="Passport">International Passport</option>
                   <option value="National Identity Card">European National Identity Card (DNI / NIE)</option>
                   <option value="Driver's License">Driver's License</option>
                 </select>
               </div>
 
-              <div className="border-2 border-dashed border-[#E3E8E3] rounded-2xl p-8 text-center bg-[#F6F7F4] space-y-2">
-                <UploadCloud className="w-8 h-8 text-[#69736F] mx-auto" />
-                <p className="text-xs font-bold text-[#18211F]">Upload Official Document Scan / Photo</p>
-                <p className="text-[11px] text-[#828D89]">
+              <div className="border-2 border-dashed border-inherit/40 rounded-2xl p-8 text-center dash-inner space-y-2">
+                <UploadCloud className="w-8 h-8 dash-muted mx-auto" />
+                <p className="text-xs font-bold dash-text">Upload Official Document Scan / Photo</p>
+                <p className="text-[11px] dash-muted">
                   Supported formats: PDF, JPG, PNG (Max 15MB). Both front and back sides required for ID cards.
                 </p>
               </div>

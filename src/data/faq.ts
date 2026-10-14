@@ -10,13 +10,13 @@ export const FAQ_DATA: FAQItem[] = [
     id: 'faq-1',
     category: 'General',
     question: 'What is Rental-log and how does tokenized real estate work?',
-    answer: 'Rental-log is a European fractional real estate investment platform that democratizes access to institutional-grade properties. Each property is acquired through a dedicated special purpose vehicle (SPV) and divided into digital tokens (usually €100 each). By holding tokens, you receive legal rights to the economic benefits of the asset: proportional monthly rental yields and your share of capital appreciation upon property sale.',
+    answer: 'Rental-log is a European fractional real estate investment platform that democratizes access to institutional-grade properties. Each property is acquired through a dedicated special purpose vehicle (SPV) and divided into digital participatory units. By holding tokens, you receive legal rights to the economic benefits of the asset: proportional monthly rental yields and your share of capital appreciation upon property sale.',
   },
   {
     id: 'faq-2',
     category: 'Investment',
     question: 'What is the minimum investment required?',
-    answer: 'The minimum investment is just 1 token, typically valued at €100 for most European residential and coliving opportunities. This enables investors of all sizes to build a diversified property portfolio without taking on high-interest mortgages or single-asset concentration risk.',
+    answer: 'The minimum investment depends on the certified property tier, enabling qualified investors to build a diversified portfolio without taking on high-interest mortgages or single-asset concentration risk.',
   },
   {
     id: 'faq-3',

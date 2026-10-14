@@ -24,7 +24,7 @@ export const HowItWorks: React.FC = () => {
     {
       step: '04',
       icon: Coins,
-      title: 'Invest from €100',
+      title: 'Seamless Investment',
       desc: 'Fund your participation instantly using SEPA bank wire, debit card, or crypto stablecoins (USDT/USDC).',
     },
     {

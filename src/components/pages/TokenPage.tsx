@@ -26,12 +26,12 @@ export const TokenPage: React.FC<TokenPageProps> = ({ onExplore }) => {
         {/* 3 Pillars */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="bg-white p-7 rounded-3xl border border-[#E3E8E3] shadow-sm space-y-3">
-            <div className="w-12 h-12 rounded-2xl bg-[#EEF1EC] text-[#182D2A] flex items-center justify-center font-bold">
-              €100
+            <div className="w-12 h-12 rounded-2xl bg-[#EEF1EC] text-[#182D2A] flex items-center justify-center">
+              <Coins className="w-6 h-6 text-[#27845D]" />
             </div>
             <h3 className="text-lg font-bold text-[#18211F]">Fractional Unit Standard</h3>
             <p className="text-xs text-[#69736F] leading-relaxed">
-              Every property is split into discrete €100 digital units. 1 token = 1 share of participatory economic rights to the property’s rental yield and terminal sale proceeds.
+              Every property is split into discrete digital units. 1 token = 1 share of participatory economic rights to the property’s rental yield and terminal sale proceeds.
             </p>
           </div>
 

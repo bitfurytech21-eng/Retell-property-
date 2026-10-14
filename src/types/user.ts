@@ -17,6 +17,7 @@ export interface User {
   phoneNumber?: string;
   country?: string;
   cryptoDepositAddress?: string;
+  bankIban?: string;
   avatarUrl?: string;
 }
 

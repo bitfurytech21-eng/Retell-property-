@@ -26,7 +26,7 @@ export const Benefits: React.FC = () => {
     {
       icon: Globe,
       title: 'Cross-Border Diversification',
-      desc: 'Spread risk across high-growth Spanish metros (Madrid, Valencia, Malaga) and prime US sunshine hubs (Miami) from €100 per asset.',
+      desc: 'Spread risk across high-growth Spanish metros (Madrid, Valencia, Malaga) and prime US sunshine hubs (Miami) with curated fractional assets.',
     },
     {
       icon: ShieldAlert,

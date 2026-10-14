@@ -7,7 +7,7 @@ export interface Transaction {
   userId: string;
   type: TransactionType;
   amount: number;
-  currency: 'EUR' | 'USDT' | 'USDC';
+  currency: 'EUR' | 'USDT' | 'USDC' | 'BTC' | 'ETH' | 'SOL' | string;
   status: TransactionStatus;
   description: string;
   reference: string;
@@ -22,6 +22,9 @@ export interface Transaction {
     destinationAddress?: string;
     bankIban?: string;
     rejectionReason?: string;
+    notes?: string;
+    adminEmail?: string;
+    network?: string;
   };
 }
 

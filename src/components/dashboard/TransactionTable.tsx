@@ -69,14 +69,14 @@ export const TransactionTable: React.FC<TransactionTableProps> = ({ transactions
 
   if (transactions.length === 0) {
     return (
-      <div className="bg-white p-6 rounded-2xl border border-[#E3E8E3] text-center text-xs text-[#69736F]">
+      <div className="dash-card p-6 rounded-2xl border text-center text-xs dash-muted">
         No ledger transactions found.
       </div>
     );
   }
 
   return (
-    <div className="dashboard-table-wrapper">
+    <div className="dashboard-table-wrapper border">
       <table className="dashboard-table">
         <thead>
           <tr>
@@ -89,34 +89,34 @@ export const TransactionTable: React.FC<TransactionTableProps> = ({ transactions
             <th className="text-right">Balance After</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-[#E3E8E3]">
+        <tbody className="divide-y border-inherit/30">
           {displayList.map((tx) => {
             const isNegative = tx.type === 'withdrawal' || tx.type === 'investment';
             return (
-              <tr key={tx.id} className="hover:bg-[#F6F7F4]/60 transition-colors">
+              <tr key={tx.id} className="hover:opacity-85 transition-opacity">
                 <td>{getTypeBadge(tx.type)}</td>
                 <td className="max-w-xs">
-                  <span className="font-semibold text-[#18211F] block text-xs truncate">
+                  <span className="font-semibold dash-text block text-xs truncate">
                     {tx.description}
                   </span>
-                  <span className="font-mono text-[10px] text-[#69736F]">
+                  <span className="font-mono text-[10px] dash-muted">
                     Ref: {tx.reference} {tx.txHash ? `· Hash: ${formatShortHash(tx.txHash)}` : ''}
                   </span>
                 </td>
-                <td className="text-xs text-[#69736F] whitespace-nowrap">
+                <td className="text-xs dash-muted whitespace-nowrap">
                   {formatDate(tx.createdAt)}
                 </td>
-                <td className="text-xs text-[#18211F] font-medium whitespace-nowrap">
+                <td className="text-xs dash-text font-medium whitespace-nowrap">
                   {tx.paymentMethod}
                 </td>
                 <td>{getStatusBadge(tx.status)}</td>
                 <td className="text-right font-bold text-xs whitespace-nowrap">
-                  <span className={isNegative ? 'text-[#18211F]' : 'text-[#27845D]'}>
+                  <span className={isNegative ? 'dash-text' : 'text-emerald-400'}>
                     {isNegative ? '-' : '+'}
                     {formatCurrency(tx.amount, tx.currency)}
                   </span>
                 </td>
-                <td className="text-right font-medium text-xs text-[#69736F] whitespace-nowrap">
+                <td className="text-right font-medium text-xs dash-muted whitespace-nowrap">
                   {formatCurrency(tx.balanceAfter)}
                 </td>
               </tr>

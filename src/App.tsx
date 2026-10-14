@@ -22,6 +22,8 @@ import { TokenPage } from './components/pages/TokenPage';
 import { FAQPage } from './components/pages/FAQPage';
 import { ContactPage } from './components/pages/ContactPage';
 import { LegalPage } from './components/pages/LegalPage';
+import { TeamPage } from './components/pages/TeamPage';
+import { WealthPage } from './components/pages/WealthPage';
 import { ProfilePage } from './components/pages/ProfilePage';
 import { AuthPages } from './components/pages/AuthPages';
 import { DashboardPage } from './components/pages/DashboardPage';
@@ -122,30 +124,56 @@ function MainApp() {
 
   // Render appropriate view based on currentPath
   const renderContent = () => {
+    const basePath = currentPath.split('#')[0] || '/';
+
     // Property detail view
-    if (currentPath.startsWith('/property/') && selectedProperty) {
-      return (
-        <PropertyDetailView
-          property={selectedProperty}
-          onBack={() => navigateTo('/properties')}
-          onNavigateDeposit={() => navigateTo('/dashboard')}
-          onNavigateAuthForInvestment={(prop) => {
-            setPendingInvestmentProperty(prop);
-            setReturnDestination(`/property/${prop.slug}`);
-            navigateTo('/login');
-          }}
-          onInvestmentSuccess={handleInvestmentSuccess}
-        />
-      );
+    if (basePath.startsWith('/property/')) {
+      const slug = basePath.replace('/property/', '');
+      const currentList = properties;
+      const found = (selectedProperty && (selectedProperty.slug === slug || selectedProperty.id === slug))
+        ? selectedProperty
+        : currentList.find(p => p.slug === slug || p.id === slug) || currentList[0];
+
+      if (found) {
+        return (
+          <PropertyDetailView
+            property={found}
+            onBack={() => navigateTo('/properties')}
+            onNavigateDeposit={() => navigateTo('/dashboard')}
+            onNavigateAuthForInvestment={(prop) => {
+              setPendingInvestmentProperty(prop);
+              setReturnDestination(`/property/${prop.slug}`);
+              navigateTo('/login');
+            }}
+            onInvestmentSuccess={handleInvestmentSuccess}
+          />
+        );
+      }
     }
 
-    switch (currentPath) {
+    switch (basePath) {
       case '/properties':
         return (
           <PropertiesPage
             properties={properties}
             onSelectProperty={handleSelectProperty}
             onInvestProperty={handleInvestProperty}
+          />
+        );
+
+      case '/team':
+        return (
+          <TeamPage
+            onExplore={() => navigateTo('/properties')}
+            onContact={() => navigateTo('/contact')}
+          />
+        );
+
+      case '/wealth':
+        return (
+          <WealthPage
+            onExplore={() => navigateTo('/properties')}
+            onContact={() => navigateTo('/contact')}
           />
         );
 
@@ -223,6 +251,7 @@ function MainApp() {
       case '/transactions':
       case '/distributions':
       case '/wallet':
+      case '/deposit':
       case '/documents':
       case '/referrals':
       case '/notifications':
@@ -234,17 +263,18 @@ function MainApp() {
           '/transactions': 'transactions',
           '/distributions': 'distributions',
           '/wallet': 'wallet',
+          '/deposit': 'deposit',
           '/documents': 'documents',
           '/referrals': 'referrals',
           '/notifications': 'notifications',
           '/profile': 'profile',
           '/support': 'support',
         };
-        const tab = tabMap[currentPath] || 'overview';
+        const tab = tabMap[basePath] || 'overview';
         return (
           <ProtectedRoute
             onNavigateLogin={() => {
-              setReturnDestination(currentPath);
+              setReturnDestination(basePath);
               navigateTo('/login');
             }}
           >
@@ -258,6 +288,7 @@ function MainApp() {
               onNavigateProfile={() => navigateTo('/profile')}
               onNavigateTransactions={() => navigateTo('/transactions')}
               onNavigatePortfolio={() => navigateTo('/portfolio')}
+              onNavigateHome={() => navigateTo('/')}
             />
           </ProtectedRoute>
         );
@@ -288,7 +319,7 @@ function MainApp() {
 
             <PlatformStats />
 
-            {/* Featured Properties Marketplace Section (Enforces >= €1,000 threshold) */}
+            {/* Featured Properties Marketplace Section */}
             <section className="section bg-white" id="properties">
               <div className="container">
                 <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-4">
@@ -301,7 +332,7 @@ function MainApp() {
                     </h2>
                     <p className="text-sm text-[#69736F] max-w-xl">
                       Each asset is structured via an independent SPV with certified RICS appraisals, 
-                      minimum entry of €1,000+, and verified monthly distributions.
+                      institutional underwriting, and verified monthly distributions.
                     </p>
                   </div>
 
@@ -353,11 +384,12 @@ function MainApp() {
     }
   };
 
+  const currentBasePath = currentPath.split('#')[0] || '/';
   const isDashboardView = [
     '/dashboard', '/portfolio', '/transactions', '/distributions', 
-    '/wallet', '/documents', '/referrals', '/notifications', 
-    '/profile', '/support', '/admin'
-  ].includes(currentPath) || currentPath.startsWith('/dashboard') || currentPath.startsWith('/property/');
+    '/wallet', '/deposit', '/documents', '/referrals', '/notifications', 
+    '/profile', '/support'
+  ].includes(currentBasePath) || currentBasePath.startsWith('/dashboard');
 
   return (
     <div className={`flex flex-col bg-white ${isDashboardView ? 'h-screen overflow-hidden' : 'min-h-screen'}`}>
