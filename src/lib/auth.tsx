@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { User, UserRole } from '../types/user';
+import { User, UserRole, AccountType } from '../types/user';
 import { ledger } from './ledger';
 import { supabase, isSupabaseConfigured, getAuthRedirectUrl } from './supabaseClient';
 import { Session } from '@supabase/supabase-js';
@@ -21,12 +21,12 @@ interface AuthContextType {
   isRecoveryMode: boolean;
   setIsRecoveryMode: (val: boolean) => void;
   login: (email: string, pass: string) => Promise<User>;
-  register: (email: string, pass: string, fullName: string, role?: UserRole) => Promise<RegisterResult>;
+  register: (email: string, pass: string, fullName: string, role?: UserRole, accountType?: AccountType) => Promise<RegisterResult>;
   logout: () => Promise<void>;
   refreshUser: () => void;
   sendPasswordReset: (email: string) => Promise<boolean>;
   updatePassword: (newPassword: string) => Promise<void>;
-  quickDemoSession: (role: 'investor' | 'admin') => Promise<User>;
+  quickDemoSession: (role: 'investor' | 'admin', accountType?: AccountType) => Promise<User>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -99,7 +99,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             initialSession.user.id,
             initialSession.user.email || '',
             initialSession.user.user_metadata?.full_name || initialSession.user.email?.split('@')[0] || 'Investor',
-            (initialSession.user.user_metadata?.role as UserRole) || 'investor'
+            (initialSession.user.user_metadata?.role as UserRole) || 'investor',
+            (initialSession.user.user_metadata?.account_type as AccountType) || undefined
           );
           setUser(synced);
           setSession(initialSession);
@@ -133,7 +134,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           currentSession.user.id,
           currentSession.user.email || '',
           currentSession.user.user_metadata?.full_name || currentSession.user.email?.split('@')[0] || 'Investor',
-          (currentSession.user.user_metadata?.role as UserRole) || 'investor'
+          (currentSession.user.user_metadata?.role as UserRole) || 'investor',
+          (currentSession.user.user_metadata?.account_type as AccountType) || undefined
         );
         setUser(synced);
         setSession(currentSession);
@@ -211,8 +213,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     email: string,
     pass: string,
     fullName: string,
-    role: UserRole = 'investor'
+    role: UserRole = 'investor',
+    accountType?: AccountType
   ): Promise<RegisterResult> => {
+    const determinedAccountType: AccountType = accountType || (role as AccountType) || 'individual_investor';
+    const determinedRole: UserRole = role === 'admin' || determinedAccountType === 'admin' ? 'admin' : 'investor';
+
     if (!isConfigured) {
       const cleanEmail = email.trim().toLowerCase();
       let existing = ledger.getUserByEmail(cleanEmail);
@@ -222,7 +228,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const created = ledger.createUser({
         email: cleanEmail,
         fullName: fullName.trim() || cleanEmail.split('@')[0],
-        role: role
+        role: determinedRole,
+        accountType: determinedAccountType
       });
       setUser(created);
       setToken('local_sess_' + created.id);
@@ -242,7 +249,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       options: {
         data: {
           full_name: fullName.trim(),
-          role: role,
+          role: determinedRole,
+          account_type: determinedAccountType,
         },
         emailRedirectTo: redirectUrl,
       },
@@ -334,13 +342,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   // Local demo session switcher (strictly labeled as preview mock mode when keys are unconfigured)
-  const quickDemoSession = async (role: 'investor' | 'admin'): Promise<User> => {
+  const quickDemoSession = async (role: 'investor' | 'admin', accountType?: AccountType): Promise<User> => {
     const demoEmail = role === 'admin' ? 'admin@kretz.com' : 'investor@kretz.com';
     const existing = ledger.getUserByEmail(demoEmail);
     if (!existing) {
       throw new Error('Demo account not found in local ledger.');
     }
-    setUser(existing);
+    if (accountType) {
+      existing.accountType = accountType;
+    }
+    setUser({ ...existing });
     setToken('local_preview_' + existing.id);
     localStorage.setItem(CURRENT_USER_KEY, existing.id);
     return existing;

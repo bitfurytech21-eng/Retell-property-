@@ -3,6 +3,7 @@ import { useAuth } from '../../lib/auth';
 import { isValidEmail, isValidPassword } from '../../lib/validation';
 import { Property } from '../../types/property';
 import { formatCurrency } from '../../lib/utils';
+import { AccountType, ACCOUNT_TYPES, UserRole } from '../../types/user';
 import {
   Building2,
   Shield,
@@ -55,7 +56,7 @@ export const AuthPages: React.FC<AuthPageProps> = ({
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [role, setRole] = useState<'investor' | 'admin'>('investor');
+  const [accountType, setAccountType] = useState<AccountType>('individual_investor');
 
   // Status states
   const [error, setError] = useState<string | null>(null);
@@ -112,9 +113,12 @@ export const AuthPages: React.FC<AuthPageProps> = ({
       return;
     }
 
+    const selectedOption = ACCOUNT_TYPES.find(a => a.id === accountType);
+    const determinedRole: UserRole = selectedOption?.role || (accountType === 'admin' ? 'admin' : 'investor');
+
     setLoading(true);
     try {
-      const result = await register(email, password, fullName, role);
+      const result = await register(email, password, fullName, determinedRole, accountType);
       if (result.requiresVerification) {
         setVerificationPending(true);
       } else {
@@ -372,16 +376,41 @@ export const AuthPages: React.FC<AuthPageProps> = ({
                   />
                 </div>
 
-                <div className="form-field space-y-1">
-                  <label className="text-xs font-bold text-[#18211F]">Account Role</label>
+                <div className="form-field space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-bold text-[#18211F]">Account Type</label>
+                    <span className="text-[10px] font-bold text-[#27845D] bg-[#27845D]/10 px-2.5 py-0.5 rounded-full">
+                      {ACCOUNT_TYPES.find(t => t.id === accountType)?.badge || 'Investor'}
+                    </span>
+                  </div>
                   <select
-                    value={role}
-                    onChange={(e) => setRole(e.target.value as any)}
+                    value={accountType}
+                    onChange={(e) => setAccountType(e.target.value as AccountType)}
                     className="w-full text-xs bg-[#F6F7F4] border border-[#E3E8E3] rounded-xl px-3.5 py-3 font-semibold text-[#18211F] focus:outline-none focus:border-[#182D2A]"
                   >
-                    <option value="investor">Standard Investor (Browse & Invest €1,000+)</option>
-                    <option value="admin">Platform Administrator (Review & Approvals)</option>
+                    {ACCOUNT_TYPES.map((type) => (
+                      <option key={type.id} value={type.id}>
+                        {type.label}
+                      </option>
+                    ))}
                   </select>
+                  {(() => {
+                    const activeType = ACCOUNT_TYPES.find(t => t.id === accountType);
+                    if (!activeType) return null;
+                    return (
+                      <div className="p-2.5 bg-[#EEF2ED] border border-[#E0E7DE] rounded-xl text-[11px] text-[#4A5753] flex items-start gap-2">
+                        <div className="mt-1 w-1.5 h-1.5 rounded-full bg-[#27845D] shrink-0" />
+                        <div className="space-y-0.5 flex-1">
+                          <p className="leading-snug text-[#2C3834] font-medium">{activeType.description}</p>
+                          {activeType.minInvestment && activeType.minInvestment !== 'N/A' && (
+                            <p className="text-[10px] font-bold text-[#182D2A]">
+                              Minimum Allocation: <span className="text-[#27845D] font-mono">{activeType.minInvestment}</span>
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })()}
                 </div>
 
                 <div className="form-field space-y-1">

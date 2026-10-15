@@ -6,9 +6,10 @@ export interface NavLink {
 export const MAIN_NAV_LINKS: NavLink[] = [
   { label: 'Home', path: '/' },
   { label: 'Marketplace', path: '/properties' },
-  { label: 'Team', path: '/team' },
+  { label: 'The Agency', path: '/agency' },
   { label: 'Wealth Advisory', path: '/wealth' },
   { label: 'How It Works', path: '/investing' },
+  { label: 'Security Guide', path: '/guide' },
   { label: 'Tokenization', path: '/token' },
   { label: 'FAQ', path: '/faq' },
   { label: 'Contact', path: '/contact' },
@@ -29,6 +30,7 @@ export const FOOTER_LINKS = {
   ],
   support: [
     { label: 'Help Center & FAQ', path: '/faq' },
+    { label: 'Passkeys & Security Guide', path: '/guide' },
     { label: 'Direct Contact', path: '/contact' },
     { label: 'Compliance & KYC', path: '/faq#kyc' },
     { label: 'Institutional Desk', path: '/contact#institutional' },

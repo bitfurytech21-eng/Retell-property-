@@ -29,6 +29,7 @@ import { DashboardPage } from './components/pages/DashboardPage';
 import { PortfolioOverview } from './components/dashboard/PortfolioOverview';
 import { TransactionTable } from './components/dashboard/TransactionTable';
 import { AdminPanel } from './components/admin/AdminPanel';
+import { InvestmentGuidePage } from './components/pages/InvestmentGuidePage';
 import { ProtectedRoute } from './components/layout/ProtectedRoute';
 
 import { ArrowRight, ShieldCheck, UserCheck, Plus, Sparkles } from 'lucide-react';
@@ -161,6 +162,7 @@ function MainApp() {
         );
 
       case '/team':
+      case '/agency':
         return (
           <TeamPage
             onExplore={() => navigateTo('/properties')}
@@ -195,6 +197,15 @@ function MainApp() {
         return (
           <FAQPage
             onContact={() => navigateTo('/contact')}
+          />
+        );
+
+      case '/guide':
+      case '/security-guide':
+        return (
+          <InvestmentGuidePage
+            onNavigateHome={() => navigateTo('/')}
+            onNavigateLogin={() => navigateTo('/login')}
           />
         );
 

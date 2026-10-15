@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../lib/auth';
+import { getAccountTypeBadge } from '../../types/user';
 import { MAIN_NAV_LINKS } from '../../data/navigation';
 import { Building2, Menu, X, User as UserIcon, Shield, LogOut, Wallet } from 'lucide-react';
 import { formatCurrency } from '../../lib/utils';
@@ -95,9 +96,11 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, onNavigate }) => {
                   <div className="px-4 py-2 border-b border-[#E3E8E3] mb-1">
                     <p className="text-xs text-[#69736F]">Signed in as</p>
                     <p className="text-sm font-semibold text-[#182D2A] truncate">{user.email}</p>
-                    <div className="flex items-center gap-1.5 mt-1 text-[11px] text-[#27845D] font-medium">
-                      <span>KYC:</span>
-                      <span className="capitalize font-semibold">{user.kycStatus}</span>
+                    <div className="flex items-center justify-between mt-1.5 text-[11px]">
+                      <span className="text-[10px] font-bold text-[#27845D] bg-[#27845D]/10 px-2 py-0.5 rounded-full">
+                        {getAccountTypeBadge(user.accountType, user.role)}
+                      </span>
+                      <span className="text-[#69736F]">KYC: <strong className="capitalize text-[#27845D]">{user.kycStatus}</strong></span>
                     </div>
                   </div>
 

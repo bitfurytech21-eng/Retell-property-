@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../lib/auth';
 import { ledger } from '../../lib/ledger';
-import { KYCStatus } from '../../types/user';
+import { KYCStatus, getAccountTypeLabel, getAccountTypeBadge } from '../../types/user';
 import { ShieldCheck, User as UserIcon, Building2, UploadCloud, CheckCircle2, Clock, XCircle, AlertCircle, Palette, Check, Sparkles } from 'lucide-react';
 import { ImageUploader } from '../common/ImageUploader';
+import { AccountTypeSwitcher } from '../common/AccountTypeSwitcher';
 
 export type DashboardThemeId = 'slate' | 'sandstone' | 'titanium' | 'obsidian';
 
@@ -157,8 +158,13 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
               <span className="font-mono font-bold dash-text">{user.id}</span>
             </div>
             <div className="p-4 rounded-2xl dash-inner border">
-              <span className="dash-muted block mb-0.5">User Role</span>
-              <span className="font-bold dash-text uppercase">{user.role}</span>
+              <span className="dash-muted block mb-0.5">Account Type</span>
+              <div className="flex items-center gap-2 mt-0.5">
+                <span className="font-bold dash-text">{getAccountTypeLabel(user.accountType, user.role)}</span>
+                <span className="text-[10px] font-bold text-[#27845D] bg-[#27845D]/10 px-2 py-0.5 rounded-full">
+                  {getAccountTypeBadge(user.accountType, user.role)}
+                </span>
+              </div>
             </div>
             <div className="p-4 rounded-2xl dash-inner border">
               <span className="dash-muted block mb-0.5">Assigned Crypto Deposit Address</span>
@@ -172,6 +178,10 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
             </div>
           </div>
         </div>
+
+        {/* Account Type Switcher Component */}
+        <AccountTypeSwitcher user={user} onRefresh={refreshUser} onMessage={(m) => setMessage(m)} />
+
 
         {/* Dashboard Appearance & Color Theme Settings Feature */}
         <div className="dash-card p-7 rounded-3xl border shadow-sm space-y-6">

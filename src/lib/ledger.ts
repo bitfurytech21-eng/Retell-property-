@@ -1,5 +1,5 @@
 import { Transaction, TransactionType, TransactionStatus, LedgerEntry } from '../types/transaction';
-import { User, KYCStatus, UserRole } from '../types/user';
+import { User, KYCStatus, UserRole, AccountType, getAccountTypeLabel } from '../types/user';
 import { Property } from '../types/property';
 import { Investment } from '../types/investment';
 import { INITIAL_PROPERTIES } from '../data/properties';
@@ -784,7 +784,7 @@ class LedgerService {
     return this.users.find(u => u.email.toLowerCase() === email.toLowerCase());
   }
 
-  public createUser(userData: { email: string; fullName: string; role?: 'investor' | 'admin' }): User {
+  public createUser(userData: { email: string; fullName: string; role?: UserRole; accountType?: AccountType }): User {
     const existing = this.getUserByEmail(userData.email);
     if (existing) {
       throw new Error('An account with this email address already exists.');
@@ -795,6 +795,7 @@ class LedgerService {
       email: userData.email,
       fullName: userData.fullName,
       role: userData.role || 'investor',
+      accountType: userData.accountType || (userData.role === 'admin' ? 'admin' : 'individual_investor'),
       kycStatus: 'unverified',
       walletBalance: 0,
       investedBalance: 0,
@@ -804,17 +805,20 @@ class LedgerService {
     };
 
     this.users.push(newUser);
-    this.logAudit(newUser.id, newUser.email, 'USER_REGISTERED', `New user registered with role ${newUser.role}`);
+    this.logAudit(newUser.id, newUser.email, 'USER_REGISTERED', `New user registered with role ${newUser.role} and account type ${newUser.accountType}`);
     this.saveState();
     return newUser;
   }
 
-  public syncSupabaseUser(supabaseId: string, email: string, fullName: string, role: UserRole = 'investor'): User {
+  public syncSupabaseUser(supabaseId: string, email: string, fullName: string, role: UserRole = 'investor', accountType?: AccountType): User {
     let existing = this.getUserById(supabaseId) || this.getUserByEmail(email);
     if (existing) {
       existing.id = supabaseId;
       if (fullName && (!existing.fullName || existing.fullName === 'Investor')) {
         existing.fullName = fullName;
+      }
+      if (accountType && !existing.accountType) {
+        existing.accountType = accountType;
       }
       this.saveState();
       return existing;
@@ -825,6 +829,7 @@ class LedgerService {
       email: email,
       fullName: fullName || email.split('@')[0] || 'Investor',
       role: role,
+      accountType: accountType || (role === 'admin' ? 'admin' : 'individual_investor'),
       kycStatus: 'unverified',
       walletBalance: 0,
       investedBalance: 0,
@@ -851,6 +856,30 @@ class LedgerService {
     this.saveState();
     return user;
   }
+
+  public updateUserAccountType(
+    userId: string, 
+    accountType: AccountType, 
+    extraDetails?: { jointHolderName?: string; companyName?: string; institutionName?: string; taxId?: string; registrationNumber?: string }
+  ): User {
+    const user = this.getUserById(userId);
+    if (!user) throw new Error('User not found');
+
+    user.accountType = accountType;
+    if (extraDetails) {
+      if (extraDetails.jointHolderName !== undefined) user.jointHolderName = extraDetails.jointHolderName;
+      if (extraDetails.companyName !== undefined) user.companyName = extraDetails.companyName;
+      if (extraDetails.institutionName !== undefined) user.institutionName = extraDetails.institutionName;
+      if (extraDetails.taxId !== undefined) user.taxId = extraDetails.taxId;
+      if (extraDetails.registrationNumber !== undefined) user.registrationNumber = extraDetails.registrationNumber;
+    }
+
+    this.logAudit(userId, user.email, 'ACCOUNT_TYPE_UPDATED', `User account type updated to ${accountType}`);
+    this.createNotification(user.id, 'Account Type Updated', `Your investor profile has been switched to ${getAccountTypeLabel(accountType)}.`, 'success');
+    this.saveState();
+    return user;
+  }
+
 
   // --- Properties Management ---
   public getProperties(): Property[] {

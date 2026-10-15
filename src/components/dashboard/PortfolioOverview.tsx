@@ -94,6 +94,7 @@ export const PortfolioOverview: React.FC<PortfolioOverviewProps> = ({
 
             <div className="flex items-center justify-between text-xs pt-2">
               <button
+                type="button"
                 onClick={() => setSelectedInvestmentForDocs(inv)}
                 className="font-medium text-emerald-400 hover:underline flex items-center gap-1 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-lg"
               >
