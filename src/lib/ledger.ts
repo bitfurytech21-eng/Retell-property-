@@ -480,38 +480,38 @@ const DEFAULT_INVESTMENTS: Investment[] = [
   {
     id: 'inv-101',
     userId: 'usr-investor-demo',
-    propertyId: 'prop-valencia-01',
-    propertyTitle: 'Valencia Ruzafa Smart Living',
-    propertyLocation: 'Calle Ruzafa 42, Valencia',
-    propertyImage: '/src/assets/images/prop_valencia_apt_1791998371242.jpg',
-    tokensPurchased: 7,
+    propertyId: 'prop-kretz-kp1-102',
+    propertyTitle: 'ROQUEBRUNE-CAP-MARTIN - Ramingao - Golf Bleu',
+    propertyLocation: 'Roquebrune Cap Martin, Alpes-Maritimes',
+    propertyImage: 'https://files.kretzrealestate.com/5534a64054a86115d0d81384cb413d7c.jpg',
+    tokensPurchased: 10,
     tokenPrice: 100,
-    totalAmountInvested: 700,
+    totalAmountInvested: 1000,
     purchasedAt: '2026-02-14T14:32:00Z',
-    estimatedAnnualYield: 11.4,
-    projectedMonthlyIncome: 6.65,
-    totalDividendsReceived: 79.80,
+    estimatedAnnualYield: 7.5,
+    projectedMonthlyIncome: 6.25,
+    totalDividendsReceived: 62.50,
     status: 'active',
     transactionHash: '0x5a18b9c2409f872110c4d812',
-    certificateId: 'CERT-VAL-101'
+    certificateId: 'CERT-KTZ-102'
   },
   {
     id: 'inv-102',
     userId: 'usr-investor-demo',
-    propertyId: 'prop-madrid-02',
-    propertyTitle: 'Madrid Chamberí Urban Coliving',
-    propertyLocation: 'Calle de Santa Engracia 78, Madrid',
-    propertyImage: '/src/assets/images/prop_madrid_living_1791998371897.jpg',
-    tokensPurchased: 5,
+    propertyId: 'prop-kretz-kp1-117',
+    propertyTitle: 'Reception apartment',
+    propertyLocation: 'Paris, Paris',
+    propertyImage: 'https://files.kretzrealestate.com/6ad7ec3c06057549d91484987949c8f.jpg',
+    tokensPurchased: 10,
     tokenPrice: 100,
-    totalAmountInvested: 500,
+    totalAmountInvested: 1000,
     purchasedAt: '2026-01-28T09:15:00Z',
-    estimatedAnnualYield: 12.8,
-    projectedMonthlyIncome: 5.33,
-    totalDividendsReceived: 57.00,
+    estimatedAnnualYield: 11.2,
+    projectedMonthlyIncome: 9.33,
+    totalDividendsReceived: 93.30,
     status: 'active',
     transactionHash: '0x992cf014bca883921901a182',
-    certificateId: 'CERT-MAD-102'
+    certificateId: 'CERT-KTZ-117'
   }
 ];
 
@@ -523,63 +523,63 @@ const DEFAULT_TRANSACTIONS: Transaction[] = [
     amount: 3000,
     currency: 'EUR',
     status: 'completed',
-    description: 'SEPA Instant Transfer from Banco Santander (ES91...)',
+    description: 'SEPA Instant Transfer from BNP Paribas (FR76...)',
     reference: 'DEP-SEPA-94821',
     createdAt: '2026-01-20T10:00:00Z',
     paymentMethod: 'SEPA Bank Transfer',
     balanceAfter: 3000,
-    txHash: 'ES91-2100-0418-4502-0005-1829'
+    txHash: 'FR76-3000-4018-4502-0005-1829'
   },
   {
     id: 'tx-202',
     userId: 'usr-investor-demo',
     type: 'investment',
-    amount: 500,
+    amount: 1000,
     currency: 'EUR',
     status: 'completed',
-    description: 'Acquisition of 5 RENT-MAD02 Tokens in Madrid Chamberí Coliving',
-    reference: 'INV-MAD-005',
+    description: 'Acquisition of 10 KTZ-117 Tokens in Reception Apartment Paris',
+    reference: 'INV-KTZ-117',
     createdAt: '2026-01-28T09:15:00Z',
     paymentMethod: 'Internal Balance',
-    balanceAfter: 2500,
+    balanceAfter: 2000,
     txHash: '0x992cf014bca883921901a182',
     metadata: {
-      propertyId: 'prop-madrid-02',
-      propertyTitle: 'Madrid Chamberí Urban Coliving',
-      tokens: 5
+      propertyId: 'prop-kretz-kp1-117',
+      propertyTitle: 'Reception apartment',
+      tokens: 10
     }
   },
   {
     id: 'tx-203',
     userId: 'usr-investor-demo',
     type: 'investment',
-    amount: 700,
+    amount: 1000,
     currency: 'EUR',
     status: 'completed',
-    description: 'Acquisition of 7 RENT-VAL01 Tokens in Valencia Ruzafa Smart Living',
-    reference: 'INV-VAL-007',
+    description: 'Acquisition of 10 KTZ-102 Tokens in Roquebrune Cap Martin Luxury Villa',
+    reference: 'INV-KTZ-102',
     createdAt: '2026-02-14T14:32:00Z',
     paymentMethod: 'Internal Balance',
-    balanceAfter: 1800,
+    balanceAfter: 1000,
     txHash: '0x5a18b9c2409f872110c4d812',
     metadata: {
-      propertyId: 'prop-valencia-01',
-      propertyTitle: 'Valencia Ruzafa Smart Living',
-      tokens: 7
+      propertyId: 'prop-kretz-kp1-102',
+      propertyTitle: 'ROQUEBRUNE-CAP-MARTIN - Ramingao - Golf Bleu',
+      tokens: 10
     }
   },
   {
     id: 'tx-204',
     userId: 'usr-investor-demo',
     type: 'deposit',
-    amount: 600,
+    amount: 1500,
     currency: 'USDT',
     status: 'completed',
     description: 'Polygon Network USDT Deposit',
     reference: 'DEP-CRYPTO-4182',
     createdAt: '2026-02-25T16:45:00Z',
     paymentMethod: 'Crypto USDT (Polygon)',
-    balanceAfter: 2400,
+    balanceAfter: 2500,
     txHash: '0x4f82c18d37aa9081bb59218d6a8f114c0001891b'
   },
   {
@@ -593,7 +593,7 @@ const DEFAULT_TRANSACTIONS: Transaction[] = [
     reference: 'DIST-2026-02',
     createdAt: '2026-03-01T08:00:00Z',
     paymentMethod: 'Rental Distribution',
-    balanceAfter: 2450
+    balanceAfter: 2550
   }
 ];
 
@@ -610,7 +610,8 @@ class LedgerService {
   constructor() {
     this.users = getStorage('users', DEFAULT_USERS);
     const storedProps = getStorage<Property[]>('properties', []);
-    const initialOrStored = (!storedProps || storedProps.length === 0 || storedProps.some(p => (p.minimumInvestment || 0) < 1000 || !p.feeStructure))
+    const hasKretzProps = storedProps && storedProps.length > 50 && storedProps.some(p => p.id.startsWith('prop-kretz-'));
+    const initialOrStored = (!hasKretzProps || storedProps.length < INITIAL_PROPERTIES.length)
       ? INITIAL_PROPERTIES
       : storedProps;
     this.properties = Array.from(new Map(initialOrStored.map(p => [p.id, p])).values());

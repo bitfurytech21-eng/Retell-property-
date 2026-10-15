@@ -127,21 +127,24 @@ export const Hero: React.FC<HeroProps> = ({ onExplore, onHowItWorks }) => {
                   <div className="p-5 space-y-4 animate-in fade-in duration-200">
                     <div className="relative h-48 sm:h-52 rounded-2xl overflow-hidden group">
                       <img
-                        src="/src/assets/images/hero_real_estate_1791998371047.jpg"
-                        alt="Palacio Real Residences - Madrid"
+                        src="https://files.kretzrealestate.com/5534a64054a86115d0d81384cb413d7c.jpg"
+                        alt="ROQUEBRUNE-CAP-MARTIN - Ramingao - Golf Bleu"
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80';
+                        }}
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-[#06241D] via-transparent to-black/30" />
                       
                       {/* Live Badge */}
                       <div className="absolute top-3 left-3 bg-emerald-950/90 border border-emerald-400/40 backdrop-blur-md px-3 py-1 rounded-full flex items-center gap-1.5 text-[11px] font-bold text-[#00FF9D]">
                         <span className="w-2 h-2 rounded-full bg-[#00FF9D] animate-pulse" />
-                        <span>LIVE OFFERING • 88% FUNDED</span>
+                        <span>LIVE OFFERING • 78% FUNDED</span>
                       </div>
 
                       <div className="absolute bottom-3 left-3 right-3 text-left">
-                        <span className="text-[10px] uppercase tracking-wider text-emerald-300 font-bold block">Prime Residential • Madrid, ES</span>
-                        <h3 className="text-base font-extrabold text-white truncate">Palacio Real Luxury Residences</h3>
+                        <span className="text-[10px] uppercase tracking-wider text-emerald-300 font-bold block">Prestige Villa • Roquebrune-Cap-Martin, French Riviera</span>
+                        <h3 className="text-base font-extrabold text-white truncate">ROQUEBRUNE - Ramingao Golf Bleu</h3>
                       </div>
                     </div>
 
@@ -149,26 +152,26 @@ export const Hero: React.FC<HeroProps> = ({ onExplore, onHowItWorks }) => {
                     <div className="grid grid-cols-3 gap-2 p-3 rounded-xl bg-[#031A14] border border-emerald-900/50 text-center">
                       <div>
                         <span className="text-[10px] text-emerald-400/80 uppercase font-semibold block">Net Yield</span>
-                        <span className="text-base font-black text-[#00FF9D]">12.8%</span>
+                        <span className="text-base font-black text-[#00FF9D]">7.5%</span>
                       </div>
                       <div className="border-x border-emerald-900/50">
                         <span className="text-[10px] text-emerald-400/80 uppercase font-semibold block">Token Price</span>
                         <span className="text-base font-black text-white">€100</span>
                       </div>
                       <div>
-                        <span className="text-[10px] text-emerald-400/80 uppercase font-semibold block">Monthly Cashflow</span>
-                        <span className="text-base font-black text-emerald-300">€1.07</span>
+                        <span className="text-[10px] text-emerald-400/80 uppercase font-semibold block">Total Return</span>
+                        <span className="text-base font-black text-emerald-300">11.0%</span>
                       </div>
                     </div>
 
                     {/* Funding Progress */}
                     <div className="space-y-1.5">
                       <div className="flex items-center justify-between text-xs font-semibold">
-                        <span className="text-emerald-300">Funded: €440,000</span>
-                        <span className="text-emerald-400">Target: €500,000</span>
+                        <span className="text-emerald-300">Funded: €4,602,000</span>
+                        <span className="text-emerald-400">Target: €5,900,000</span>
                       </div>
                       <div className="w-full h-2.5 rounded-full bg-emerald-950 overflow-hidden p-0.5 border border-emerald-900">
-                        <div className="h-full rounded-full bg-gradient-to-r from-emerald-500 to-[#00FF9D] w-[88%]" />
+                        <div className="h-full rounded-full bg-gradient-to-r from-emerald-500 to-[#00FF9D] w-[78%]" />
                       </div>
                     </div>
 

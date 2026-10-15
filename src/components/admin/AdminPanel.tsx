@@ -24,6 +24,8 @@ import {
   FileText
 } from 'lucide-react';
 
+import { PropertyDocumentsHub } from '../documents/PropertyDocumentsHub';
+
 export const AdminPanel: React.FC = () => {
   const { user } = useAuth();
   if (!user) {
@@ -34,7 +36,7 @@ export const AdminPanel: React.FC = () => {
     );
   }
 
-  const [activeTab, setActiveTab] = useState<'deposits' | 'withdrawals' | 'manual-payment' | 'kyc' | 'properties' | 'audit' | 'payment-settings'>('deposits');
+  const [activeTab, setActiveTab] = useState<'deposits' | 'withdrawals' | 'manual-payment' | 'kyc' | 'properties' | 'property-documents' | 'audit' | 'payment-settings'>('deposits');
   const [transactions, setTransactions] = useState(ledger.getTransactions());
   const [properties, setProperties] = useState(ledger.getProperties());
   const [users, setUsers] = useState(ledger.getUsers());
@@ -443,6 +445,16 @@ export const AdminPanel: React.FC = () => {
           >
             <Building2 className="w-4 h-4" />
             Manage Properties ({properties.length})
+          </button>
+
+          <button
+            onClick={() => setActiveTab('property-documents')}
+            className={`pb-3 border-b-2 flex items-center gap-2 whitespace-nowrap cursor-pointer transition-colors ${
+              activeTab === 'property-documents' ? 'border-[#182D2A] text-[#182D2A]' : 'border-transparent text-[#69736F] hover:text-[#18211F]'
+            }`}
+          >
+            <FileText className="w-4 h-4 text-[#27845D]" />
+            Property Documents ({properties.length})
           </button>
 
           <button
@@ -1218,6 +1230,13 @@ export const AdminPanel: React.FC = () => {
                 </div>
               ))}
             </div>
+          </div>
+        )}
+
+        {/* Tab: Property Documents Automatic Generator */}
+        {activeTab === 'property-documents' && (
+          <div className="animate-in fade-in duration-200">
+            <PropertyDocumentsHub properties={properties} />
           </div>
         )}
 

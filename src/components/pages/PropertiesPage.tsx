@@ -83,8 +83,17 @@ export const PropertiesPage: React.FC<PropertiesPageProps> = ({
     return 0;
   });
 
+  const [visibleCount, setVisibleCount] = useState<number>(24);
+
+  // Reset pagination when filters change
+  const handleFilterChange = (setter: any, val: any) => {
+    setter(val);
+    setVisibleCount(24);
+  };
+
   // Deduplicate by ID to guarantee unique React keys
   const uniqueFiltered = Array.from(new Map(filtered.map((p) => [p.id, p])).values());
+  const displayedProperties = uniqueFiltered.slice(0, visibleCount);
 
   const handleResetFilters = () => {
     setSelectedLocation('all');
@@ -93,6 +102,7 @@ export const PropertiesPage: React.FC<PropertiesPageProps> = ({
     setSelectedStatus('all');
     setMinInvestmentFilter(1000);
     setSortBy('min_asc');
+    setVisibleCount(24);
   };
 
   return (
@@ -102,23 +112,22 @@ export const PropertiesPage: React.FC<PropertiesPageProps> = ({
         <div className="max-w-3xl mb-8">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-[#E3E8E3] text-xs font-semibold text-[#182D2A] mb-3 shadow-sm">
             <ShieldCheck className="w-4 h-4 text-[#27845D]" />
-            <span>Institutional Real Estate Marketplace · Reental Reference Architecture</span>
+            <span>Kretz Real Estate France · Prestige Luxury Portfolio</span>
           </div>
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#18211F] mb-3 tracking-tight">
-            Property Investment Opportunities
+            Prestigious French Real Estate Opportunities
           </h1>
           <p className="text-sm sm:text-base text-[#69736F] leading-relaxed">
-            Curated tokenized residential, commercial, coliving, and holiday properties with a minimum investment 
-            of €1,000 and above. Every offering features independent RICS appraisal, audited net pro-formas, 
-            and automated monthly dividend distribution rights.
+            Curated selection of 200+ world-class private mansions in Paris, French Riviera waterfront villas, 
+            Alpine chalets, and historic châteaux. Every offering includes authentic photography, RICS valuation, 
+            and automated monthly rental yields.
           </p>
 
           {/* Compliance Notice Banner */}
           <div className="mt-4 p-3 rounded-2xl bg-white border border-[#E3E8E3] flex items-center gap-2.5 text-xs text-[#69736F] shadow-sm">
             <Info className="w-4 h-4 text-[#27845D] shrink-0" />
             <span>
-              <strong>Investor Threshold Rule:</strong> Only certified opportunities with a minimum entry of €1,000+ are displayed. 
-              Projected returns represent audited pro-forma estimates, not guaranteed yields.
+              <strong>Investor Threshold Rule:</strong> Minimum entry from €1,000. All properties verified through Kretz Exclusive & Co-Exclusive Mandates.
             </span>
           </div>
         </div>
@@ -126,47 +135,74 @@ export const PropertiesPage: React.FC<PropertiesPageProps> = ({
         {/* Dynamic Multi-Filter Bar */}
         <PropertyFilters
           selectedLocation={selectedLocation}
-          onSelectLocation={setSelectedLocation}
+          onSelectLocation={(loc) => handleFilterChange(setSelectedLocation, loc)}
           selectedType={selectedType}
-          onSelectType={setSelectedType}
+          onSelectType={(t) => handleFilterChange(setSelectedType, t)}
           selectedDuration={selectedDuration}
-          onSelectDuration={setSelectedDuration}
+          onSelectDuration={(d) => handleFilterChange(setSelectedDuration, d)}
           selectedStatus={selectedStatus}
-          onSelectStatus={setSelectedStatus}
+          onSelectStatus={(s) => handleFilterChange(setSelectedStatus, s)}
           minInvestmentFilter={minInvestmentFilter}
-          onSelectMinInvestment={setMinInvestmentFilter}
+          onSelectMinInvestment={(m) => handleFilterChange(setMinInvestmentFilter, m)}
           sortBy={sortBy}
           onSelectSort={setSortBy}
           totalCount={uniqueFiltered.length}
           onResetFilters={handleResetFilters}
         />
 
+        {/* Property Count Bar */}
+        <div className="flex items-center justify-between text-xs text-[#69736F] font-semibold mb-4 px-1">
+          <span>
+            Showing <strong className="text-[#18211F]">{displayedProperties.length}</strong> of{' '}
+            <strong className="text-[#18211F]">{uniqueFiltered.length}</strong> available properties
+          </span>
+          {uniqueFiltered.length > displayedProperties.length && (
+            <span className="text-[#27845D]">
+              + {uniqueFiltered.length - displayedProperties.length} more available
+            </span>
+          )}
+        </div>
+
         {/* Property Grid */}
         {uniqueFiltered.length === 0 ? (
           <div className="bg-white p-12 rounded-3xl border border-[#E3E8E3] text-center shadow-sm max-w-xl mx-auto my-12">
             <h3 className="text-xl font-bold text-[#18211F] mb-2">No Properties Match Your Active Filters</h3>
             <p className="text-xs text-[#69736F] mb-6 leading-relaxed">
-              No offerings currently match the chosen location, duration, type, or minimum investment parameters.
-              Try widening your criteria or reset filters to view all €1,000+ opportunities.
+              No offerings currently match the chosen region, duration, or property category.
+              Try widening your criteria or reset filters to view all prestigious opportunities.
             </p>
             <button
               onClick={handleResetFilters}
-              className="btn btn-primary btn-sm text-xs font-bold px-6"
+              className="btn btn-primary btn-sm text-xs font-bold px-6 cursor-pointer"
             >
               Reset All Filters
             </button>
           </div>
         ) : (
-          <div className="property-grid">
-            {uniqueFiltered.map((property) => (
-              <PropertyCard
-                key={property.id}
-                property={property}
-                onSelect={onSelectProperty}
-                onInvest={onInvestProperty}
-              />
-            ))}
-          </div>
+          <>
+            <div className="property-grid">
+              {displayedProperties.map((property) => (
+                <PropertyCard
+                  key={property.id}
+                  property={property}
+                  onSelect={onSelectProperty}
+                  onInvest={onInvestProperty}
+                />
+              ))}
+            </div>
+
+            {/* Load More Button */}
+            {uniqueFiltered.length > displayedProperties.length && (
+              <div className="text-center mt-10">
+                <button
+                  onClick={() => setVisibleCount((prev) => prev + 24)}
+                  className="px-8 py-3.5 rounded-2xl bg-white border border-[#E3E8E3] text-[#18211F] hover:bg-[#EEF1EC] hover:border-[#182D2A] text-xs font-bold shadow-sm transition-all cursor-pointer"
+                >
+                  Load More Properties ({uniqueFiltered.length - displayedProperties.length} remaining)
+                </button>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>

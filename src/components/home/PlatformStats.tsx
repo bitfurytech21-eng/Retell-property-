@@ -5,9 +5,9 @@ export const PlatformStats: React.FC = () => {
   const stats = [
     {
       icon: Building2,
-      value: '€28.5M+',
-      label: 'Total Volume Financed',
-      subtitle: 'Across 65+ tokenized property assets',
+      value: '€1.4B+',
+      label: 'Portfolio Under Management',
+      subtitle: 'Across 200+ prestige estates, châteaux & villas',
     },
     {
       icon: TrendingUp,

@@ -1,4 +1,15 @@
-export type PropertyType = 'Residential' | 'Coliving' | 'Vacation Rental' | 'Commercial';
+export type PropertyType = 
+  | 'Residential' 
+  | 'Coliving' 
+  | 'Vacation Rental' 
+  | 'Commercial' 
+  | 'Villa' 
+  | 'Apartment' 
+  | 'Château' 
+  | 'Private Mansion' 
+  | 'House' 
+  | 'Estate / Property' 
+  | 'Chalet';
 
 export type PropertyStatus = 'funding' | 'funded' | 'completed' | 'upcoming';
 
@@ -39,6 +50,13 @@ export interface PaymentSchedule {
   maturityTerms: string; // e.g. "100% Principal + accumulated capital appreciation distributed upon sale"
 }
 
+export interface PropertyTimelineItem {
+  phase: string;
+  date: string;
+  status: 'completed' | 'in_progress' | 'upcoming';
+  description: string;
+}
+
 export interface Property {
   id: string;
   slug: string;
@@ -59,7 +77,7 @@ export interface Property {
   capitalAppreciationYield: number; // e.g. 4.2%
   totalEstimatedReturn: number; // e.g. 15.6%
   durationMonths: number; // e.g. 36 or 48 months
-  minimumInvestment: number; // Strictly >= €1,000
+  minimumInvestment: number; // Strictly >= €750
   distributionFrequency: 'Monthly' | 'Quarterly';
   tokenTicker: string; // e.g. RENT-VAL01
   blockchainNetwork: string; // e.g. 'Polygon POS'
@@ -76,4 +94,27 @@ export interface Property {
   investorCount: number;
   createdAt: string;
   isSampleRecord?: boolean;
+  surfaceAreaM2?: number;
+  bedrooms?: number;
+  bathrooms?: number;
+  yearBuilt?: string | number;
+  energyRating?: string;
+  cadastralReference?: string;
+  amenities?: string[];
+  timeline?: PropertyTimelineItem[];
+  operatorName?: string;
+  reentalFeatures?: string[];
+  ref?: string;
+  agent?: {
+    name: string;
+    phone?: string;
+    email?: string;
+    photo?: string;
+    role?: string;
+  };
+  isExclusive?: boolean;
+  isOffMarket?: boolean;
+  tourUrl?: string;
+  externalTourUrl?: string;
 }
+

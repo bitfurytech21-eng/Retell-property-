@@ -858,3 +858,50 @@ p {
   }
 }
 
+/* Print Stylesheet for Automatic Property Documents */
+@media print {
+  @page {
+    margin: 1.5cm;
+    size: A4 portrait;
+  }
+  
+  body, html {
+    background: #ffffff !important;
+    color: #18211F !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 10.5pt !important;
+  }
+
+  /* Hide interactive controls, navigation and floating elements */
+  header, nav, aside, footer, button, .print\:hidden, [role="navigation"] {
+    display: none !important;
+  }
+
+  #property-printable-document {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    background: #ffffff !important;
+  }
+
+  .print\:page-break-after {
+    page-break-after: always !important;
+    break-after: page !important;
+  }
+
+  img {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  table, tr, td, th {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+}
+

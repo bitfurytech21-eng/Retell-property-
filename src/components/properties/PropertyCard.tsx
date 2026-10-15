@@ -46,6 +46,12 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({ property, onSelect, 
 
         {/* Type and Sample Indicator */}
         <div className="absolute top-3 right-3 z-10 flex items-center gap-1.5">
+          {property.images && property.images.length > 1 && (
+            <span className="bg-black/65 backdrop-blur-md text-white text-[10px] font-semibold px-2 py-0.5 rounded-full flex items-center gap-1">
+              <span>📷</span>
+              <span>{property.images.length} Photos</span>
+            </span>
+          )}
           <span className="bg-black/65 backdrop-blur-md text-white text-[11px] font-semibold px-2.5 py-1 rounded-full">
             {property.type}
           </span>
@@ -69,9 +75,32 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({ property, onSelect, 
           {property.location}
         </div>
 
-        <h3 className="text-lg font-bold text-[#18211F] mb-3 leading-snug line-clamp-1 group-hover:text-[#27845D] transition-colors">
+        <h3 className="text-lg font-bold text-[#18211F] mb-1 leading-snug line-clamp-1 group-hover:text-[#27845D] transition-colors">
           {property.title}
         </h3>
+
+        {/* Architectural Specs Summary */}
+        {(property.surfaceAreaM2 || property.bedrooms || property.energyRating) && (
+          <div className="flex items-center gap-2 text-[11px] font-medium text-[#69736F] mb-3">
+            {property.surfaceAreaM2 && (
+              <span className="font-semibold text-[#18211F]">{property.surfaceAreaM2} m²</span>
+            )}
+            {property.bedrooms && (
+              <>
+                <span>•</span>
+                <span>{property.bedrooms} Beds</span>
+              </>
+            )}
+            {property.energyRating && (
+              <>
+                <span>•</span>
+                <span className="bg-emerald-50 text-[#27845D] px-1.5 py-0.5 rounded text-[10px] font-bold border border-emerald-200">
+                  {property.energyRating}
+                </span>
+              </>
+            )}
+          </div>
+        )}
 
         {/* Funding Progress Bar */}
         <div className="mb-4">

@@ -3,7 +3,7 @@ import { Property } from '../../types/property';
 import { useAuth } from '../../lib/auth';
 import { ledger } from '../../lib/ledger';
 import { formatCurrency, formatPercent, formatShortHash } from '../../lib/utils';
-import { InvestmentMetrics } from './InvestmentMetrics';
+import { PropertyDocumentViewer } from '../documents/PropertyDocumentViewer';
 import {
   MapPin,
   Calendar,
@@ -12,13 +12,20 @@ import {
   AlertTriangle,
   Coins,
   ChevronLeft,
+  ChevronRight,
+  Maximize2,
+  X,
+  Sparkles,
+  Bed,
+  Bath,
+  Check,
+  Compass,
   ArrowLeft,
   CheckCircle2,
   TrendingUp,
   FileText,
   Building,
   HelpCircle,
-  ExternalLink,
   Wallet,
   Clock,
   Layers,
@@ -43,6 +50,8 @@ export const PropertyDetailView: React.FC<PropertyDetailViewProps> = ({
 }) => {
   const { user, refreshUser } = useAuth();
   const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
+  const [lightboxOpen, setLightboxOpen] = useState<boolean>(false);
+  const [inspectingDoc, setInspectingDoc] = useState<any>(null);
   const [activeTab, setActiveTab] = useState<
     'overview' | 'financials' | 'structure' | 'fees' | 'schedule' | 'documents' | 'tokenization'
   >('overview');
@@ -60,6 +69,7 @@ export const PropertyDetailView: React.FC<PropertyDetailViewProps> = ({
   } | null>(null);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [docNotification, setDocNotification] = useState<string | null>(null);
+  const [isDocViewerOpen, setIsDocViewerOpen] = useState<boolean>(false);
 
   const fundingPercent = Math.min(
     100,
@@ -137,6 +147,21 @@ export const PropertyDetailView: React.FC<PropertyDetailViewProps> = ({
               <span className="status-badge funding font-semibold uppercase tracking-wider text-[11px]">
                 {property.type}
               </span>
+              {property.ref && (
+                <span className="text-xs font-mono font-bold text-[#182D2A] bg-[#EEF1EC] px-2.5 py-0.5 rounded-full">
+                  Ref: {property.ref}
+                </span>
+              )}
+              {property.isExclusive && (
+                <span className="text-xs font-bold text-amber-800 bg-amber-50 border border-amber-200 px-2.5 py-0.5 rounded-full flex items-center gap-1">
+                  <span>★</span> Exclusive Mandate
+                </span>
+              )}
+              {property.isOffMarket && (
+                <span className="text-xs font-bold text-purple-800 bg-purple-50 border border-purple-200 px-2.5 py-0.5 rounded-full">
+                  Off-Market
+                </span>
+              )}
               <span className="text-xs text-[#69736F] flex items-center gap-1 font-medium">
                 <MapPin className="w-3.5 h-3.5 text-[#27845D]" />
                 {property.location}, {property.country}
@@ -150,7 +175,16 @@ export const PropertyDetailView: React.FC<PropertyDetailViewProps> = ({
             </h1>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
+            <button
+              onClick={() => setIsDocViewerOpen(true)}
+              className="px-5 py-2.5 rounded-xl border border-[#E3E8E3] bg-[#F6F7F4] hover:bg-white text-[#18211F] text-xs font-bold flex items-center gap-2 transition-all cursor-pointer shadow-xs"
+              title="Generate, Preview and Download Official 7-Document Package"
+            >
+              <FileText className="w-4 h-4 text-[#27845D]" />
+              <span>Official Documents & Brochure</span>
+            </button>
+
             {property.status === 'funding' && (
               <button
                 onClick={() => handleStartInvest()}
@@ -167,37 +201,84 @@ export const PropertyDetailView: React.FC<PropertyDetailViewProps> = ({
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
           {/* Image Showcase */}
           <div className="lg:col-span-2 space-y-3">
-            <div className="rounded-3xl overflow-hidden aspect-video bg-[#EEF1EC] border border-[#E3E8E3] shadow-sm relative">
+            <div className="rounded-3xl overflow-hidden aspect-video bg-[#EEF1EC] border border-[#E3E8E3] shadow-sm relative group">
               <img
                 src={property.images[selectedImageIndex] || property.bannerImage}
                 alt={property.title}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover cursor-pointer transition-transform duration-500 group-hover:scale-102"
                 referrerPolicy="no-referrer"
+                onClick={() => setLightboxOpen(true)}
               />
-              <div className="absolute top-4 left-4 bg-black/60 backdrop-blur-md text-white text-xs font-semibold px-3 py-1 rounded-full">
-                Ticker: {property.tokenTicker} · {property.blockchainNetwork}
+              
+              {/* Ticker & Network Badge */}
+              <div className="absolute top-4 left-4 bg-black/65 backdrop-blur-md text-white text-xs font-semibold px-3 py-1.5 rounded-full flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                <span>Ticker: {property.tokenTicker} · {property.blockchainNetwork}</span>
               </div>
+
+              {/* Photo Counter & Fullscreen Lightbox Button */}
+              <div className="absolute top-4 right-4 flex items-center gap-2">
+                <span className="bg-black/65 backdrop-blur-md text-white text-xs font-semibold px-3 py-1.5 rounded-full">
+                  📷 {selectedImageIndex + 1} / {property.images.length}
+                </span>
+                <button
+                  onClick={() => setLightboxOpen(true)}
+                  title="Expand Fullscreen Gallery"
+                  className="w-8 h-8 rounded-full bg-black/65 backdrop-blur-md text-white hover:bg-black/80 flex items-center justify-center transition-all cursor-pointer"
+                >
+                  <Maximize2 className="w-3.5 h-3.5" />
+                </button>
+              </div>
+
+              {/* Carousel Arrows */}
+              {property.images.length > 1 && (
+                <>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedImageIndex((prev) => (prev === 0 ? property.images.length - 1 : prev - 1));
+                    }}
+                    aria-label="Previous Photo"
+                    className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/60 hover:bg-black/80 text-white flex items-center justify-center backdrop-blur-sm transition-all opacity-80 group-hover:opacity-100 cursor-pointer shadow-md"
+                  >
+                    <ChevronLeft className="w-5 h-5" />
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedImageIndex((prev) => (prev === property.images.length - 1 ? 0 : prev + 1));
+                    }}
+                    aria-label="Next Photo"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/60 hover:bg-black/80 text-white flex items-center justify-center backdrop-blur-sm transition-all opacity-80 group-hover:opacity-100 cursor-pointer shadow-md"
+                  >
+                    <ChevronRight className="w-5 h-5" />
+                  </button>
+                </>
+              )}
             </div>
 
             {/* Thumbnail selector */}
             {property.images.length > 1 && (
-              <div className="flex gap-3">
+              <div className="flex gap-2.5 overflow-x-auto pb-1 scrollbar-none">
                 {property.images.map((img, idx) => (
                   <button
                     key={idx}
                     onClick={() => setSelectedImageIndex(idx)}
-                    className={`w-24 h-16 rounded-xl overflow-hidden border-2 transition-all ${
+                    className={`relative w-24 h-16 shrink-0 rounded-xl overflow-hidden border-2 transition-all cursor-pointer ${
                       selectedImageIndex === idx
-                        ? 'border-[#182D2A] opacity-100 scale-102 shadow-sm'
-                        : 'border-transparent opacity-70 hover:opacity-100'
+                        ? 'border-[#182D2A] opacity-100 scale-102 shadow-sm ring-2 ring-[#27845D]/40'
+                        : 'border-transparent opacity-65 hover:opacity-100'
                     }`}
                   >
                     <img
                       src={img}
-                      alt={`Thumb ${idx}`}
+                      alt={`Thumb ${idx + 1}`}
                       className="w-full h-full object-cover"
                       referrerPolicy="no-referrer"
                     />
+                    <span className="absolute bottom-1 right-1 text-[9px] bg-black/70 text-white font-bold px-1 rounded">
+                      {idx + 1}
+                    </span>
                   </button>
                 ))}
               </div>
@@ -285,6 +366,68 @@ export const PropertyDetailView: React.FC<PropertyDetailViewProps> = ({
           </div>
         </div>
 
+        {/* Architectural Specifications Bar */}
+        {(property.surfaceAreaM2 || property.bedrooms || property.yearBuilt || property.energyRating || property.cadastralReference) && (
+          <div className="bg-white p-5 sm:p-6 rounded-3xl border border-[#E3E8E3] shadow-sm mb-8">
+            <div className="flex items-center gap-2 mb-4">
+              <Building className="w-4 h-4 text-[#27845D]" />
+              <h3 className="text-sm font-bold text-[#18211F] uppercase tracking-wider">
+                Asset Architectural & Registry Profile
+              </h3>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5">
+              {property.surfaceAreaM2 && (
+                <div className="bg-[#F6F7F4] p-3 rounded-2xl border border-[#E3E8E3]">
+                  <span className="text-[11px] text-[#69736F] block font-medium">Built Surface</span>
+                  <span className="text-base font-extrabold text-[#18211F]">{property.surfaceAreaM2} m²</span>
+                </div>
+              )}
+              {property.bedrooms !== undefined && (
+                <div className="bg-[#F6F7F4] p-3 rounded-2xl border border-[#E3E8E3]">
+                  <span className="text-[11px] text-[#69736F] block font-medium">Layout</span>
+                  <span className="text-sm font-extrabold text-[#18211F]">
+                    {property.bedrooms} Beds · {property.bathrooms} Baths
+                  </span>
+                </div>
+              )}
+              {property.yearBuilt && (
+                <div className="bg-[#F6F7F4] p-3 rounded-2xl border border-[#E3E8E3]">
+                  <span className="text-[11px] text-[#69736F] block font-medium">Built / Restored</span>
+                  <span className="text-xs font-bold text-[#18211F] truncate block" title={String(property.yearBuilt)}>
+                    {property.yearBuilt}
+                  </span>
+                </div>
+              )}
+              {property.energyRating && (
+                <div className="bg-[#F6F7F4] p-3 rounded-2xl border border-[#E3E8E3]">
+                  <span className="text-[11px] text-[#69736F] block font-medium">Energy Audit</span>
+                  <span className="text-xs font-bold text-[#27845D] bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 inline-block mt-0.5">
+                    {property.energyRating}
+                  </span>
+                </div>
+              )}
+              {property.cadastralReference && (
+                <div className="bg-[#F6F7F4] p-3 rounded-2xl border border-[#E3E8E3]">
+                  <span className="text-[11px] text-[#69736F] block font-medium">Cadastral Ref</span>
+                  <span className="text-xs font-mono font-bold text-[#18211F] truncate block" title={property.cadastralReference}>
+                    {property.cadastralReference}
+                  </span>
+                </div>
+              )}
+              {property.operatorName && (
+                <div className="bg-[#F6F7F4] p-3 rounded-2xl border border-[#E3E8E3]">
+                  <span className="text-[11px] text-[#69736F] block font-medium">Asset Operator</span>
+                  <span className="text-xs font-bold text-[#18211F] truncate block" title={property.operatorName}>
+                    {property.operatorName}
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+
+
         {/* Tab Navigation (Requirement 6: Description, Investment Structure, Financial Terms, Fees, Documents, Risks, Payment Schedule, Exit Conditions) */}
         <div className="flex flex-wrap border-b border-[#E3E8E3] mb-6 gap-3 sm:gap-6 text-xs sm:text-sm font-bold">
           {[
@@ -299,7 +442,7 @@ export const PropertyDetailView: React.FC<PropertyDetailViewProps> = ({
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
-              className={`pb-3 border-b-2 transition-colors whitespace-nowrap ${
+              className={`pb-3 border-b-2 transition-colors whitespace-nowrap cursor-pointer ${
                 activeTab === tab.id
                   ? 'border-[#182D2A] text-[#182D2A]'
                   : 'border-transparent text-[#69736F] hover:text-[#18211F]'
@@ -315,42 +458,142 @@ export const PropertyDetailView: React.FC<PropertyDetailViewProps> = ({
           {/* TAB 1: Description & Highlights */}
           {activeTab === 'overview' && (
             <div className="space-y-8">
-              <div className="bg-white p-7 sm:p-8 rounded-3xl border border-[#E3E8E3] shadow-sm">
-                <h3 className="text-xl font-bold text-[#18211F] mb-3">Property Description</h3>
-                <p className="text-sm text-[#69736F] leading-relaxed mb-6">
-                  {property.description}
-                </p>
+              <div className="bg-white p-7 sm:p-8 rounded-3xl border border-[#E3E8E3] shadow-sm space-y-6">
+                <div>
+                  <h3 className="text-xl font-bold text-[#18211F] mb-3">Property Description & Architectural Concept</h3>
+                  <p className="text-sm text-[#69736F] leading-relaxed">
+                    {property.description}
+                  </p>
+                </div>
 
-                <h4 className="text-sm font-bold text-[#18211F] uppercase tracking-wider mb-3">
-                  Key Investment Strengths
-                </h4>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
-                  {property.highlights.map((h, i) => (
-                    <div
-                      key={i}
-                      className="flex items-start gap-2.5 text-xs text-[#18211F] bg-[#F6F7F4] p-3.5 rounded-xl border border-[#E3E8E3]"
-                    >
-                      <CheckCircle2 className="w-4 h-4 text-[#27845D] shrink-0 mt-0.5" />
-                      <span>{h}</span>
+                {/* Amenities Grid */}
+                {property.amenities && property.amenities.length > 0 && (
+                  <div>
+                    <h4 className="text-sm font-bold text-[#18211F] uppercase tracking-wider mb-3 flex items-center gap-2">
+                      <Sparkles className="w-4 h-4 text-[#27845D]" />
+                      <span>Key Amenities & Specifications</span>
+                    </h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
+                      {property.amenities.map((item, idx) => (
+                        <div
+                          key={idx}
+                          className="flex items-center gap-2 text-xs font-semibold text-[#18211F] bg-[#F6F7F4] p-3 rounded-xl border border-[#E3E8E3]"
+                        >
+                          <div className="w-5 h-5 rounded-full bg-emerald-100 text-[#27845D] flex items-center justify-center shrink-0">
+                            <Check className="w-3 h-3" />
+                          </div>
+                          <span>{item}</span>
+                        </div>
+                      ))}
                     </div>
-                  ))}
+                  </div>
+                )}
+
+                {/* Reental Platform & Ecosystem Benefits */}
+                {property.reentalFeatures && property.reentalFeatures.length > 0 && (
+                  <div className="bg-gradient-to-br from-[#06241D] to-[#041914] text-white p-6 rounded-2xl border border-emerald-900/60 shadow-sm">
+                    <div className="flex items-center gap-2 mb-3">
+                      <Coins className="w-4 h-4 text-[#00FF9D]" />
+                      <h4 className="text-sm font-bold uppercase tracking-wider text-[#00FF9D]">
+                        Reental Ecosystem Integration & Privileges
+                      </h4>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {property.reentalFeatures.map((feat, idx) => (
+                        <div
+                          key={idx}
+                          className="flex items-start gap-2.5 text-xs text-emerald-100 bg-emerald-950/70 p-3 rounded-xl border border-emerald-500/20"
+                        >
+                          <span className="w-2 h-2 rounded-full bg-[#00FF9D] mt-1 shrink-0" />
+                          <span>{feat}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Project Milestone Timeline */}
+                {property.timeline && property.timeline.length > 0 && (
+                  <div>
+                    <h4 className="text-sm font-bold text-[#18211F] uppercase tracking-wider mb-4 flex items-center gap-2">
+                      <Clock className="w-4 h-4 text-[#27845D]" />
+                      <span>Project Development & Operational Milestones</span>
+                    </h4>
+                    <div className="space-y-3 relative before:absolute before:inset-0 before:left-3.5 before:w-0.5 before:bg-[#E3E8E3]">
+                      {property.timeline.map((step, idx) => (
+                        <div key={idx} className="relative flex items-start gap-3.5 pl-1">
+                          <div
+                            className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 mt-0.5 z-10 ${
+                              step.status === 'completed'
+                                ? 'bg-[#27845D] text-white'
+                                : step.status === 'in_progress'
+                                ? 'bg-amber-500 text-white animate-pulse'
+                                : 'bg-[#E3E8E3] text-[#69736F]'
+                            }`}
+                          >
+                            {step.status === 'completed' ? '✓' : idx + 1}
+                          </div>
+                          <div className="bg-[#F6F7F4] p-3.5 rounded-2xl border border-[#E3E8E3] flex-1 text-xs">
+                            <div className="flex flex-wrap items-center justify-between gap-1 mb-1">
+                              <span className="font-bold text-[#18211F] text-sm">{step.phase}</span>
+                              <div className="flex items-center gap-2">
+                                <span className="text-[#69736F] font-medium">{step.date}</span>
+                                <span
+                                  className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${
+                                    step.status === 'completed'
+                                      ? 'bg-emerald-100 text-[#27845D]'
+                                      : step.status === 'in_progress'
+                                      ? 'bg-amber-100 text-amber-800'
+                                      : 'bg-gray-200 text-gray-700'
+                                  }`}
+                                >
+                                  {step.status.replace('_', ' ')}
+                                </span>
+                              </div>
+                            </div>
+                            <p className="text-[#69736F] leading-relaxed">{step.description}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Key Investment Strengths */}
+                <div>
+                  <h4 className="text-sm font-bold text-[#18211F] uppercase tracking-wider mb-3">
+                    Key Investment Strengths
+                  </h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {property.highlights.map((h, i) => (
+                      <div
+                        key={i}
+                        className="flex items-start gap-2.5 text-xs text-[#18211F] bg-[#F6F7F4] p-3.5 rounded-xl border border-[#E3E8E3]"
+                      >
+                        <CheckCircle2 className="w-4 h-4 text-[#27845D] shrink-0 mt-0.5" />
+                        <span>{h}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
 
                 {/* Risk Mitigations (Requirement 6) */}
-                <h4 className="text-sm font-bold text-[#18211F] uppercase tracking-wider mb-3 flex items-center gap-2">
-                  <AlertTriangle className="w-4 h-4 text-[#B7791F]" />
-                  <span>Identified Risk Mitigations</span>
-                </h4>
-                <div className="space-y-2 mb-6">
-                  {property.risks.map((r, i) => (
-                    <div
-                      key={i}
-                      className="text-xs text-[#69736F] bg-amber-50/50 p-3.5 rounded-xl border border-amber-100 flex items-start gap-2"
-                    >
-                      <span className="font-bold text-[#B7791F]">·</span>
-                      <span>{r}</span>
-                    </div>
-                  ))}
+                <div>
+                  <h4 className="text-sm font-bold text-[#18211F] uppercase tracking-wider mb-3 flex items-center gap-2">
+                    <AlertTriangle className="w-4 h-4 text-[#B7791F]" />
+                    <span>Identified Risk Mitigations</span>
+                  </h4>
+                  <div className="space-y-2">
+                    {property.risks.map((r, i) => (
+                      <div
+                        key={i}
+                        className="text-xs text-[#69736F] bg-amber-50/50 p-3.5 rounded-xl border border-amber-100 flex items-start gap-2"
+                      >
+                        <span className="font-bold text-[#B7791F]">·</span>
+                        <span>{r}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
 
                 {/* Exit Conditions (Requirement 6) */}
@@ -364,14 +607,7 @@ export const PropertyDetailView: React.FC<PropertyDetailViewProps> = ({
                 </div>
               </div>
 
-              {/* Calculator Section */}
-              <InvestmentMetrics
-                propertyYield={property.estimatedAnnualYield}
-                appreciationYield={property.capitalAppreciationYield}
-                durationMonths={property.durationMonths}
-                tokenPrice={property.tokenPrice}
-                onInvestClick={(amt) => handleStartInvest(amt)}
-              />
+
             </div>
           )}
 
@@ -621,16 +857,25 @@ export const PropertyDetailView: React.FC<PropertyDetailViewProps> = ({
                       </div>
                     </div>
 
-                    <button
-                      onClick={() => {
-                        setDocNotification(`Document prepared: ${doc.name}. Cryptographic SPV notary deed hash verified.`);
-                        setTimeout(() => setDocNotification(null), 4000);
-                      }}
-                      className="btn btn-secondary btn-sm text-xs font-semibold"
-                    >
-                      <Download className="w-3.5 h-3.5 mr-1" />
-                      Download PDF
-                    </button>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => setInspectingDoc(doc)}
+                        className="btn btn-secondary btn-sm text-xs font-semibold cursor-pointer"
+                      >
+                        <FileText className="w-3.5 h-3.5 mr-1 text-[#27845D]" />
+                        Inspect
+                      </button>
+                      <button
+                        onClick={() => {
+                          setDocNotification(`Document prepared: ${doc.name}. Cryptographic SPV notary deed hash verified.`);
+                          setTimeout(() => setDocNotification(null), 4000);
+                        }}
+                        className="btn btn-primary btn-sm text-xs font-semibold cursor-pointer"
+                      >
+                        <Download className="w-3.5 h-3.5 mr-1" />
+                        Download PDF
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -859,6 +1104,182 @@ export const PropertyDetailView: React.FC<PropertyDetailViewProps> = ({
           </div>
         </div>
       )}
+      {/* Document Inspection & Verification Modal */}
+      {inspectingDoc && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200">
+          <div className="bg-white w-full max-w-lg rounded-3xl p-6 sm:p-7 shadow-2xl border border-[#E3E8E3] relative space-y-5 text-left">
+            <button
+              onClick={() => setInspectingDoc(null)}
+              className="absolute top-5 right-5 w-8 h-8 rounded-full bg-[#F6F7F4] hover:bg-[#EEF1EC] text-[#69736F] flex items-center justify-center cursor-pointer transition-colors"
+            >
+              <X className="w-4 h-4" />
+            </button>
+
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-2xl bg-emerald-100 text-[#27845D] flex items-center justify-center shrink-0">
+                <FileText className="w-6 h-6" />
+              </div>
+              <div>
+                <span className="text-[11px] font-bold uppercase tracking-wider text-[#27845D]">
+                  {inspectingDoc.category} Document Verification
+                </span>
+                <h3 className="text-lg font-bold text-[#18211F] leading-tight">
+                  {inspectingDoc.name}
+                </h3>
+              </div>
+            </div>
+
+            <div className="bg-[#F6F7F4] p-4 rounded-2xl border border-[#E3E8E3] space-y-2.5 text-xs">
+              <div className="flex justify-between">
+                <span className="text-[#69736F]">Asset Underwriting:</span>
+                <span className="font-semibold text-[#18211F]">{property.title}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-[#69736F]">Auditing Body:</span>
+                <span className="font-semibold text-[#18211F]">
+                  {inspectingDoc.category === 'Valuation'
+                    ? 'Savills / Tinsa Official Appraisal'
+                    : inspectingDoc.category === 'Legal'
+                    ? 'Spanish Notary Public & Commercial Registry'
+                    : 'Certified Independent Engineering Auditor'}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-[#69736F]">Digital File Size:</span>
+                <span className="font-semibold text-[#18211F]">{inspectingDoc.size}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-[#69736F]">Notarization Date:</span>
+                <span className="font-semibold text-[#18211F]">{inspectingDoc.updatedAt}</span>
+              </div>
+              <div className="flex justify-between items-center pt-2 border-t border-[#E3E8E3]">
+                <span className="text-[#69736F]">Cryptographic Hash:</span>
+                <span className="font-mono text-[11px] font-bold text-[#27845D] bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                  SHA-256 Verified
+                </span>
+              </div>
+            </div>
+
+            <div className="p-3.5 rounded-xl bg-emerald-50/60 border border-emerald-200/80 text-[11px] text-emerald-900 leading-relaxed flex items-start gap-2">
+              <ShieldCheck className="w-4 h-4 text-[#27845D] shrink-0 mt-0.5" />
+              <span>
+                This legal instrument is ring-fenced under the dedicated Spanish/US SPV bylaws and stored immutably for tokenholder due diligence.
+              </span>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  setDocNotification(`Download complete: ${inspectingDoc.name}`);
+                  setInspectingDoc(null);
+                  setTimeout(() => setDocNotification(null), 4000);
+                }}
+                className="btn btn-primary flex-1 text-xs font-bold"
+              >
+                <Download className="w-3.5 h-3.5 mr-1.5" />
+                Download Certified Copy
+              </button>
+              <button
+                onClick={() => setInspectingDoc(null)}
+                className="btn btn-secondary text-xs font-semibold px-5"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Fullscreen Photo Lightbox Modal */}
+      {lightboxOpen && (
+        <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex flex-col justify-between p-4 sm:p-6 animate-in fade-in duration-200">
+          {/* Lightbox Header */}
+          <div className="flex items-center justify-between text-white max-w-6xl mx-auto w-full z-10">
+            <div>
+              <span className="text-xs uppercase tracking-wider text-emerald-400 font-bold block">
+                {property.city}, {property.country}
+              </span>
+              <h4 className="text-base sm:text-lg font-bold truncate max-w-md sm:max-w-xl">
+                {property.title}
+              </h4>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="text-xs text-gray-300 bg-white/10 px-3 py-1 rounded-full font-semibold">
+                Photo {selectedImageIndex + 1} of {property.images.length}
+              </span>
+              <button
+                onClick={() => setLightboxOpen(false)}
+                title="Close Lightbox"
+                className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center cursor-pointer transition-all"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+
+          {/* Lightbox Main Image & Controls */}
+          <div className="relative flex-1 flex items-center justify-center max-w-5xl mx-auto w-full py-4">
+            <img
+              src={property.images[selectedImageIndex] || property.bannerImage}
+              alt={`${property.title} view ${selectedImageIndex + 1}`}
+              className="max-h-[75vh] max-w-full object-contain rounded-2xl shadow-2xl"
+              referrerPolicy="no-referrer"
+            />
+
+            {/* Left/Right Carousel Controls */}
+            {property.images.length > 1 && (
+              <>
+                <button
+                  onClick={() =>
+                    setSelectedImageIndex((prev) => (prev === 0 ? property.images.length - 1 : prev - 1))
+                  }
+                  className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-black/60 hover:bg-black/90 text-white flex items-center justify-center transition-all cursor-pointer"
+                >
+                  <ChevronLeft className="w-6 h-6" />
+                </button>
+                <button
+                  onClick={() =>
+                    setSelectedImageIndex((prev) => (prev === property.images.length - 1 ? 0 : prev + 1))
+                  }
+                  className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-black/60 hover:bg-black/90 text-white flex items-center justify-center transition-all cursor-pointer"
+                >
+                  <ChevronRight className="w-6 h-6" />
+                </button>
+              </>
+            )}
+          </div>
+
+          {/* Lightbox Thumbnails Strip */}
+          <div className="flex justify-center gap-2 overflow-x-auto py-2 max-w-4xl mx-auto w-full scrollbar-none">
+            {property.images.map((img, idx) => (
+              <button
+                key={idx}
+                onClick={() => setSelectedImageIndex(idx)}
+                className={`relative w-20 h-14 shrink-0 rounded-xl overflow-hidden border-2 transition-all cursor-pointer ${
+                  selectedImageIndex === idx
+                    ? 'border-[#00FF9D] scale-105 shadow-md ring-2 ring-[#00FF9D]/30'
+                    : 'border-transparent opacity-50 hover:opacity-100'
+                }`}
+              >
+                <img
+                  src={img}
+                  alt={`Thumbnail ${idx + 1}`}
+                  className="w-full h-full object-cover"
+                  referrerPolicy="no-referrer"
+                />
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Property Document Generator Modal */}
+      <PropertyDocumentViewer
+        property={property}
+        isOpen={isDocViewerOpen}
+        onClose={() => setIsDocViewerOpen(false)}
+      />
     </div>
   );
 };

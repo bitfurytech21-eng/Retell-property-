@@ -36,22 +36,27 @@ export const PropertyFilters: React.FC<PropertyFiltersProps> = ({
   onResetFilters,
 }) => {
   const locations = [
-    { label: 'All Locations', value: 'all' },
-    { label: 'Spain (All Metros)', value: 'Spain' },
-    { label: 'Valencia, Spain', value: 'Valencia' },
-    { label: 'Madrid, Spain', value: 'Madrid' },
-    { label: 'Malaga, Spain', value: 'Malaga' },
-    { label: 'Barcelona, Spain', value: 'Barcelona' },
-    { label: 'Seville, Spain', value: 'Seville' },
-    { label: 'Miami, USA', value: 'Miami' },
+    { label: 'All Regions', value: 'all' },
+    { label: 'Paris & Île-de-France', value: 'Paris' },
+    { label: 'French Riviera & Côte d’Azur', value: 'Provence-Alpes-Côte-d\'Azur' },
+    { label: 'Cannes & Antibes', value: 'Cannes' },
+    { label: 'Saint-Tropez', value: 'Saint Tropez' },
+    { label: 'French Alps & Chalets', value: 'Auvergne-Rhône-Alpes' },
+    { label: 'Occitanie & Provence', value: 'Occitanie' },
+    { label: 'Nouvelle-Aquitaine & Basque Coast', value: 'Nouvelle-Aquitaine' },
+    { label: 'Loire Valley & Central Castles', value: 'Centre-Val-de-Loire' },
+    { label: 'Normandy & Brittany', value: 'Normandie' },
+    { label: 'Corsica', value: 'Corse' },
   ];
 
   const types: { label: string; value: string }[] = [
     { label: 'All Property Types', value: 'all' },
-    { label: 'Residential', value: 'Residential' },
-    { label: 'Coliving Hubs', value: 'Coliving' },
-    { label: 'Vacation Rentals', value: 'Vacation Rental' },
-    { label: 'Commercial & Retail', value: 'Commercial' },
+    { label: 'Prestige Villas', value: 'Villa' },
+    { label: 'Luxury Apartments', value: 'Apartment' },
+    { label: 'Châteaux & Historic Estates', value: 'Château' },
+    { label: 'Private Mansions (Hôtel Particulier)', value: 'Private Mansion' },
+    { label: 'Alpine Chalets', value: 'Chalet' },
+    { label: 'Country Estates', value: 'Estate / Property' },
   ];
 
   const statuses: { label: string; value: string }[] = [

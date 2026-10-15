@@ -16,6 +16,7 @@ import {
   Share2, Award, CheckCircle2, AlertCircle, ExternalLink, Copy, Check, Menu, X, Sparkles, Search
 } from 'lucide-react';
 import { ShortcutsHub } from '../dashboard/ShortcutsHub';
+import { PropertyDocumentsHub } from '../documents/PropertyDocumentsHub';
 import { formatCurrency, formatDate } from '../../lib/utils';
 
 interface DashboardPageProps {
@@ -45,6 +46,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
   const [isWithdrawOpen, setIsWithdrawOpen] = useState(false);
   const [selectedDocInvestment, setSelectedDocInvestment] = useState<any | null>(null);
   const [copiedLink, setCopiedLink] = useState(false);
+  const [documentSectionTab, setDocumentSectionTab] = useState<'property-generator' | 'my-certificates'>('property-generator');
 
   const handleTabChange = (newTab: string) => {
     if (newTab !== activeTab) {
@@ -592,48 +594,88 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
 
             {/* 7. DOCUMENTS TAB */}
             {activeTab === 'documents' && (
-              <div className="dash-card p-6 sm:p-8 rounded-3xl border shadow-sm space-y-6 animate-in fade-in duration-200">
-                <div>
-                  <h2 className="text-2xl font-black dash-text">Investment Documents & Agreements</h2>
-                </div>
+              <div className="space-y-6 animate-in fade-in duration-200">
+                {/* Header & Section Switcher */}
+                <div className="dash-card p-6 sm:p-7 rounded-3xl border shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div>
+                    <h2 className="text-2xl font-black dash-text">Property Documents & Legal Hub</h2>
+                    <p className="text-xs dash-muted mt-0.5">
+                      Generate, customize, download and print official documentation, brochures, and reservation agreements for every listed property.
+                    </p>
+                  </div>
 
-                {investments.length === 0 ? (
-                  <div className="text-center py-12 dash-muted space-y-3">
-                    <FileText className="w-12 h-12 mx-auto opacity-40" />
-                    <p className="text-sm font-semibold">No investments yet to generate legal documents.</p>
-                    <button onClick={() => setActiveTab('properties')} className="btn btn-primary btn-sm text-xs font-bold">
-                      Explore Properties
+                  <div className="flex items-center gap-1.5 p-1 rounded-2xl border border-inherit/30 shrink-0 dash-inner">
+                    <button
+                      onClick={() => setDocumentSectionTab('property-generator')}
+                      className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                        documentSectionTab === 'property-generator'
+                          ? 'bg-[#182D2A] text-[#00FF9D] shadow-xs'
+                          : 'dash-muted hover:opacity-100'
+                      }`}
+                    >
+                      Property Generator ({properties.length})
+                    </button>
+                    <button
+                      onClick={() => setDocumentSectionTab('my-certificates')}
+                      className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                        documentSectionTab === 'my-certificates'
+                          ? 'bg-[#182D2A] text-[#00FF9D] shadow-xs'
+                          : 'dash-muted hover:opacity-100'
+                      }`}
+                    >
+                      My SPV Certificates ({investments.length})
                     </button>
                   </div>
-                ) : (
-                  <div className="space-y-4">
-                    {investments.map((inv) => {
-                      const prop = properties.find(p => p.id === inv.propertyId);
-                      return (
-                        <div key={inv.id} className="p-5 rounded-2xl border flex flex-col sm:flex-row sm:items-center justify-between gap-4 dash-inner hover:opacity-90 transition-opacity">
-                          <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 rounded-xl bg-[#182D2A] text-[#B7E36A] flex items-center justify-center font-bold">
-                              <FileText className="w-6 h-6" />
-                            </div>
-                            <div>
-                              <h4 className="font-bold dash-text text-sm">{inv.propertyTitle || prop?.title || 'Real Estate Asset'}</h4>
-                              <p className="text-xs dash-muted">
-                                Invested {formatCurrency(inv.totalAmountInvested)} · {inv.tokensPurchased} Tokens · {formatDate(inv.purchasedAt)}
-                              </p>
-                            </div>
-                          </div>
+                </div>
 
-                          <div className="flex items-center gap-2">
-                            <button
-                              onClick={() => setSelectedDocInvestment(inv)}
-                              className="btn btn-secondary btn-sm text-xs font-bold"
-                            >
-                              <FileText className="w-3.5 h-3.5 mr-1" /> View SPV Certificate & Deed
-                            </button>
-                          </div>
-                        </div>
-                      );
-                    })}
+                {documentSectionTab === 'property-generator' ? (
+                  <PropertyDocumentsHub properties={properties} />
+                ) : (
+                  <div className="dash-card p-6 sm:p-8 rounded-3xl border shadow-sm space-y-6">
+                    <div>
+                      <h3 className="text-lg font-bold dash-text">Personal Portfolio Investment Deeds</h3>
+                      <p className="text-xs dash-muted">Audited ownership certificates and tokenized equity rights</p>
+                    </div>
+
+                    {investments.length === 0 ? (
+                      <div className="text-center py-12 dash-muted space-y-3">
+                        <FileText className="w-12 h-12 mx-auto opacity-40" />
+                        <p className="text-sm font-semibold">No active investments yet.</p>
+                        <button onClick={() => setActiveTab('properties')} className="btn btn-primary btn-sm text-xs font-bold cursor-pointer">
+                          Explore Properties
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        {investments.map((inv) => {
+                          const prop = properties.find(p => p.id === inv.propertyId);
+                          return (
+                            <div key={inv.id} className="p-5 rounded-2xl border flex flex-col sm:flex-row sm:items-center justify-between gap-4 dash-inner hover:opacity-90 transition-opacity">
+                              <div className="flex items-center gap-4">
+                                <div className="w-12 h-12 rounded-xl bg-[#182D2A] text-[#B7E36A] flex items-center justify-center font-bold">
+                                  <FileText className="w-6 h-6" />
+                                </div>
+                                <div>
+                                  <h4 className="font-bold dash-text text-sm">{inv.propertyTitle || prop?.title || 'Real Estate Asset'}</h4>
+                                  <p className="text-xs dash-muted">
+                                    Invested {formatCurrency(inv.totalAmountInvested)} · {inv.tokensPurchased} Tokens · {formatDate(inv.purchasedAt)}
+                                  </p>
+                                </div>
+                              </div>
+
+                              <div className="flex items-center gap-2">
+                                <button
+                                  onClick={() => setSelectedDocInvestment(inv)}
+                                  className="btn btn-secondary btn-sm text-xs font-bold cursor-pointer"
+                                >
+                                  <FileText className="w-3.5 h-3.5 mr-1" /> View SPV Certificate & Deed
+                                </button>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
