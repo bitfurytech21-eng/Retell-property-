@@ -43,7 +43,7 @@ export const PlatformStats: React.FC = () => {
                 <div className="w-8 h-8 rounded-md bg-emerald-950 border border-emerald-800/50 flex items-center justify-center text-emerald-400 mb-3">
                   <Icon className="w-4 h-4" />
                 </div>
-                <span className="text-xl sm:text-2xl font-bold text-white tracking-tight block mb-1">
+                <span className="text-xl sm:text-2xl font-bold text-white tracking-tight block mb-1 tabular-nums">
                   {s.value}
                 </span>
                 <span className="text-xs font-semibold text-emerald-300 block mb-1">

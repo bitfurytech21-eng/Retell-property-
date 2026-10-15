@@ -16,22 +16,19 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({ property, onSelect, 
     switch (property.status) {
       case 'funding':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-900/90 text-emerald-400 border border-emerald-500/30 text-[11px] font-semibold backdrop-blur-xs">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+          <span className="inline-flex items-center px-2.5 py-1 rounded-md bg-slate-950/90 text-emerald-400 border border-emerald-500/30 text-[11px] font-semibold backdrop-blur-xs">
             Funding Active
           </span>
         );
       case 'funded':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-900/90 text-slate-300 border border-slate-700 text-[11px] font-semibold backdrop-blur-xs">
-            <span className="w-1.5 h-1.5 rounded-full bg-slate-400" />
+          <span className="inline-flex items-center px-2.5 py-1 rounded-md bg-slate-950/90 text-slate-300 border border-slate-700 text-[11px] font-semibold backdrop-blur-xs">
             100% Funded
           </span>
         );
       case 'upcoming':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-900/90 text-amber-300 border border-amber-600/30 text-[11px] font-semibold backdrop-blur-xs">
-            <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+          <span className="inline-flex items-center px-2.5 py-1 rounded-md bg-slate-950/90 text-amber-300 border border-amber-600/30 text-[11px] font-semibold backdrop-blur-xs">
             Launching Soon
           </span>
         );
@@ -143,10 +140,10 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({ property, onSelect, 
               <TrendingUp className="w-3 h-3 text-[#27845D]" />
               Projected Net Yield*
             </span>
-            <span className="metric-value text-base font-bold text-[#27845D] block">
+            <span className="metric-value text-base font-bold text-[#27845D] block tabular-nums">
               {formatPercent(property.estimatedAnnualYield)}
             </span>
-            <span className="text-[10px] text-[#69736F] block mt-0.5">
+            <span className="text-[10px] text-[#69736F] block mt-0.5 tabular-nums">
               +{formatPercent(property.capitalAppreciationYield)} cap. gain
             </span>
           </div>
@@ -156,10 +153,10 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({ property, onSelect, 
               <Users className="w-3 h-3 text-[#182D2A]" />
               Min. Investment
             </span>
-            <span className="metric-value text-base font-bold text-[#18211F] block">
+            <span className="metric-value text-base font-bold text-[#18211F] block tabular-nums">
               {formatCurrency(property.minimumInvestment)}
             </span>
-            <span className="text-[10px] text-emerald-700 font-medium block mt-0.5">
+            <span className="text-[10px] text-emerald-700 font-medium block mt-0.5 tabular-nums">
               {formatCurrency(property.tokenPrice)} / unit
             </span>
           </div>
@@ -169,7 +166,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({ property, onSelect, 
               <Calendar className="w-3 h-3 text-[#69736F]" />
               Term
             </span>
-            <span className="text-xs font-semibold text-[#18211F] block">
+            <span className="text-xs font-semibold text-[#18211F] block tabular-nums">
               {property.durationMonths} Months
             </span>
           </div>
@@ -179,7 +176,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({ property, onSelect, 
               <ShieldCheck className="w-3 h-3 text-[#27845D]" />
               Target Total Return*
             </span>
-            <span className="text-xs font-semibold text-[#18211F] block">
+            <span className="text-xs font-semibold text-[#18211F] block tabular-nums">
               {formatPercent(property.totalEstimatedReturn)}
             </span>
           </div>

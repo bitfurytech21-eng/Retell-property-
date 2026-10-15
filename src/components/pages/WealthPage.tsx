@@ -65,7 +65,7 @@ export const WealthPage: React.FC<WealthPageProps> = ({ onExplore, onContact }) 
           <div className="max-w-3xl space-y-6 text-left">
             <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-emerald-950 border border-emerald-500/35 text-[#00FF9D] text-xs font-bold shadow-lg">
               <Crown className="w-4 h-4 text-[#00FF9D]" />
-              <span>Reental Wealth • Private Investor Service</span>
+              <span>Kretz Wealth • Private Investor Service</span>
             </div>
 
             <h1 className="text-4xl sm:text-6xl font-black tracking-tight leading-[1.08]">
@@ -102,7 +102,7 @@ export const WealthPage: React.FC<WealthPageProps> = ({ onExplore, onContact }) 
             <span>Privileged Services</span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-[#18211F]">
-            The Reental Wealth Advantage
+            The Kretz Wealth Advantage
           </h2>
           <p className="text-sm text-[#69736F]">
             Elevate your real estate tokenization experience with VIP privileges tailored for serious capital growth.

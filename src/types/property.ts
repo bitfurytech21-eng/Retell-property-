@@ -103,6 +103,7 @@ export interface Property {
   amenities?: string[];
   timeline?: PropertyTimelineItem[];
   operatorName?: string;
+  kretzFeatures?: string[];
   reentalFeatures?: string[];
   ref?: string;
   agent?: {

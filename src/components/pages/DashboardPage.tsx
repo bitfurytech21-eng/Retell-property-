@@ -1091,7 +1091,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
           onClose={() => setSelectedGeneratorProperty(null)}
           buyerInfo={{
             buyerName: user?.fullName || 'David Vance',
-            buyerEmail: user?.email || 'investor@reental-log.com',
+            buyerEmail: user?.email || 'investor@kretz.com',
             buyerPhone: user?.phoneNumber || '+34 612 345 678',
             buyerNationality: user?.country || 'European Union'
           }}

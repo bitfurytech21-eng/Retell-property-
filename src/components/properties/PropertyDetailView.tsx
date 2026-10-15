@@ -489,17 +489,17 @@ export const PropertyDetailView: React.FC<PropertyDetailViewProps> = ({
                   </div>
                 )}
 
-                {/* Reental Platform & Ecosystem Benefits */}
-                {property.reentalFeatures && property.reentalFeatures.length > 0 && (
+                {/* Kretz Platform & Ecosystem Benefits */}
+                {(property.kretzFeatures || property.reentalFeatures) && (property.kretzFeatures || property.reentalFeatures)!.length > 0 && (
                   <div className="bg-gradient-to-br from-[#06241D] to-[#041914] text-white p-6 rounded-2xl border border-emerald-900/60 shadow-sm">
                     <div className="flex items-center gap-2 mb-3">
                       <Coins className="w-4 h-4 text-[#00FF9D]" />
                       <h4 className="text-sm font-bold uppercase tracking-wider text-[#00FF9D]">
-                        Reental Ecosystem Integration & Privileges
+                        Kretz Ecosystem Integration & Privileges
                       </h4>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      {property.reentalFeatures.map((feat, idx) => (
+                      {(property.kretzFeatures || property.reentalFeatures)!.map((feat, idx) => (
                         <div
                           key={idx}
                           className="flex items-start gap-2.5 text-xs text-emerald-100 bg-emerald-950/70 p-3 rounded-xl border border-emerald-500/20"

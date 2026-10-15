@@ -19,11 +19,11 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
                 <Building2 className="w-5 h-5" />
               </div>
               <span className="text-xl font-black tracking-tight text-white">
-                Bitfury<span className="text-[#10B981]">Tech</span>
+                Kretz<span className="text-[#10B981]">.</span>
               </span>
             </div>
             <p className="text-sm text-[#A0A8A5] leading-relaxed">
-              Institutional-grade tokenized real estate and digital infrastructure. Ring-fenced SPV custody, independent RICS valuations, and automated monthly distributions.
+              Institutional-grade tokenized real estate and luxury properties. Ring-fenced SPV custody, independent RICS valuations, and automated monthly distributions.
             </p>
             <div className="flex items-center gap-2 text-xs text-[#10B981] font-semibold pt-1">
               <ShieldCheck className="w-4 h-4" />
@@ -85,25 +85,16 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
               </div>
               <div className="flex items-center gap-2.5">
                 <Mail className="w-4 h-4 text-[#B7E36A] shrink-0" />
-                <span>support@reental-log.com</span>
+                <span>support@kretz.com</span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Regulatory Risk Warning */}
-        <div className="py-8 border-b border-[#24423C] text-xs text-[#828D89] leading-relaxed">
-          <p className="font-semibold text-[#A0A8A5] mb-2 uppercase tracking-wider text-[11px]">
-            Statutory Investor Risk Notice & Regulatory Disclosure:
-          </p>
-          <p>
-            Participation in fractional real estate assets carries substantial risks, including the potential risk of total or partial capital loss, real estate market illiquidity, and tenancy vacancy risks. Past performance and projected returns displayed on this platform are estimates based on independent third-party appraisals and conservative financial modeling, not guarantees of future performance. BitfuryTech operates through registered Special Purpose Vehicles (SPVs) under applicable European commercial legislation. Nothing on this platform should be construed as financial or tax advice. Investors should carefully review the legal offering documentation and risk disclosures before committing funds.
-          </p>
-        </div>
 
         {/* Copyright */}
         <div className="pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-[#828D89] gap-4">
-          <p>© {new Date().getFullYear()} BitfuryTech Capital S.L. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} Kretz Real Estate S.L. All rights reserved.</p>
           <div className="flex items-center gap-6">
             <button onClick={() => onNavigate('/privacy')} className="hover:text-white">Privacy Policy</button>
             <button onClick={() => onNavigate('/terms')} className="hover:text-white">Terms of Use</button>

@@ -109,27 +109,28 @@ export const PropertiesPage: React.FC<PropertiesPageProps> = ({
   return (
     <div className="bg-[#F6F7F4] min-h-screen py-10">
       <div className="container">
-        {/* Marketplace Hero Header */}
-        <div className="max-w-3xl mb-8">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-[#E3E8E3] text-xs font-semibold text-[#182D2A] mb-3 shadow-sm">
-            <ShieldCheck className="w-4 h-4 text-[#27845D]" />
-            <span>Kretz Real Estate France · Prestige Luxury Portfolio</span>
-          </div>
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#18211F] mb-3 tracking-tight">
-            Prestigious French Real Estate Opportunities
-          </h1>
-          <p className="text-sm sm:text-base text-[#69736F] leading-relaxed">
-            Curated selection of world-class private mansions in Paris, French Riviera waterfront villas, 
-            Alpine chalets, and historic châteaux. Every offering includes authentic photography, certified appraisals, 
-            and automated monthly rental yields.
-          </p>
+        {/* Marketplace Breadcrumb and Catalogue Header */}
+        <div className="mb-6 space-y-2 text-left">
+          <nav className="flex items-center gap-2 text-xs text-[#69736F] font-medium mb-1">
+            <a href="#/" className="hover:text-emerald-700 transition-colors">Home</a>
+            <span>/</span>
+            <span className="text-[#18211F] font-semibold">Marketplace</span>
+          </nav>
+          
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div>
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-[#18211F] tracking-tight">
+                Kretz Property Marketplace
+              </h1>
+              <p className="text-xs sm:text-sm text-[#69736F] max-w-2xl mt-1 leading-relaxed">
+                Curated portfolio of prestige European real estate. Each opportunity is ring-fenced via independent SPVs with RICS appraisals and automated monthly distributions.
+              </p>
+            </div>
 
-          {/* Compliance Notice Banner */}
-          <div className="mt-4 p-3 rounded-2xl bg-white border border-[#E3E8E3] flex items-center gap-2.5 text-xs text-[#69736F] shadow-sm">
-            <Info className="w-4 h-4 text-[#27845D] shrink-0" />
-            <span>
-              <strong>Investor Threshold Rule:</strong> Minimum investment from €750 up to €10,000 with flexible terms from 3 to 48 months. All properties verified through Kretz Exclusive Mandates.
-            </span>
+            <div className="flex items-center gap-3 text-xs font-semibold text-[#182D2A] bg-white border border-[#E3E8E3] px-3.5 py-2 rounded-lg shadow-xs shrink-0">
+              <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+              <span>SPV Ring-Fenced · Minimum €750</span>
+            </div>
           </div>
         </div>
 

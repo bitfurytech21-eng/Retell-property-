@@ -68,7 +68,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setUser(found);
           setToken('sess_' + found.id);
         } else {
-          const demo = ledger.getUserByEmail('investor@reental-log.com');
+          const demo = ledger.getUserByEmail('investor@kretz.com');
           if (demo) {
             setUser(demo);
             setToken('sess_' + demo.id);
@@ -76,7 +76,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           }
         }
       } else {
-        const demo = ledger.getUserByEmail('investor@reental-log.com');
+        const demo = ledger.getUserByEmail('investor@kretz.com');
         if (demo) {
           setUser(demo);
           setToken('sess_' + demo.id);
@@ -335,7 +335,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Local demo session switcher (strictly labeled as preview mock mode when keys are unconfigured)
   const quickDemoSession = async (role: 'investor' | 'admin'): Promise<User> => {
-    const demoEmail = role === 'admin' ? 'admin@reental-log.com' : 'investor@reental-log.com';
+    const demoEmail = role === 'admin' ? 'admin@kretz.com' : 'investor@kretz.com';
     const existing = ledger.getUserByEmail(demoEmail);
     if (!existing) {
       throw new Error('Demo account not found in local ledger.');

@@ -11,7 +11,7 @@ export const TeamPage: React.FC<TeamPageProps> = ({ onExplore, onContact }) => {
     {
       name: 'Eric Sánchez Gálvez',
       role: 'CEO & Co-Founder',
-      bio: 'Former professional basketball player and IT engineer. Co-founder of Chekin and Reental. Passionate about democratizing real estate investment globally through blockchain.',
+      bio: 'Former professional basketball player and IT engineer. Co-founder of Kretz Real Estate. Passionate about democratizing luxury real estate investment globally through tokenization.',
       image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=600&auto=format&fit=crop',
       location: 'Madrid, Spain',
     },
@@ -32,7 +32,7 @@ export const TeamPage: React.FC<TeamPageProps> = ({ onExplore, onContact }) => {
     {
       name: 'Javier Ortiz',
       role: 'CTO & Co-Founder',
-      bio: 'Blockchain architecture and smart contract security expert. Architected Reental’s automated monthly dividend distribution engine on Polygon POS.',
+      bio: 'Blockchain architecture and smart contract security expert. Architected Kretz’s automated monthly dividend distribution engine on Polygon POS.',
       image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=600&auto=format&fit=crop',
       location: 'Barcelona, Spain',
     },
@@ -65,7 +65,7 @@ export const TeamPage: React.FC<TeamPageProps> = ({ onExplore, onContact }) => {
           </div>
 
           <h1 className="text-4xl sm:text-6xl font-black tracking-tight">
-            Meet the <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00FF9D] to-teal-300">Reental Team</span>
+            Meet the <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00FF9D] to-teal-300">Kretz Team</span>
           </h1>
 
           <p className="text-base sm:text-lg text-emerald-100/80 max-w-2xl mx-auto">

@@ -1,5 +1,5 @@
 /**
- * Rental-log Full-Stack Express Server & Ledger API
+ * Kretz Full-Stack Express Server & Ledger API
  * Provides authenticated REST endpoints for properties, investments, deposits, withdrawals, and ledger audit.
  */
 
@@ -28,7 +28,7 @@ app.use((req, res, next) => {
 app.get('/api/health', (req: Request, res: Response) => {
   res.json({
     status: 'healthy',
-    platform: 'Rental-log API',
+    platform: 'Kretz API',
     version: '1.0.0',
     timestamp: new Date().toISOString()
   });

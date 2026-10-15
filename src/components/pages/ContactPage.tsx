@@ -35,10 +35,10 @@ export const ContactPage: React.FC = () => {
             <span>Direct Investor Desk</span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-black text-[#18211F] mb-3">
-            Contact Rental-log
+            Contact Kretz
           </h1>
           <p className="text-sm text-[#69736F]">
-            Have a question regarding active offerings, institutional allocations, or real estate developer partnerships? Reach out to our specialized team.
+            Have a question regarding active offerings, institutional allocations, or luxury property developer partnerships? Reach out to our specialized team.
           </p>
         </div>
 
@@ -49,7 +49,7 @@ export const ContactPage: React.FC = () => {
               <div>
                 <h3 className="text-xl font-bold text-white mb-2">Corporate Headquarters</h3>
                 <p className="text-xs text-[#A0A8A5]">
-                  Rental-log Technologies S.L. · CIF B-84918239
+                  Kretz Real Estate S.L. · CIF B-84918239
                 </p>
               </div>
 
@@ -66,8 +66,8 @@ export const ContactPage: React.FC = () => {
                   <Mail className="w-4 h-4 text-[#B7E36A] shrink-0 mt-0.5" />
                   <div>
                     <span className="font-bold block text-white">Email Desk</span>
-                    <span>support@reental-log.com</span>
-                    <span className="text-[#A0A8A5] block">compliance@reental-log.com</span>
+                    <span>support@kretz.com</span>
+                    <span className="text-[#A0A8A5] block">compliance@kretz.com</span>
                   </div>
                 </div>
 
@@ -87,7 +87,7 @@ export const ContactPage: React.FC = () => {
                 <span>Security Assurance</span>
               </div>
               <p>
-                Rental-log staff will never ask for your passwords, private keys, or seed phrases.
+                Kretz staff will never ask for your passwords, private keys, or seed phrases.
               </p>
             </div>
           </div>

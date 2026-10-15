@@ -12,7 +12,6 @@ import { HowItWorks } from './components/home/HowItWorks';
 import { Benefits } from './components/home/Benefits';
 import { FAQSection } from './components/home/FAQSection';
 import { FinalCTA } from './components/home/FinalCTA';
-import { PropertyCard } from './components/properties/PropertyCard';
 
 // Dedicated Pages
 import { PropertiesPage } from './components/pages/PropertiesPage';
@@ -319,49 +318,63 @@ function MainApp() {
 
             <PlatformStats />
 
-            {/* Featured Properties Marketplace Section */}
-            <section className="section bg-white" id="properties">
+            {/* Dedicated Marketplace Gateway Section */}
+            <section className="py-14 sm:py-20 bg-[#F6F7F4] border-b border-[#E3E8E3]">
               <div className="container">
-                <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-4">
-                  <div>
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#F6F7F4] border border-[#E3E8E3] text-xs font-semibold text-[#182D2A] mb-3">
-                      <span>Curated Institutional Assets</span>
+                <div className="bg-white rounded-2xl border border-[#E3E8E3] p-8 sm:p-12 shadow-xs">
+                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                    <div className="lg:col-span-8 space-y-4 text-left">
+                      <div className="flex items-center gap-2 text-xs font-semibold text-emerald-800 uppercase tracking-wider">
+                        <span>Kretz Asset Marketplace</span>
+                        <span>·</span>
+                        <span className="text-[#69736F] font-normal normal-case">Direct Fractional Real Estate</span>
+                      </div>
+                      <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#18211F] tracking-tight">
+                        Access Curated Prime Offerings in the Marketplace
+                      </h2>
+                      <p className="text-sm sm:text-base text-[#69736F] max-w-2xl leading-relaxed">
+                        The full marketplace is hosted in an independent investment portal with advanced filtering, 
+                        RICS certified appraisals, notarial deed verification, and real-time funding progress. 
+                        Invest directly from €750 with automated monthly dividend distributions.
+                      </p>
+                      
+                      {/* Marketplace Metrics Bar */}
+                      <div className="pt-2 flex flex-wrap items-center gap-y-3 gap-x-8 text-xs font-medium text-[#18211F]">
+                        <div className="flex items-center gap-2">
+                          <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                          <span><strong>{properties.filter(p => p.status !== 'hidden' && p.status !== 'pending_approval').length}</strong> Active Offerings</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                          <span><strong>€750</strong> Minimum Investment</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                          <span><strong>11.4%</strong> Avg. Target Net IRR</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                          <span><strong>100%</strong> Independent SPVs</span>
+                        </div>
+                      </div>
                     </div>
-                    <h2 className="text-3xl sm:text-4xl font-extrabold text-[#18211F]">
-                      Featured Investment Opportunities
-                    </h2>
-                    <p className="text-sm text-[#69736F] max-w-xl">
-                      Each asset is structured via an independent SPV with certified RICS appraisals, 
-                      institutional underwriting, and verified monthly distributions.
-                    </p>
+
+                    <div className="lg:col-span-4 flex flex-col sm:flex-row lg:flex-col gap-3 justify-center">
+                      <button
+                        onClick={() => navigateTo('/properties')}
+                        className="btn btn-primary py-4 px-6 text-sm font-bold flex items-center justify-center gap-2 shadow-sm hover:shadow transition-all cursor-pointer"
+                      >
+                        <span>Enter Marketplace</span>
+                        <ArrowRight className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => navigateTo('/investing')}
+                        className="btn btn-secondary py-3.5 px-6 text-xs font-semibold flex items-center justify-center gap-2 cursor-pointer"
+                      >
+                        <span>Review How It Works</span>
+                      </button>
+                    </div>
                   </div>
-
-                  <button
-                    onClick={() => navigateTo('/properties')}
-                    className="btn btn-secondary text-xs font-bold self-start sm:self-auto"
-                  >
-                    View All Opportunities ({properties.filter(p => p.minimumInvestment >= 750 && p.status !== 'hidden' && p.status !== 'pending_approval').length})
-                    <ArrowRight className="w-3.5 h-3.5 ml-1" />
-                  </button>
-                </div>
-
-                <div className="property-grid">
-                  {Array.from(
-                    new Map(
-                      properties
-                        .filter((p) => (p.minimumInvestment || 0) >= 750 && p.status !== 'hidden' && p.status !== 'pending_approval')
-                        .map((p) => [p.id, p])
-                    ).values()
-                  )
-                    .slice(0, 6)
-                    .map((property) => (
-                      <PropertyCard
-                        key={property.id}
-                        property={property}
-                        onSelect={handleSelectProperty}
-                        onInvest={handleInvestProperty}
-                      />
-                    ))}
                 </div>
               </div>
             </section>
@@ -393,60 +406,7 @@ function MainApp() {
 
   return (
     <div className={`flex flex-col bg-white ${isDashboardView ? 'h-screen overflow-hidden' : 'min-h-screen'}`}>
-      {/* Supabase & Active Session Banner (Hidden on dashboard views) */}
-      {!isDashboardView && (
-        <div className="bg-[#182D2A] text-white py-1.5 px-4 text-xs font-medium border-b border-[#24423C]">
-          <div className="container flex flex-wrap items-center justify-between gap-2">
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-1.5">
-                <span
-                  className={`w-2 h-2 rounded-full ${
-                    isConfigured ? 'bg-[#B7E36A] animate-pulse' : 'bg-amber-400'
-                  }`}
-                />
-                <span className="text-[11px] font-semibold text-[#EEF1EC]">
-                  {isConfigured ? 'Supabase Auth: Active' : 'Supabase Auth: Awaiting Keys'}
-                </span>
-              </div>
 
-              <span className="text-white/30 hidden sm:inline">|</span>
-
-              <span>
-                Session: <strong>{user ? `${user.fullName} (${user.role})` : 'Guest (Signed Out)'}</strong>
-              </span>
-            </div>
-
-            <div className="flex items-center gap-3 text-[11px]">
-              {!isConfigured && (
-                <span className="text-amber-200/80 text-[10px] hidden md:inline">
-                  (Preview Switcher Active)
-                </span>
-              )}
-              <button
-                onClick={() => handleQuickRoleSwitch('investor')}
-                className={`px-2 py-0.5 rounded font-bold transition-colors ${
-                  user?.role === 'investor' ? 'bg-[#B7E36A] text-[#18211F]' : 'bg-[#24423C] text-white hover:bg-[#2e544c]'
-                }`}
-                title="Switch session persona for interface testing"
-              >
-                Investor Mode
-              </button>
-              <button
-                onClick={() => {
-                  handleQuickRoleSwitch('admin');
-                  navigateTo('/admin');
-                }}
-                className={`px-2 py-0.5 rounded font-bold transition-colors ${
-                  user?.role === 'admin' ? 'bg-[#B7E36A] text-[#18211F]' : 'bg-[#24423C] text-white hover:bg-[#2e544c]'
-                }`}
-                title="Switch to administrator role for access review"
-              >
-                Admin Mode
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {!isDashboardView && <Header currentPath={currentPath} onNavigate={navigateTo} />}
 

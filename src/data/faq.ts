@@ -9,8 +9,8 @@ export const FAQ_DATA: FAQItem[] = [
   {
     id: 'faq-1',
     category: 'General',
-    question: 'What is Rental-log and how does tokenized real estate work?',
-    answer: 'Rental-log is a European fractional real estate investment platform that democratizes access to institutional-grade properties. Each property is acquired through a dedicated special purpose vehicle (SPV) and divided into digital participatory units. By holding tokens, you receive legal rights to the economic benefits of the asset: proportional monthly rental yields and your share of capital appreciation upon property sale.',
+    question: 'What is Kretz and how does tokenized real estate work?',
+    answer: 'Kretz is a European fractional real estate investment platform that democratizes access to institutional-grade and luxury properties. Each property is acquired through a dedicated special purpose vehicle (SPV) and divided into digital participatory units. By holding tokens, you receive legal rights to the economic benefits of the asset: proportional monthly rental yields and your share of capital appreciation upon property sale.',
   },
   {
     id: 'faq-2',
@@ -63,7 +63,7 @@ export const FAQ_DATA: FAQItem[] = [
   {
     id: 'faq-10',
     category: 'Security & Legal',
-    question: 'What platform fees does Rental-log charge?',
+    question: 'What platform fees does Kretz charge?',
     answer: 'We prioritize transparent alignment: a one-time 3–5% property structuring and acquisition fee (already factored into the initial target funding amount), a 10% monthly property management fee deducted from gross rental income, and 0% withdrawal fees for SEPA transfers.',
   },
 ];

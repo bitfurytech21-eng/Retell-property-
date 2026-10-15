@@ -622,7 +622,7 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose, onS
                 <div>
                   <span className="text-gray-400 block text-[11px]">Mandatory Wire Transfer Concept / Reference</span>
                   <div className="bg-[#1a1a1a] p-2 rounded-lg border border-[#333] mt-1 text-emerald-400 font-mono font-bold">
-                    BITFURY-DEP-{user.email.split('@')[0].toUpperCase()}
+                    KRETZ-DEP-{user.email.split('@')[0].toUpperCase()}
                   </div>
                 </div>
               </div>

@@ -18,13 +18,13 @@ export const LegalPage: React.FC<LegalPageProps> = ({ mode }) => {
               <h1 className="text-2xl sm:text-3xl font-black text-[#18211F]">
                 General Terms of Service & Investment Disclosures
               </h1>
-              <p className="text-xs text-[#828D89] mt-1">Last Updated: March 2026 · Rental-log Technologies S.L.</p>
+              <p className="text-xs text-[#828D89] mt-1">Last Updated: March 2026 · Kretz Real Estate S.L.</p>
             </div>
 
             <section className="space-y-2">
               <h3 className="text-sm font-bold text-[#18211F]">1. Scope of the Platform</h3>
               <p>
-                Rental-log provides a technology infrastructure enabling registered and identity-verified individuals and entities to subscribe to participatory debt and equity tokens issued by independent Special Purpose Vehicles (SPVs). Each SPV is legally incorporated under Spanish law (Sociedad Limitada) exclusively dedicated to the acquisition, refurbishment, leasing, and eventual liquidation of a specific real estate property.
+                Kretz provides a technology infrastructure enabling registered and identity-verified individuals and entities to subscribe to participatory debt and equity tokens issued by independent Special Purpose Vehicles (SPVs). Each SPV is legally incorporated under Spanish law (Sociedad Limitada) exclusively dedicated to the acquisition, refurbishment, leasing, and eventual liquidation of a specific real estate property.
               </p>
             </section>
 
@@ -55,7 +55,7 @@ export const LegalPage: React.FC<LegalPageProps> = ({ mode }) => {
             <section id="protection" className="space-y-2">
               <h3 className="text-sm font-bold text-[#18211F]">4. Asset Ring-Fencing & Bankruptcy Remoteness</h3>
               <p>
-                Because title deeds are held directly by dedicated SPVs rather than the platform operator, any insolvency or corporate restructuring of Rental-log Technologies S.L. does not impact the ownership rights of the property or the SPV assets. A court-appointed administrator would continue distributions in accordance with the underlying SPV articles of association.
+                Because title deeds are held directly by dedicated SPVs rather than the platform operator, any insolvency or corporate restructuring of Kretz Real Estate S.L. does not impact the ownership rights of the property or the SPV assets. A court-appointed administrator would continue distributions in accordance with the underlying SPV articles of association.
               </p>
             </section>
           </div>
@@ -74,7 +74,7 @@ export const LegalPage: React.FC<LegalPageProps> = ({ mode }) => {
             <section className="space-y-2">
               <h3 className="text-sm font-bold text-[#18211F]">1. Data Controller</h3>
               <p>
-                Rental-log Technologies S.L., with registered address at Paseo de la Castellana 95, 28046 Madrid, Spain, is the data controller responsible for the processing of your personal data.
+                Kretz Real Estate S.L., with registered address at Paseo de la Castellana 95, 28046 Madrid, Spain, is the data controller responsible for the processing of your personal data.
               </p>
             </section>
 
@@ -88,7 +88,7 @@ export const LegalPage: React.FC<LegalPageProps> = ({ mode }) => {
             <section className="space-y-2">
               <h3 className="text-sm font-bold text-[#18211F]">3. Your Rights</h3>
               <p>
-                You maintain the legal right to access, rectify, delete, or port your personal data under GDPR Articles 15–22. Requests can be submitted to privacy@reental-log.com with proof of identity.
+                You maintain the legal right to access, rectify, delete, or port your personal data under GDPR Articles 15–22. Requests can be submitted to privacy@kretz.com with proof of identity.
               </p>
             </section>
           </div>

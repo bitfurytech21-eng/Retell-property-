@@ -51,12 +51,12 @@ export interface PaymentConfig {
 
 const DEFAULT_PAYMENT_CONFIG: PaymentConfig = {
   traditional: {
-    beneficiary: 'Rental-log Escrow Services S.L.',
+    beneficiary: 'Kretz Escrow Services S.L.',
     iban: 'ES91 2100 0418 4502 0005 1829',
     bic: 'CAIXESBBXXX',
     bankName: 'CaixaBank Institutional Escrow',
-    supportEmail: 'payments@reental-log.com',
-    instructions: 'Include your unique transfer reference in the wire transfer concept and email your transfer confirmation receipt to payments@reental-log.com for rapid verification.',
+    supportEmail: 'payments@kretz.com',
+    instructions: 'Include your unique transfer reference in the wire transfer concept and email your transfer confirmation receipt to payments@kretz.com for rapid verification.',
     routingNumber: 'ES912100'
   },
   cryptoNetworks: [
@@ -449,7 +449,7 @@ function generateTxHash(reference: string, amount: number, timestamp: string): s
 const DEFAULT_USERS: User[] = [
   {
     id: 'usr-admin-1',
-    email: 'admin@reental-log.com',
+    email: 'admin@kretz.com',
     fullName: 'Platform Administrator',
     role: 'admin',
     kycStatus: 'verified',
@@ -462,7 +462,7 @@ const DEFAULT_USERS: User[] = [
   },
   {
     id: 'usr-investor-demo',
-    email: 'investor@reental-log.com',
+    email: 'investor@kretz.com',
     fullName: 'David Vance',
     role: 'investor',
     kycStatus: 'verified',
@@ -620,7 +620,7 @@ class LedgerService {
       {
         id: 'audit-1',
         adminId: 'usr-admin-1',
-        adminEmail: 'admin@reental-log.com',
+        adminEmail: 'admin@kretz.com',
         action: 'SYSTEM_INITIALIZATION',
         details: 'Auditable double-entry ledger initialized with strict balance protections.',
         timestamp: '2026-01-01T00:00:00Z'
@@ -655,7 +655,7 @@ class LedgerService {
 
   public updatePaymentConfig(config: PaymentConfig): void {
     this.paymentConfig = config;
-    this.logAudit('usr-admin-1', 'admin@reental-log.com', 'PAYMENT_CONFIG_UPDATED', 'Administrator updated dual payment gateway and crypto treasury wallet settings.');
+    this.logAudit('usr-admin-1', 'admin@kretz.com', 'PAYMENT_CONFIG_UPDATED', 'Administrator updated dual payment gateway and crypto treasury wallet settings.');
     this.saveState();
   }
 
@@ -667,7 +667,7 @@ class LedgerService {
     this.paymentConfig.cryptoNetworks.push(newNetwork);
     this.logAudit(
       'usr-admin-1',
-      'admin@reental-log.com',
+      'admin@kretz.com',
       'CRYPTO_NETWORK_ADDED',
       `Added crypto treasury network: ${newNetwork.name} (${newNetwork.token})`
     );
@@ -679,7 +679,7 @@ class LedgerService {
     this.paymentConfig.cryptoNetworks = this.paymentConfig.cryptoNetworks.filter(n => n.id !== id);
     this.logAudit(
       'usr-admin-1',
-      'admin@reental-log.com',
+      'admin@kretz.com',
       'CRYPTO_NETWORK_DELETED',
       `Deleted crypto treasury network ID: ${id}`
     );
@@ -763,7 +763,7 @@ class LedgerService {
     }
     this.logAudit(
       'usr-admin-1',
-      'admin@reental-log.com',
+      'admin@kretz.com',
       'USER_PAYMENT_DETAILS_UPDATED',
       `Updated payment integration details for ${user.email}`
     );
@@ -846,7 +846,7 @@ class LedgerService {
     if (docType) user.kycDocumentType = docType;
     if (status === 'pending') user.kycSubmittedAt = new Date().toISOString();
 
-    this.logAudit('usr-admin-1', 'admin@reental-log.com', 'KYC_STATUS_UPDATED', `User ${user.email} KYC status set to ${status}`);
+    this.logAudit('usr-admin-1', 'admin@kretz.com', 'KYC_STATUS_UPDATED', `User ${user.email} KYC status set to ${status}`);
     this.createNotification(user.id, `Identity Verification: ${status.toUpperCase()}`, `Your KYC verification is now ${status}.`, status === 'verified' ? 'success' : 'info');
     this.saveState();
     return user;
@@ -868,7 +868,7 @@ class LedgerService {
     } else {
       this.properties.push(property);
     }
-    this.logAudit('usr-admin-1', 'admin@reental-log.com', 'PROPERTY_UPDATED', `Property ${property.title} was saved/updated`);
+    this.logAudit('usr-admin-1', 'admin@kretz.com', 'PROPERTY_UPDATED', `Property ${property.title} was saved/updated`);
     this.saveState();
     return property;
   }
@@ -1002,7 +1002,7 @@ class LedgerService {
       tx.status = 'completed';
       tx.txHash = (tx.metadata?.destinationAddress ? 'CRYPTO-EXEC-' : 'SEPA-EXEC-') + Math.random().toString(36).substring(2, 10).toUpperCase();
       this.createNotification(user.id, 'Withdrawal Executed', `Your withdrawal of €${tx.amount.toFixed(2)} has been successfully approved and transferred.`, 'success');
-      this.logAudit('usr-admin-1', 'admin@reental-log.com', 'WITHDRAWAL_APPROVED', `Approved withdrawal of €${tx.amount.toFixed(2)} for ${user.email} (${tx.paymentMethod})`);
+      this.logAudit('usr-admin-1', 'admin@kretz.com', 'WITHDRAWAL_APPROVED', `Approved withdrawal of €${tx.amount.toFixed(2)} for ${user.email} (${tx.paymentMethod})`);
     } else {
       // Refund balance
       user.walletBalance = Number((user.walletBalance + tx.amount).toFixed(2));
@@ -1011,7 +1011,7 @@ class LedgerService {
       if (!tx.metadata) tx.metadata = {};
       tx.metadata.rejectionReason = reason || 'Compliance or bank details verification check failed.';
       this.createNotification(user.id, 'Withdrawal Declined', `Your withdrawal of €${tx.amount.toFixed(2)} was declined: ${tx.metadata.rejectionReason}. Funds were returned to your balance.`, 'warning');
-      this.logAudit('usr-admin-1', 'admin@reental-log.com', 'WITHDRAWAL_REJECTED', `Rejected withdrawal of €${tx.amount.toFixed(2)} for ${user.email}`);
+      this.logAudit('usr-admin-1', 'admin@kretz.com', 'WITHDRAWAL_REJECTED', `Rejected withdrawal of €${tx.amount.toFixed(2)} for ${user.email}`);
     }
 
     this.saveState();
@@ -1031,13 +1031,13 @@ class LedgerService {
       user.walletBalance = Number((user.walletBalance + tx.amount).toFixed(2));
       tx.balanceAfter = user.walletBalance;
       this.createNotification(user.id, 'Deposit Approved & Credited', `Your deposit of €${tx.amount.toFixed(2)} has been approved by admin and credited to your wallet balance.`, 'success');
-      this.logAudit('usr-admin-1', 'admin@reental-log.com', 'DEPOSIT_APPROVED', `Approved deposit of €${tx.amount.toFixed(2)} for ${user.email}`);
+      this.logAudit('usr-admin-1', 'admin@kretz.com', 'DEPOSIT_APPROVED', `Approved deposit of €${tx.amount.toFixed(2)} for ${user.email}`);
     } else {
       tx.status = 'rejected';
       if (!tx.metadata) tx.metadata = {};
       tx.metadata.rejectionReason = reason || 'Deposit bank wire transfer reference or receipt could not be verified.';
       this.createNotification(user.id, 'Deposit Rejected', `Your deposit request for €${tx.amount.toFixed(2)} was declined: ${tx.metadata.rejectionReason}.`, 'warning');
-      this.logAudit('usr-admin-1', 'admin@reental-log.com', 'DEPOSIT_REJECTED', `Rejected deposit of €${tx.amount.toFixed(2)} for ${user.email}`);
+      this.logAudit('usr-admin-1', 'admin@kretz.com', 'DEPOSIT_REJECTED', `Rejected deposit of €${tx.amount.toFixed(2)} for ${user.email}`);
     }
 
     this.saveState();

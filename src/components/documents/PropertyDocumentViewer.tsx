@@ -337,11 +337,11 @@ export const PropertyDocumentViewer: React.FC<PropertyDocumentViewerProps> = ({
           <div className="flex items-center justify-between border-b border-[#E3E8E3] pb-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-[#182D2A] text-[#00FF9D] flex items-center justify-center font-black text-sm">
-                RL
+                KZ
               </div>
               <div>
                 <h1 className="font-extrabold text-base tracking-tight text-[#18211F] leading-tight">
-                  Rental-log Prestige Real Estate
+                  Kretz Prestige Real Estate
                 </h1>
                 <p className="text-[10px] text-[#69736F] uppercase tracking-widest font-semibold">
                   Authorized European Agency & Tokenized Property Syndicate
@@ -741,7 +741,7 @@ export const PropertyDocumentViewer: React.FC<PropertyDocumentViewerProps> = ({
 
           {/* Footer Disclaimer */}
           <footer className="mt-10 pt-4 border-t border-[#E3E8E3] flex flex-wrap items-center justify-between text-[10px] text-[#828D89]">
-            <span>Generated automatically via Rental-log Institutional Property Engine · {formatDate(docRecord.updatedAt)}</span>
+            <span>Generated automatically via Kretz Institutional Property Engine · {formatDate(docRecord.updatedAt)}</span>
             <span>Document ID: {docRecord.id} · Version {docRecord.version}</span>
           </footer>
         </section>

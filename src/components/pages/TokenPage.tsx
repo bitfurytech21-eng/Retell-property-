@@ -16,7 +16,7 @@ export const TokenPage: React.FC<TokenPageProps> = ({ onExplore }) => {
             <span>Digital Real Estate Shares</span>
           </div>
           <h1 className="text-3xl sm:text-5xl font-black text-[#18211F]">
-            The Rental-log Token Model
+            The Kretz Token Model
           </h1>
           <p className="text-base text-[#69736F]">
             Combining real estate security with public blockchain efficiency, automated rent routing, and peer-to-peer liquidity.
@@ -73,7 +73,7 @@ export const TokenPage: React.FC<TokenPageProps> = ({ onExplore }) => {
               While tokens provide significantly greater flexibility than traditional direct real estate purchases, <strong>real estate remains an inherently medium-to-long term asset class</strong>.
             </p>
             <p>
-              Investors can list their tokens for sale to other verified platform users via our internal P2P bulletin board. However, Rental-log does NOT guarantee immediate counterparties or fixed buyback execution times. Execution depends on buyer demand at the offered price.
+              Investors can list their tokens for sale to other verified platform users via our internal P2P bulletin board. However, Kretz does NOT guarantee immediate counterparties or fixed buyback execution times. Execution depends on buyer demand at the offered price.
             </p>
             <p>
               Additionally, in accordance with European securities regulations, tokens can only be transferred between KYC-verified accounts in good standing. Transferring tokens to unverified external wallets will block dividend distribution routing until verification is completed.

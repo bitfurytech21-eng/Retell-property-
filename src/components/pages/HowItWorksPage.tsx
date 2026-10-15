@@ -21,7 +21,7 @@ export const HowItWorksPage: React.FC<HowItWorksPageProps> = ({ onExplore, onReg
             Transparent Real Estate Tokenization
           </h1>
           <p className="text-base text-[#69736F] leading-relaxed">
-            Understand how Rental-log transforms multi-million euro real estate assets into accessible, liquid digital shares backed by real-world physical brick and mortar.
+            Understand how Kretz transforms multi-million euro real estate assets into accessible, liquid digital shares backed by real-world physical brick and mortar.
           </p>
         </div>
 
