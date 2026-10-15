@@ -1,10 +1,12 @@
 /**
  * Kretz Full-Stack Express Server & Ledger API
- * Provides authenticated REST endpoints for properties, investments, deposits, withdrawals, and ledger audit.
+ * Provides authenticated REST endpoints and serves the built frontend in production.
  */
 
 import express, { Request, Response, NextFunction } from 'express';
 import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 dotenv.config();
 
@@ -34,19 +36,24 @@ app.get('/api/health', (req: Request, res: Response) => {
   });
 });
 
-/**
- * Endpoints specification:
- * - POST /api/auth/register
- * - POST /api/auth/login
- * - GET  /api/properties
- * - GET  /api/properties/:id
- * - POST /api/investments/execute
- * - GET  /api/investments/my
- * - POST /api/wallet/deposit
- * - POST /api/wallet/withdraw
- * - GET  /api/transactions
- * - GET  /api/admin/audit-logs
- * - POST /api/admin/withdrawals/:id/review
- */
+// Serve static frontend files in production
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const distPath = path.resolve(__dirname, '../dist');
+app.use(express.static(distPath));
+
+app.get('*', (req: Request, res: Response, next) => {
+  if (req.path.startsWith('/api/')) {
+    return next();
+  }
+  res.sendFile(path.join(distPath, 'index.html'), (err) => {
+    if (err) {
+      next();
+    }
+  });
+});
+
+app.listen(Number(PORT), '0.0.0.0', () => {
+  console.log(`Kretz Express server successfully listening on port ${PORT}`);
+});
 
 export default app;
