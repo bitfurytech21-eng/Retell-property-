@@ -183,7 +183,7 @@ h2,
 h3,
 h4 {
   margin-top: 0;
-  color: var(--color-text);
+  color: inherit;
   font-weight: 650;
   line-height: 1.15;
   letter-spacing: -0.035em;

@@ -17,6 +17,9 @@ import {
 } from 'lucide-react';
 import { ShortcutsHub } from '../dashboard/ShortcutsHub';
 import { PropertyDocumentsHub } from '../documents/PropertyDocumentsHub';
+import { PropertyDocumentGenerator } from '../documents/PropertyDocumentGenerator';
+import { Property } from '../../types/property';
+import { PropertyDocumentType } from '../../types/document';
 import { formatCurrency, formatDate } from '../../lib/utils';
 
 interface DashboardPageProps {
@@ -45,6 +48,8 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
   const [isDepositOpen, setIsDepositOpen] = useState(defaultTab === 'deposit');
   const [isWithdrawOpen, setIsWithdrawOpen] = useState(false);
   const [selectedDocInvestment, setSelectedDocInvestment] = useState<any | null>(null);
+  const [selectedGeneratorProperty, setSelectedGeneratorProperty] = useState<Property | null>(null);
+  const [generatorDocType, setGeneratorDocType] = useState<PropertyDocumentType>('brochure');
   const [copiedLink, setCopiedLink] = useState(false);
   const [documentSectionTab, setDocumentSectionTab] = useState<'property-generator' | 'my-certificates'>('property-generator');
 
@@ -628,6 +633,66 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
                   </div>
                 </div>
 
+                {/* Quick Property Document Generator Action Bar */}
+                <div className="dash-card p-5 rounded-3xl border shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-2xl bg-[#27845D]/15 text-[#27845D] flex items-center justify-center font-bold">
+                      <Sparkles className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-bold dash-text">Instant Document Generator & Preview</h3>
+                      <p className="text-xs dash-muted">Select any property to preview luxury brochures or generate binding legal reservation forms</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <select
+                      className="text-xs font-bold p-2.5 rounded-xl border border-inherit/40 dash-inner dash-text max-w-xs cursor-pointer"
+                      onChange={(e) => {
+                        const found = properties.find(p => p.id === e.target.value);
+                        if (found) {
+                          setSelectedGeneratorProperty(found);
+                          setGeneratorDocType('brochure');
+                        }
+                      }}
+                      defaultValue=""
+                    >
+                      <option value="" disabled>Select property to preview...</option>
+                      {properties.map(p => (
+                        <option key={p.id} value={p.id}>
+                          {p.title} ({p.city})
+                        </option>
+                      ))}
+                    </select>
+
+                    <button
+                      onClick={() => {
+                        const target = properties[0];
+                        if (target) {
+                          setSelectedGeneratorProperty(target);
+                          setGeneratorDocType('brochure');
+                        }
+                      }}
+                      className="btn btn-secondary text-xs font-bold px-3 py-2 flex items-center gap-1 cursor-pointer"
+                    >
+                      <Building2 className="w-3.5 h-3.5 text-[#27845D]" /> Property Brochure
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        const target = properties[0];
+                        if (target) {
+                          setSelectedGeneratorProperty(target);
+                          setGeneratorDocType('reservation-agreement');
+                        }
+                      }}
+                      className="btn btn-primary text-xs font-bold px-3.5 py-2 flex items-center gap-1 cursor-pointer bg-[#27845D] text-white shadow-xs"
+                    >
+                      <FileText className="w-3.5 h-3.5" /> Reservation Form
+                    </button>
+                  </div>
+                </div>
+
                 {documentSectionTab === 'property-generator' ? (
                   <PropertyDocumentsHub properties={properties} />
                 ) : (
@@ -663,13 +728,37 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
                                 </div>
                               </div>
 
-                              <div className="flex items-center gap-2">
+                              <div className="flex flex-wrap items-center gap-2">
                                 <button
                                   onClick={() => setSelectedDocInvestment(inv)}
                                   className="btn btn-secondary btn-sm text-xs font-bold cursor-pointer"
                                 >
-                                  <FileText className="w-3.5 h-3.5 mr-1" /> View SPV Certificate & Deed
+                                  <FileText className="w-3.5 h-3.5 mr-1" /> View SPV Certificate
                                 </button>
+                                {prop && (
+                                  <>
+                                    <button
+                                      onClick={() => {
+                                        setSelectedGeneratorProperty(prop);
+                                        setGeneratorDocType('brochure');
+                                      }}
+                                      className="btn btn-secondary btn-sm text-xs font-bold cursor-pointer flex items-center gap-1"
+                                      title="Preview Property Brochure"
+                                    >
+                                      <Building2 className="w-3.5 h-3.5 text-[#27845D]" /> Brochure
+                                    </button>
+                                    <button
+                                      onClick={() => {
+                                        setSelectedGeneratorProperty(prop);
+                                        setGeneratorDocType('reservation-agreement');
+                                      }}
+                                      className="btn btn-primary btn-sm text-xs font-bold cursor-pointer flex items-center gap-1 bg-[#27845D] text-white"
+                                      title="Open Reservation Agreement & Terms"
+                                    >
+                                      <FileText className="w-3.5 h-3.5" /> Reservation Form
+                                    </button>
+                                  </>
+                                )}
                               </div>
                             </div>
                           );
@@ -992,6 +1081,23 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
         isOpen={!!selectedDocInvestment}
         onClose={() => setSelectedDocInvestment(null)}
       />
+
+      {/* Property Document Generator Preview Modal */}
+      {selectedGeneratorProperty && (
+        <PropertyDocumentGenerator
+          property={selectedGeneratorProperty}
+          initialType={generatorDocType}
+          isOpen={!!selectedGeneratorProperty}
+          onClose={() => setSelectedGeneratorProperty(null)}
+          buyerInfo={{
+            buyerName: user?.fullName || 'David Vance',
+            buyerEmail: user?.email || 'investor@reental-log.com',
+            buyerPhone: user?.phoneNumber || '+34 612 345 678',
+            buyerNationality: user?.country || 'European Union'
+          }}
+          onDocumentUpdated={() => setDataVersion(v => v + 1)}
+        />
+      )}
 
       {/* Brought-Down Power Shortcuts & Utilities Hub (Clear View Architecture) */}
       <ShortcutsHub

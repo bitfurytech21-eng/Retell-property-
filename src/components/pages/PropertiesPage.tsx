@@ -19,12 +19,12 @@ export const PropertiesPage: React.FC<PropertiesPageProps> = ({
   const [selectedType, setSelectedType] = useState<string>('all');
   const [selectedDuration, setSelectedDuration] = useState<string>('all');
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
-  const [minInvestmentFilter, setMinInvestmentFilter] = useState<number>(1000);
+  const [minInvestmentFilter, setMinInvestmentFilter] = useState<number>(750);
   const [sortBy, setSortBy] = useState<string>('min_asc');
 
-  // Strict Rule 1 & 8: Only display opportunities that meet the €1,000 minimum threshold
+  // Display opportunities that meet the €750 minimum threshold and are approved
   const baseQualifiedProperties = properties.filter(
-    (p) => (p.minimumInvestment || 0) >= 1000
+    (p) => (p.minimumInvestment || 0) >= 750 && p.status !== 'hidden' && p.status !== 'pending_approval'
   );
 
   // Multi-dimensional filtering
@@ -43,11 +43,12 @@ export const PropertiesPage: React.FC<PropertiesPageProps> = ({
       return false;
     }
 
-    // 3. Duration Filter
+    // 3. Duration Filter (supports short term from 3 months)
     if (selectedDuration !== 'all') {
-      if (selectedDuration === '36' && p.durationMonths > 36) return false;
-      if (selectedDuration === '48' && (p.durationMonths <= 36 || p.durationMonths > 48)) return false;
-      if (selectedDuration === '60' && p.durationMonths <= 48) return false;
+      if (selectedDuration === '12' && p.durationMonths > 12) return false;
+      if (selectedDuration === '24' && (p.durationMonths <= 12 || p.durationMonths > 24)) return false;
+      if (selectedDuration === '36' && (p.durationMonths <= 24 || p.durationMonths > 36)) return false;
+      if (selectedDuration === '48' && p.durationMonths <= 36) return false;
     }
 
     // 4. Status Filter
@@ -100,7 +101,7 @@ export const PropertiesPage: React.FC<PropertiesPageProps> = ({
     setSelectedType('all');
     setSelectedDuration('all');
     setSelectedStatus('all');
-    setMinInvestmentFilter(1000);
+    setMinInvestmentFilter(750);
     setSortBy('min_asc');
     setVisibleCount(24);
   };
@@ -118,8 +119,8 @@ export const PropertiesPage: React.FC<PropertiesPageProps> = ({
             Prestigious French Real Estate Opportunities
           </h1>
           <p className="text-sm sm:text-base text-[#69736F] leading-relaxed">
-            Curated selection of 200+ world-class private mansions in Paris, French Riviera waterfront villas, 
-            Alpine chalets, and historic châteaux. Every offering includes authentic photography, RICS valuation, 
+            Curated selection of world-class private mansions in Paris, French Riviera waterfront villas, 
+            Alpine chalets, and historic châteaux. Every offering includes authentic photography, certified appraisals, 
             and automated monthly rental yields.
           </p>
 
@@ -127,7 +128,7 @@ export const PropertiesPage: React.FC<PropertiesPageProps> = ({
           <div className="mt-4 p-3 rounded-2xl bg-white border border-[#E3E8E3] flex items-center gap-2.5 text-xs text-[#69736F] shadow-sm">
             <Info className="w-4 h-4 text-[#27845D] shrink-0" />
             <span>
-              <strong>Investor Threshold Rule:</strong> Minimum entry from €1,000. All properties verified through Kretz Exclusive & Co-Exclusive Mandates.
+              <strong>Investor Threshold Rule:</strong> Minimum investment from €750 up to €10,000 with flexible terms from 3 to 48 months. All properties verified through Kretz Exclusive Mandates.
             </span>
           </div>
         </div>

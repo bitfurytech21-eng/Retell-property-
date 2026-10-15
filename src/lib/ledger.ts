@@ -411,7 +411,7 @@ const DEFAULT_PAYMENT_CONFIG: PaymentConfig = {
 };
 
 // In-Memory & LocalStorage Persistent Ledger
-const STORAGE_PREFIX = 'rentallog_v1_';
+const STORAGE_PREFIX = 'rentallog_v2_';
 
 function getStorage<T>(key: string, defaultValue: T): T {
   if (typeof window === 'undefined') return defaultValue;
@@ -610,11 +610,8 @@ class LedgerService {
   constructor() {
     this.users = getStorage('users', DEFAULT_USERS);
     const storedProps = getStorage<Property[]>('properties', []);
-    const hasKretzProps = storedProps && storedProps.length > 50 && storedProps.some(p => p.id.startsWith('prop-kretz-'));
-    const initialOrStored = (!hasKretzProps || storedProps.length < INITIAL_PROPERTIES.length)
-      ? INITIAL_PROPERTIES
-      : storedProps;
-    this.properties = Array.from(new Map(initialOrStored.map(p => [p.id, p])).values());
+    const hasValidProps = Array.isArray(storedProps) && storedProps.length === INITIAL_PROPERTIES.length && storedProps.some(p => p.id.startsWith('prop-kretz-'));
+    this.properties = hasValidProps ? storedProps : [...INITIAL_PROPERTIES];
     setStorage('properties', this.properties);
     this.investments = getStorage('investments', DEFAULT_INVESTMENTS);
     this.transactions = getStorage('transactions', DEFAULT_TRANSACTIONS);

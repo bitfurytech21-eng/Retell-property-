@@ -11,7 +11,7 @@ export type PropertyType =
   | 'Estate / Property' 
   | 'Chalet';
 
-export type PropertyStatus = 'funding' | 'funded' | 'completed' | 'upcoming';
+export type PropertyStatus = 'funding' | 'funded' | 'completed' | 'upcoming' | 'hidden' | 'pending_approval';
 
 export interface PropertyDocument {
   id: string;

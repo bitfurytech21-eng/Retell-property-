@@ -15,24 +15,39 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({ property, onSelect, 
   const getStatusBadge = () => {
     switch (property.status) {
       case 'funding':
-        return <span className="status-badge funding font-semibold">● Funding Active</span>;
+        return (
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-900/90 text-emerald-400 border border-emerald-500/30 text-[11px] font-semibold backdrop-blur-xs">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+            Funding Active
+          </span>
+        );
       case 'funded':
-        return <span className="status-badge funded font-semibold">✓ 100% Funded</span>;
+        return (
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-900/90 text-slate-300 border border-slate-700 text-[11px] font-semibold backdrop-blur-xs">
+            <span className="w-1.5 h-1.5 rounded-full bg-slate-400" />
+            100% Funded
+          </span>
+        );
       case 'upcoming':
-        return <span className="status-badge upcoming font-semibold">⏳ Launching Soon</span>;
+        return (
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-900/90 text-amber-300 border border-amber-600/30 text-[11px] font-semibold backdrop-blur-xs">
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+            Launching Soon
+          </span>
+        );
       default:
-        return <span className="status-badge">{property.status}</span>;
+        return <span className="text-xs uppercase font-medium">{property.status}</span>;
     }
   };
 
   return (
-    <div className="property-card flex flex-col group border border-[#E3E8E3] rounded-3xl bg-white overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300">
+    <div className="property-card flex flex-col group border border-slate-200 rounded-xl bg-white overflow-hidden shadow-xs hover:border-slate-300 hover:shadow-md transition-all">
       {/* Property Image & Status Badges */}
-      <div className="property-image relative aspect-[4/3] overflow-hidden bg-[#EEF1EC]">
+      <div className="property-image relative aspect-[4/3] overflow-hidden bg-slate-100">
         <img
           src={property.images[0] || property.bannerImage}
           alt={property.title}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-102"
           referrerPolicy="no-referrer"
           onError={(e) => {
             (e.target as HTMLElement).style.display = 'none';
@@ -47,12 +62,11 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({ property, onSelect, 
         {/* Type and Sample Indicator */}
         <div className="absolute top-3 right-3 z-10 flex items-center gap-1.5">
           {property.images && property.images.length > 1 && (
-            <span className="bg-black/65 backdrop-blur-md text-white text-[10px] font-semibold px-2 py-0.5 rounded-full flex items-center gap-1">
-              <span>📷</span>
+            <span className="bg-slate-900/80 backdrop-blur-xs text-slate-200 text-[10px] font-medium px-2 py-0.5 rounded-md flex items-center gap-1">
               <span>{property.images.length} Photos</span>
             </span>
           )}
-          <span className="bg-black/65 backdrop-blur-md text-white text-[11px] font-semibold px-2.5 py-1 rounded-full">
+          <span className="bg-slate-900/80 backdrop-blur-xs text-white text-[11px] font-medium px-2.5 py-0.5 rounded-md">
             {property.type}
           </span>
         </div>
@@ -123,13 +137,13 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({ property, onSelect, 
         </div>
 
         {/* Financial Metrics Grid */}
-        <div className="property-metrics py-3.5 border-y border-[#E3E8E3] grid grid-cols-2 gap-3 mb-4 bg-[#F6F7F4]/50 rounded-2xl p-3">
+        <div className="property-metrics py-3 border-y border-slate-200 grid grid-cols-2 gap-3 mb-3 bg-slate-50/80 rounded-lg p-3">
           <div>
             <span className="metric-label text-[11px] text-[#69736F] flex items-center gap-1 font-medium">
               <TrendingUp className="w-3 h-3 text-[#27845D]" />
               Projected Net Yield*
             </span>
-            <span className="metric-value text-base font-extrabold text-[#27845D] block">
+            <span className="metric-value text-base font-bold text-[#27845D] block">
               {formatPercent(property.estimatedAnnualYield)}
             </span>
             <span className="text-[10px] text-[#69736F] block mt-0.5">
@@ -142,20 +156,20 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({ property, onSelect, 
               <Users className="w-3 h-3 text-[#182D2A]" />
               Min. Investment
             </span>
-            <span className="metric-value text-base font-black text-[#18211F] block">
+            <span className="metric-value text-base font-bold text-[#18211F] block">
               {formatCurrency(property.minimumInvestment)}
             </span>
-            <span className="text-[10px] text-[#27845D] font-semibold block mt-0.5">
-              €1,000+ Tier
+            <span className="text-[10px] text-emerald-700 font-medium block mt-0.5">
+              {formatCurrency(property.tokenPrice)} / unit
             </span>
           </div>
 
           <div>
             <span className="metric-label text-[11px] text-[#69736F] flex items-center gap-1 font-medium">
               <Calendar className="w-3 h-3 text-[#69736F]" />
-              Duration
+              Term
             </span>
-            <span className="text-xs font-bold text-[#18211F] block">
+            <span className="text-xs font-semibold text-[#18211F] block">
               {property.durationMonths} Months
             </span>
           </div>
@@ -163,9 +177,9 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({ property, onSelect, 
           <div>
             <span className="metric-label text-[11px] text-[#69736F] flex items-center gap-1 font-medium">
               <ShieldCheck className="w-3 h-3 text-[#27845D]" />
-              Total 3-Yr Return*
+              Target Total Return*
             </span>
-            <span className="text-xs font-bold text-[#18211F] block">
+            <span className="text-xs font-semibold text-[#18211F] block">
               {formatPercent(property.totalEstimatedReturn)}
             </span>
           </div>

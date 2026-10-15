@@ -64,12 +64,6 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
     }, 600);
   };
 
-  const handleSimulateInstantVerify = () => {
-    ledger.updateKYCStatus(user.id, 'verified', 'Passport');
-    refreshUser();
-    setMessage('KYC instantly verified for testing!');
-  };
-
   const handleAvatarUpload = (base64: string) => {
     ledger.updateUserAvatar(user.id, base64);
     refreshUser();
@@ -144,15 +138,6 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
                 <div className="mt-2">{renderKYCBadge(user.kycStatus)}</div>
               </div>
             </div>
-
-            {user.kycStatus !== 'verified' && (
-              <button
-                onClick={handleSimulateInstantVerify}
-                className="btn btn-secondary btn-sm text-xs font-bold text-emerald-400 border-emerald-500/40 hover:bg-emerald-500/10"
-              >
-                Instant Verify (Demo Mode)
-              </button>
-            )}
           </div>
 
           {/* Dedicated Image Uploader Component */}

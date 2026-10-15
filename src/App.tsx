@@ -340,7 +340,7 @@ function MainApp() {
                     onClick={() => navigateTo('/properties')}
                     className="btn btn-secondary text-xs font-bold self-start sm:self-auto"
                   >
-                    View All Opportunities ({properties.filter(p => p.minimumInvestment >= 750).length})
+                    View All Opportunities ({properties.filter(p => p.minimumInvestment >= 750 && p.status !== 'hidden' && p.status !== 'pending_approval').length})
                     <ArrowRight className="w-3.5 h-3.5 ml-1" />
                   </button>
                 </div>
@@ -349,7 +349,7 @@ function MainApp() {
                   {Array.from(
                     new Map(
                       properties
-                        .filter((p) => (p.minimumInvestment || 0) >= 750)
+                        .filter((p) => (p.minimumInvestment || 0) >= 750 && p.status !== 'hidden' && p.status !== 'pending_approval')
                         .map((p) => [p.id, p])
                     ).values()
                   )

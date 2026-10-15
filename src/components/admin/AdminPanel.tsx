@@ -76,6 +76,7 @@ export const AdminPanel: React.FC = () => {
   const [newYield, setNewYield] = useState<number>(11.5);
   const [newAppreciation, setNewAppreciation] = useState<number>(4.0);
   const [newDuration, setNewDuration] = useState<number>(36);
+  const [adminPropertyFilter, setAdminPropertyFilter] = useState<'all' | 'hidden' | 'upcoming' | 'funded' | 'funding'>('all');
 
   const pendingDeposits = transactions.filter(t => t.type === 'deposit' && t.status === 'pending');
   const pendingWithdrawals = transactions.filter(t => t.type === 'withdrawal' && t.status === 'pending');
@@ -323,10 +324,38 @@ export const AdminPanel: React.FC = () => {
   };
 
   const handleTogglePropertyStatus = (prop: Property) => {
-    const nextStatus: PropertyStatus = prop.status === 'funding' ? 'funded' : prop.status === 'funded' ? 'upcoming' : 'funding';
+    let nextStatus: PropertyStatus = 'funding';
+    if (prop.status === 'hidden' || prop.status === 'pending_approval') {
+      nextStatus = 'funding';
+    } else if (prop.status === 'funding') {
+      nextStatus = 'funded';
+    } else if (prop.status === 'funded') {
+      nextStatus = 'upcoming';
+    } else {
+      nextStatus = 'funding';
+    }
     const updated = { ...prop, status: nextStatus };
     ledger.saveProperty(updated);
     refreshAll();
+  };
+
+  const handleSetPropertyStatus = (prop: Property, newStatus: PropertyStatus) => {
+    const updated = { ...prop, status: newStatus };
+    ledger.saveProperty(updated);
+    refreshAll();
+    setActionSuccess(`Property "${prop.title}" status changed to ${newStatus.toUpperCase()}.`);
+    setTimeout(() => setActionSuccess(null), 3000);
+  };
+
+  const handleApproveAllPending = () => {
+    const pending = properties.filter(p => p.status === 'hidden' || p.status === 'pending_approval');
+    if (pending.length === 0) return;
+    pending.forEach(p => {
+      ledger.saveProperty({ ...p, status: 'funding' });
+    });
+    refreshAll();
+    setActionSuccess(`Approved and published ${pending.length} properties to live marketplace!`);
+    setTimeout(() => setActionSuccess(null), 3500);
   };
 
   const selectedTargetUser = users.find(u => u.id === selectedUserId);
@@ -445,6 +474,11 @@ export const AdminPanel: React.FC = () => {
           >
             <Building2 className="w-4 h-4" />
             Manage Properties ({properties.length})
+            {properties.filter(p => p.status === 'hidden' || p.status === 'pending_approval').length > 0 && (
+              <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-800">
+                {properties.filter(p => p.status === 'hidden' || p.status === 'pending_approval').length} waiting
+              </span>
+            )}
           </button>
 
           <button
@@ -1186,49 +1220,206 @@ export const AdminPanel: React.FC = () => {
 
         {/* Tab 5: Manage Properties */}
         {activeTab === 'properties' && (
-          <div className="bg-white p-6 rounded-3xl border border-[#E3E8E3] shadow-sm">
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="text-lg font-bold text-[#18211F]">Property Offerings Portfolio</h3>
-              <button
-                onClick={() => setShowNewPropertyModal(true)}
-                className="btn btn-primary btn-sm text-xs font-bold cursor-pointer"
-              >
-                + Add Property
-              </button>
+          <div className="bg-white p-6 sm:p-8 rounded-3xl border border-[#E3E8E3] shadow-sm space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#E3E8E3] pb-5">
+              <div>
+                <h3 className="text-xl font-bold text-[#18211F]">Property Offerings Portfolio ({properties.length})</h3>
+                <p className="text-xs text-[#69736F]">
+                  Manage luxury assets, review pending properties waiting for listing approval, and configure funding statuses.
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                {properties.filter(p => p.status === 'hidden' || p.status === 'pending_approval').length > 0 && (
+                  <button
+                    onClick={handleApproveAllPending}
+                    className="btn btn-secondary text-xs font-bold px-3 py-2 text-[#27845D] border-emerald-200 hover:bg-emerald-50 flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    Approve All Pending ({properties.filter(p => p.status === 'hidden' || p.status === 'pending_approval').length})
+                  </button>
+                )}
+                <button
+                  onClick={() => setShowNewPropertyModal(true)}
+                  className="btn btn-primary btn-sm text-xs font-bold cursor-pointer bg-[#27845D] text-white flex items-center gap-1"
+                >
+                  <Plus className="w-4 h-4" />
+                  Add Property
+                </button>
+              </div>
             </div>
 
+            {/* Quick Status KPI Cards */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div
+                onClick={() => setAdminPropertyFilter('all')}
+                className={`p-4 rounded-2xl border cursor-pointer transition-all ${
+                  adminPropertyFilter === 'all'
+                    ? 'border-[#182D2A] bg-[#182D2A] text-white shadow-sm'
+                    : 'border-[#E3E8E3] bg-[#F6F7F4] text-[#18211F] hover:bg-gray-100'
+                }`}
+              >
+                <div className="text-xs font-semibold opacity-80">Total Properties</div>
+                <div className="text-2xl font-black mt-1">{properties.length}</div>
+              </div>
+
+              <div
+                onClick={() => setAdminPropertyFilter('hidden')}
+                className={`p-4 rounded-2xl border cursor-pointer transition-all ${
+                  adminPropertyFilter === 'hidden'
+                    ? 'border-amber-500 bg-amber-500 text-white shadow-sm'
+                    : 'border-amber-200 bg-amber-50 text-amber-900 hover:bg-amber-100'
+                }`}
+              >
+                <div className="text-xs font-bold flex items-center gap-1">
+                  <AlertCircle className="w-3.5 h-3.5" />
+                  Waiting Approval (Hidden)
+                </div>
+                <div className="text-2xl font-black mt-1">
+                  {properties.filter(p => p.status === 'hidden' || p.status === 'pending_approval').length}
+                </div>
+              </div>
+
+              <div
+                onClick={() => setAdminPropertyFilter('upcoming')}
+                className={`p-4 rounded-2xl border cursor-pointer transition-all ${
+                  adminPropertyFilter === 'upcoming'
+                    ? 'border-blue-600 bg-blue-600 text-white shadow-sm'
+                    : 'border-blue-200 bg-blue-50 text-blue-900 hover:bg-blue-100'
+                }`}
+              >
+                <div className="text-xs font-bold">Launching Soon (Upcoming)</div>
+                <div className="text-2xl font-black mt-1">
+                  {properties.filter(p => p.status === 'upcoming').length}
+                </div>
+              </div>
+
+              <div
+                onClick={() => setAdminPropertyFilter('funded')}
+                className={`p-4 rounded-2xl border cursor-pointer transition-all ${
+                  adminPropertyFilter === 'funded'
+                    ? 'border-emerald-600 bg-emerald-600 text-white shadow-sm'
+                    : 'border-emerald-200 bg-emerald-50 text-emerald-900 hover:bg-emerald-100'
+                }`}
+              >
+                <div className="text-xs font-bold">100% Fully Funded</div>
+                <div className="text-2xl font-black mt-1">
+                  {properties.filter(p => p.status === 'funded').length}
+                </div>
+              </div>
+            </div>
+
+            {/* Filter Pills */}
+            <div className="flex flex-wrap items-center gap-2 pt-2 pb-1 border-b border-[#E3E8E3]">
+              {[
+                { label: `All (${properties.length})`, val: 'all' },
+                { label: `Waiting Approval (${properties.filter(p => p.status === 'hidden' || p.status === 'pending_approval').length})`, val: 'hidden' },
+                { label: `Launching Soon (${properties.filter(p => p.status === 'upcoming').length})`, val: 'upcoming' },
+                { label: `100% Funded (${properties.filter(p => p.status === 'funded').length})`, val: 'funded' },
+                { label: `Active Funding (${properties.filter(p => p.status === 'funding').length})`, val: 'funding' },
+              ].map((tab) => (
+                <button
+                  key={tab.val}
+                  onClick={() => setAdminPropertyFilter(tab.val as any)}
+                  className={`text-xs px-3.5 py-1.5 rounded-full font-bold transition-all cursor-pointer ${
+                    adminPropertyFilter === tab.val
+                      ? 'bg-[#182D2A] text-white shadow-sm'
+                      : 'bg-[#EEF1EC] text-[#69736F] hover:text-[#18211F] hover:bg-gray-200'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Properties List */}
             <div className="divide-y divide-[#E3E8E3]">
-              {properties.map((p) => (
-                <div key={p.id} className="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-xl overflow-hidden bg-gray-100 shrink-0">
-                      <img src={p.images[0] || p.bannerImage} alt={p.title} className="w-full h-full object-cover" />
-                    </div>
-                    <div>
-                      <h4 className="text-sm font-bold text-[#18211F]">{p.title}</h4>
-                      <div className="flex items-center gap-2 text-xs text-[#69736F]">
-                        <span>{p.location}</span>
-                        <span>·</span>
-                        <span className="font-semibold text-[#27845D]">{p.estimatedAnnualYield}% Yield</span>
-                        <span>·</span>
-                        <span>Target: {formatCurrency(p.targetAmount)}</span>
+              {properties
+                .filter((p) => {
+                  if (adminPropertyFilter === 'all') return true;
+                  if (adminPropertyFilter === 'hidden') return p.status === 'hidden' || p.status === 'pending_approval';
+                  return p.status === adminPropertyFilter;
+                })
+                .map((p) => {
+                  const isHidden = p.status === 'hidden' || p.status === 'pending_approval';
+                  return (
+                    <div
+                      key={p.id}
+                      className={`py-4 px-2 sm:px-3 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4 transition-colors ${
+                        isHidden ? 'bg-amber-50/60 border border-amber-200/70 my-1.5' : 'hover:bg-[#F6F7F4]'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3.5">
+                        <div className="w-14 h-14 rounded-2xl overflow-hidden bg-gray-100 shrink-0 border border-[#E3E8E3]">
+                          <img
+                            src={p.images[0] || p.bannerImage}
+                            alt={p.title}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        <div className="space-y-0.5">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <h4 className="text-sm font-bold text-[#18211F]">{p.title}</h4>
+                            {isHidden && (
+                              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-300">
+                                Waiting Approval
+                              </span>
+                            )}
+                            {p.status === 'upcoming' && (
+                              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 border border-blue-300">
+                                Launching Soon
+                              </span>
+                            )}
+                            {p.status === 'funded' && (
+                              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300">
+                                Fully Funded
+                              </span>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-2 text-xs text-[#69736F] flex-wrap">
+                            <span>{p.location}</span>
+                            <span>·</span>
+                            <span className="font-semibold text-[#27845D]">{p.estimatedAnnualYield}% Yield</span>
+                            <span>·</span>
+                            <span>Min: <strong className="text-[#18211F]">{formatCurrency(p.minimumInvestment || 750)}</strong></span>
+                            <span>·</span>
+                            <span>Term: <strong>{p.durationMonths} Mos</strong></span>
+                            <span>·</span>
+                            <span>Target: {formatCurrency(p.targetAmount)}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2.5 shrink-0 self-end md:self-auto flex-wrap">
+                        {/* Direct Approval Button for Hidden/Waiting properties */}
+                        {isHidden && (
+                          <button
+                            onClick={() => handleSetPropertyStatus(p, 'funding')}
+                            className="btn btn-primary text-xs font-bold px-3.5 py-1.5 bg-[#27845D] hover:bg-[#1f6b4b] text-white flex items-center gap-1 cursor-pointer shadow-sm"
+                            title="Approve and publish to public listing"
+                          >
+                            <CheckCircle2 className="w-3.5 h-3.5" />
+                            Approve for Listing
+                          </button>
+                        )}
+
+                        {/* Status Switcher Select */}
+                        <div className="flex items-center gap-1.5">
+                          <label className="text-[11px] font-bold text-[#69736F] hidden sm:inline">Status:</label>
+                          <select
+                            value={p.status}
+                            onChange={(e) => handleSetPropertyStatus(p, e.target.value as PropertyStatus)}
+                            className="text-xs font-bold px-2.5 py-1.5 rounded-xl border border-[#E3E8E3] bg-white text-[#18211F] cursor-pointer"
+                          >
+                            <option value="funding">Funding Active</option>
+                            <option value="upcoming">Launching Soon</option>
+                            <option value="funded">100% Funded</option>
+                            <option value="hidden">Hidden (Pending Approval)</option>
+                          </select>
+                        </div>
                       </div>
                     </div>
-                  </div>
-
-                  <div className="flex items-center gap-3">
-                    <span className={`status-badge ${p.status} text-xs font-bold`}>
-                      {p.status.toUpperCase()}
-                    </span>
-                    <button
-                      onClick={() => handleTogglePropertyStatus(p)}
-                      className="btn btn-secondary btn-sm text-xs font-semibold cursor-pointer"
-                    >
-                      Cycle Status
-                    </button>
-                  </div>
-                </div>
-              ))}
+                  );
+                })}
             </div>
           </div>
         )}

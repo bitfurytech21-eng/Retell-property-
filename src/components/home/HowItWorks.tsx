@@ -45,14 +45,14 @@ export const HowItWorks: React.FC = () => {
     <section className="section section--soft" id="how-it-works">
       <div className="container">
         <div className="section-heading">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-[#E3E8E3] text-xs font-semibold text-[#182D2A] mb-3">
-            <span>Simplified Wealth Building</span>
+          <div className="text-xs font-semibold text-emerald-800 tracking-wider uppercase mb-2">
+            Operational Lifecycle · From Appraisal to Distribution
           </div>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-[#18211F] mb-4">
-            How Real Estate Tokenization Works
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#18211F] mb-3">
+            How Fractional Property Investment Works
           </h2>
-          <p className="text-base text-[#69736F]">
-            We handle the acquisitions, legal structuring, refurbishment, and tenant management. You enjoy passive returns and asset ownership.
+          <p className="text-sm sm:text-base text-[#69736F] max-w-2xl mx-auto">
+            BitfuryTech oversees acquisition, SPV titling, property maintenance, and professional leasing while investors hold direct fractional economic rights.
           </p>
         </div>
 

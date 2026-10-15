@@ -256,13 +256,13 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose, onS
         </div>
 
         {/* Method Toggle: Crypto vs SEPA */}
-        <div className="flex bg-[#242424] p-1 rounded-2xl mb-5 border border-[#333]">
+        <div className="flex bg-[#202020] p-1 rounded-xl mb-5 border border-[#333]">
           <button
             type="button"
             onClick={() => setMethod('crypto')}
-            className={`flex-1 py-2.5 text-xs font-extrabold rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer ${
+            className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-all flex items-center justify-center gap-2 cursor-pointer ${
               method === 'crypto'
-                ? 'bg-[#fcd535] text-black shadow-md'
+                ? 'bg-emerald-600 text-white shadow-xs'
                 : 'text-gray-400 hover:text-white'
             }`}
           >
@@ -272,9 +272,9 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose, onS
           <button
             type="button"
             onClick={() => setMethod('sepa')}
-            className={`flex-1 py-2.5 text-xs font-extrabold rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer ${
+            className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-all flex items-center justify-center gap-2 cursor-pointer ${
               method === 'sepa'
-                ? 'bg-[#fcd535] text-black shadow-md'
+                ? 'bg-emerald-600 text-white shadow-xs'
                 : 'text-gray-400 hover:text-white'
             }`}
           >
@@ -284,14 +284,14 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose, onS
         </div>
 
         {successMsg && (
-          <div className="mb-5 p-4 rounded-2xl bg-emerald-950/60 border border-emerald-800 text-emerald-300 text-xs font-semibold flex items-center gap-2.5">
+          <div className="mb-5 p-4 rounded-xl bg-emerald-950/60 border border-emerald-800 text-emerald-300 text-xs font-semibold flex items-center gap-2.5">
             <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
             <span>{successMsg}</span>
           </div>
         )}
 
         {errorMsg && (
-          <div className="mb-5 p-3.5 rounded-2xl bg-red-950/60 border border-red-800 text-red-300 text-xs font-semibold">
+          <div className="mb-5 p-3.5 rounded-xl bg-red-950/60 border border-red-800 text-red-300 text-xs font-semibold">
             {errorMsg}
           </div>
         )}
@@ -303,27 +303,27 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose, onS
             <div>
               <div className="flex items-center justify-between mb-2.5">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-6 h-6 rounded-full bg-[#fcd535] text-black font-extrabold text-xs flex items-center justify-center shadow-xs">
+                  <div className="w-5 h-5 rounded-full bg-emerald-600 text-white font-bold text-xs flex items-center justify-center shadow-xs">
                     1
                   </div>
-                  <h4 className="text-sm sm:text-base font-extrabold text-white">Select Coin</h4>
+                  <h4 className="text-sm sm:text-base font-bold text-white">Select Coin</h4>
                 </div>
                 <span className="text-[11px] text-gray-400 font-medium">12 Supported Blockchains</span>
               </div>
 
               {/* Coin Preview Bar showing authentic token profile logo */}
-              <div className="bg-[#242424] px-4 py-3 rounded-2xl mb-3 flex items-center justify-between border border-[#383838]">
+              <div className="bg-[#242424] px-4 py-3 rounded-xl mb-3 flex items-center justify-between border border-[#383838]">
                 <div className="flex items-center gap-3">
                   <TokenSymbolIcon symbol={selectedCoin} className="w-7 h-7 shadow-sm" />
                   <div className="flex flex-col">
-                    <span className="font-extrabold text-sm text-white tracking-wide">{selectedCoin}</span>
+                    <span className="font-bold text-sm text-white tracking-wide">{selectedCoin}</span>
                     <span className="text-[11px] text-gray-400 font-medium">
                       {coins.find(c => c.symbol === selectedCoin)?.name || selectedCoin}
                     </span>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-[11px] bg-emerald-500/15 text-emerald-400 px-2 py-0.5 rounded-full font-bold border border-emerald-500/30">
+                  <span className="text-[11px] bg-emerald-500/15 text-emerald-400 px-2 py-0.5 rounded-md font-semibold border border-emerald-500/30">
                     Active
                   </span>
                   <span className="text-xs text-gray-400">▼</span>
@@ -339,15 +339,15 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose, onS
                       key={c.symbol}
                       type="button"
                       onClick={() => handleCoinSelect(c.symbol)}
-                      className={`p-2 rounded-xl transition-all border flex flex-col items-center justify-center gap-1.5 cursor-pointer group ${
+                      className={`p-2 rounded-lg transition-all border flex flex-col items-center justify-center gap-1.5 cursor-pointer group ${
                         isSelected
-                          ? 'bg-[#2f2f2f] text-[#fcd535] border-[#fcd535] shadow-md ring-1 ring-[#fcd535]/30'
-                          : 'bg-[#222222] text-gray-300 border-[#333333] hover:bg-[#2a2a2a] hover:border-gray-500 hover:text-white'
+                          ? 'bg-[#2b2b2b] text-emerald-400 border-emerald-500 shadow-xs'
+                          : 'bg-[#202020] text-gray-300 border-[#333333] hover:bg-[#282828] hover:border-gray-500 hover:text-white'
                       }`}
                     >
                       <TokenSymbolIcon 
                         symbol={c.symbol} 
-                        className={`w-6 h-6 transition-transform group-hover:scale-110 ${isSelected ? 'scale-105' : 'opacity-90'}`} 
+                        className={`w-6 h-6 transition-transform group-hover:scale-105 ${isSelected ? 'scale-105' : 'opacity-90'}`} 
                       />
                       <span className="text-[11px] font-bold leading-none">{c.symbol}</span>
                     </button>
@@ -360,10 +360,10 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose, onS
             <div className="relative">
               <div className="flex items-center justify-between mb-2.5">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-6 h-6 rounded-full bg-[#fcd535] text-black font-extrabold text-xs flex items-center justify-center shadow-xs">
+                  <div className="w-5 h-5 rounded-full bg-emerald-600 text-white font-bold text-xs flex items-center justify-center shadow-xs">
                     2
                   </div>
-                  <h4 className="text-sm sm:text-base font-extrabold text-white">Select Network</h4>
+                  <h4 className="text-sm sm:text-base font-bold text-white">Select Network</h4>
                 </div>
                 <span className="text-[11px] text-gray-400 font-medium">
                   {currentNetworks.length} {currentNetworks.length === 1 ? 'Network' : 'Networks'} Available
@@ -372,17 +372,17 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose, onS
 
               <div
                 onClick={() => setIsNetworkDropdownOpen(!isNetworkDropdownOpen)}
-                className="bg-[#242424] px-4 py-3 rounded-2xl mb-1.5 flex items-center justify-between border border-[#383838] cursor-pointer hover:border-gray-500 transition-colors shadow-xs"
+                className="bg-[#242424] px-4 py-2.5 rounded-xl mb-1.5 flex items-center justify-between border border-[#383838] cursor-pointer hover:border-gray-500 transition-colors shadow-xs"
               >
                 <div className="flex items-center gap-2.5">
                   <NetworkBadgeIcon networkName={selectedNetwork} className="w-5 h-5 shrink-0" />
-                  <span className="font-extrabold text-sm text-white">{selectedNetwork}</span>
+                  <span className="font-bold text-sm text-white">{selectedNetwork}</span>
                 </div>
                 <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${isNetworkDropdownOpen ? 'rotate-180' : ''}`} />
               </div>
 
               {isNetworkDropdownOpen && (
-                <div className="absolute top-full left-0 right-0 z-40 bg-[#222222] border border-[#444] rounded-2xl shadow-2xl py-1 mt-1 max-h-56 overflow-y-auto divide-y divide-[#333]">
+                <div className="absolute top-full left-0 right-0 z-40 bg-[#222222] border border-[#444] rounded-xl shadow-2xl py-1 mt-1 max-h-56 overflow-y-auto divide-y divide-[#333]">
                   {currentNetworks.map(net => {
                     const isSelected = selectedNetwork === net;
                     return (
@@ -394,15 +394,15 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose, onS
                           setIsNetworkDropdownOpen(false);
                           setIsQrGenerated(false);
                         }}
-                        className={`w-full text-left px-4 py-2.5 text-xs font-semibold flex items-center justify-between hover:bg-[#2f2f2f] transition-colors cursor-pointer ${
-                          isSelected ? 'text-[#fcd535] bg-[#2a2a2a]' : 'text-gray-200'
+                        className={`w-full text-left px-4 py-2 text-xs font-semibold flex items-center justify-between hover:bg-[#2f2f2f] transition-colors cursor-pointer ${
+                          isSelected ? 'text-emerald-400 bg-[#2a2a2a]' : 'text-gray-200'
                         }`}
                       >
                         <div className="flex items-center gap-2.5">
                           <NetworkBadgeIcon networkName={net} className="w-4 h-4 shrink-0" />
-                          <span className="font-bold">{net}</span>
+                          <span className="font-medium">{net}</span>
                         </div>
-                        {isSelected && <Check className="w-4 h-4 text-[#fcd535] shrink-0" />}
+                        {isSelected && <Check className="w-4 h-4 text-emerald-400 shrink-0" />}
                       </button>
                     );
                   })}
@@ -418,20 +418,20 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose, onS
             {/* Step 3: Address & QR Generation */}
             <div>
               <div className="flex items-center gap-2.5 mb-2.5">
-                <div className="w-6 h-6 rounded-full bg-[#fcd535] text-black font-extrabold text-xs flex items-center justify-center shadow-xs">
+                <div className="w-5 h-5 rounded-full bg-emerald-600 text-white font-bold text-xs flex items-center justify-center shadow-xs">
                   3
                 </div>
-                <h4 className="text-sm sm:text-base font-extrabold text-white">Deposit Address & QR</h4>
+                <h4 className="text-sm sm:text-base font-bold text-white">Deposit Address & QR</h4>
               </div>
 
               {!isQrGenerated ? (
                 <button
                   type="button"
                   onClick={() => setIsQrGenerated(true)}
-                  className="w-full bg-[#fcd535] hover:bg-[#e6c128] text-black font-black py-3.5 rounded-2xl shadow-md transition-all cursor-pointer text-xs sm:text-sm flex items-center justify-center gap-2"
+                  className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-3 rounded-xl shadow-xs transition-colors cursor-pointer text-xs sm:text-sm flex items-center justify-center gap-2"
                 >
                   <QrCode className="w-4 h-4" />
-                  <span>Click to Generate QR Code & Address</span>
+                  <span>Generate QR Code & Deposit Address</span>
                 </button>
               ) : (
                 <div className="space-y-4 bg-[#242424] p-4 sm:p-5 rounded-2xl border border-[#383838]">
@@ -501,7 +501,7 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose, onS
                         <NetworkBadgeIcon networkName={selectedNetwork} className="w-3.5 h-3.5" />
                         <span>{selectedCoin} Deposit Address ({selectedNetwork})</span>
                       </label>
-                      <span className="text-[10px] text-emerald-400 font-semibold">1 Confirmations Needed</span>
+                      <span className="text-[10px] text-emerald-400 font-semibold">1 Confirmation Required</span>
                     </div>
                     <div className="flex items-center gap-2 bg-[#1a1a1a] p-2.5 rounded-xl border border-[#333]">
                       <span className="font-mono text-xs text-white truncate flex-1 select-all font-semibold">
@@ -510,7 +510,7 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose, onS
                       <button
                         type="button"
                         onClick={handleCopy}
-                        className="px-3 py-1.5 bg-[#fcd535] text-black font-extrabold text-xs rounded-lg hover:bg-[#e6c128] transition-colors flex items-center gap-1 shrink-0 cursor-pointer shadow-xs"
+                        className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs rounded-lg transition-colors flex items-center gap-1 shrink-0 cursor-pointer shadow-xs"
                       >
                         {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
                         {copied ? 'Copied' : 'Copy'}
@@ -530,7 +530,7 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose, onS
                         step="1"
                         value={amount}
                         onChange={(e) => setAmount(Number(e.target.value))}
-                        className="w-full bg-[#1a1a1a] border border-[#333] rounded-xl px-3 py-2 text-xs font-bold text-white focus:outline-none focus:border-[#fcd535]"
+                        className="w-full bg-[#1a1a1a] border border-[#333] rounded-xl px-3 py-2 text-xs font-bold text-white focus:outline-none focus:border-emerald-500"
                       />
                     </div>
                     <div>
@@ -542,7 +542,7 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose, onS
                         placeholder="0x... or transaction id"
                         value={txHashInput}
                         onChange={(e) => setTxHashInput(e.target.value)}
-                        className="w-full bg-[#1a1a1a] border border-[#333] rounded-xl px-3 py-2 text-xs font-medium text-white focus:outline-none focus:border-[#fcd535]"
+                        className="w-full bg-[#1a1a1a] border border-[#333] rounded-xl px-3 py-2 text-xs font-medium text-white focus:outline-none focus:border-emerald-500"
                       />
                     </div>
                   </div>
@@ -551,15 +551,15 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose, onS
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full bg-[#fcd535] hover:bg-[#e6c128] text-black font-black py-3 rounded-xl transition-all cursor-pointer text-xs sm:text-sm flex items-center justify-center gap-2 disabled:opacity-60 shadow-md"
+                    className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-3 rounded-xl transition-colors cursor-pointer text-xs sm:text-sm flex items-center justify-center gap-2 disabled:opacity-60 shadow-xs"
                   >
                     {isSubmitting ? (
                       <>
-                        <span className="w-3.5 h-3.5 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                        <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
                         <span>Submitting Deposit Request...</span>
                       </>
                     ) : (
-                      <span>I Have Transferred the Funds · Confirm Deposit</span>
+                      <span>Confirm Deposit Submission</span>
                     )}
                   </button>
                 </div>
@@ -583,9 +583,9 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose, onS
         {/* 2. SEPA BANK WIRE FLOW */}
         {method === 'sepa' && (
           <form onSubmit={handleDepositSubmit} className="space-y-5">
-            <div className="bg-[#242424] p-5 rounded-2xl border border-[#383838] space-y-4">
+            <div className="bg-[#242424] p-5 rounded-xl border border-[#383838] space-y-4">
               <div className="flex items-center gap-2 font-bold text-sm text-white">
-                <Building2 className="w-4 h-4 text-[#fcd535]" />
+                <Building2 className="w-4 h-4 text-emerald-400" />
                 <span>European Bank Escrow Account Details</span>
               </div>
               
@@ -609,7 +609,7 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose, onS
                         setCopied(true);
                         setTimeout(() => setCopied(false), 2000);
                       }}
-                      className="text-[#fcd535] hover:underline font-bold text-[11px] cursor-pointer"
+                      className="text-emerald-400 hover:underline font-bold text-[11px] cursor-pointer"
                     >
                       {copied ? 'Copied' : 'Copy IBAN'}
                     </button>
@@ -621,8 +621,8 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose, onS
                 </div>
                 <div>
                   <span className="text-gray-400 block text-[11px]">Mandatory Wire Transfer Concept / Reference</span>
-                  <div className="bg-[#1a1a1a] p-2 rounded-lg border border-[#333] mt-1 text-[#fcd535] font-mono font-bold">
-                    RENTAL-DEP-{user.email.split('@')[0].toUpperCase()}
+                  <div className="bg-[#1a1a1a] p-2 rounded-lg border border-[#333] mt-1 text-emerald-400 font-mono font-bold">
+                    BITFURY-DEP-{user.email.split('@')[0].toUpperCase()}
                   </div>
                 </div>
               </div>
@@ -638,14 +638,14 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose, onS
                 step="10"
                 value={amount}
                 onChange={(e) => setAmount(Number(e.target.value))}
-                className="w-full bg-[#242424] border border-[#383838] rounded-xl px-3.5 py-2.5 text-xs font-bold text-white focus:outline-none focus:border-[#fcd535]"
+                className="w-full bg-[#242424] border border-[#383838] rounded-xl px-3.5 py-2.5 text-xs font-bold text-white focus:outline-none focus:border-emerald-500"
               />
             </div>
 
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full bg-[#fcd535] hover:bg-[#e6c128] text-black font-extrabold py-3.5 rounded-2xl transition-all cursor-pointer text-xs sm:text-sm flex items-center justify-center gap-2 disabled:opacity-60 shadow-md"
+              className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-3 rounded-xl transition-colors cursor-pointer text-xs sm:text-sm flex items-center justify-center gap-2 disabled:opacity-60 shadow-xs"
             >
               {isSubmitting ? 'Registering SEPA Deposit...' : 'Confirm SEPA Transfer Request'}
             </button>

@@ -68,17 +68,18 @@ export const PropertyFilters: React.FC<PropertyFiltersProps> = ({
 
   const durations = [
     { label: 'All Durations', value: 'all' },
-    { label: '≤ 36 Months', value: '36' },
-    { label: '37–48 Months', value: '48' },
-    { label: '60+ Months', value: '60' },
+    { label: 'Short Term (3–12 Mo)', value: '12' },
+    { label: 'Medium Term (13–24 Mo)', value: '24' },
+    { label: 'Standard Term (25–36 Mo)', value: '36' },
+    { label: 'Long Term (37–48 Mo)', value: '48' },
   ];
 
   const minInvestments = [
-    { label: 'Min €1,000+ (All)', value: 1000 },
-    { label: 'Min €1,500+', value: 1500 },
+    { label: 'All (from €750)', value: 750 },
+    { label: 'Min €1,000+', value: 1000 },
     { label: 'Min €2,000+', value: 2000 },
-    { label: 'Min €2,500+', value: 2500 },
     { label: 'Min €5,000+', value: 5000 },
+    { label: 'Min €10,000', value: 10000 },
   ];
 
   const isFiltered =
@@ -86,7 +87,7 @@ export const PropertyFilters: React.FC<PropertyFiltersProps> = ({
     selectedType !== 'all' ||
     selectedDuration !== 'all' ||
     selectedStatus !== 'all' ||
-    minInvestmentFilter > 1000;
+    minInvestmentFilter > 750;
 
   return (
     <div className="bg-white p-5 sm:p-6 rounded-3xl border border-[#E3E8E3] shadow-sm mb-8 space-y-5">
@@ -96,7 +97,7 @@ export const PropertyFilters: React.FC<PropertyFiltersProps> = ({
           <SlidersHorizontal className="w-4 h-4 text-[#27845D]" />
           <span className="text-sm font-bold text-[#18211F]">Marketplace Filters</span>
           <span className="text-xs text-[#69736F] bg-[#EEF1EC] px-2 py-0.5 rounded-full font-semibold">
-            Minimum €1,000 threshold active
+            Minimum €750 – €10,000 Verified
           </span>
         </div>
 

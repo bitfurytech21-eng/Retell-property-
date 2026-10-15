@@ -8,50 +8,47 @@ interface FinalCTAProps {
 
 export const FinalCTA: React.FC<FinalCTAProps> = ({ onRegister, onExplore }) => {
   return (
-    <section className="relative overflow-hidden py-20 bg-[#031914] text-white border-t border-emerald-900/50">
-      {/* Background Ambient Glows */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-[#00FF9D]/15 rounded-full blur-[140px] pointer-events-none" />
-
+    <section className="relative overflow-hidden py-16 bg-[#071714] text-white border-t border-emerald-900/40">
       <div className="container max-w-[1240px] mx-auto px-4 relative z-10">
-        <div className="max-w-3xl mx-auto text-center space-y-6">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-950 border border-emerald-500/40 text-[#00FF9D] text-xs font-bold shadow-lg">
-            <ShieldCheck className="w-4 h-4 text-[#00FF9D]" />
-            <span>Regulated European Participatory Investing</span>
+        <div className="max-w-3xl mx-auto text-center space-y-5">
+          <div className="inline-flex items-center gap-2 text-xs font-semibold text-emerald-400 tracking-wide uppercase">
+            <ShieldCheck className="w-4 h-4 text-emerald-400" />
+            <span>Regulated European SPV Custody · Transparent Participation</span>
           </div>
 
-          <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight leading-tight">
-            Start Earning Monthly Real Estate <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00FF9D] to-teal-300">Cashflow Today</span>
+          <h2 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
+            Build a Diversified Real Estate Portfolio with Monthly Cashflow
           </h2>
 
-          <p className="text-base sm:text-lg text-emerald-100/90 max-w-xl mx-auto font-medium">
-            Join over 12,400+ investors building passive income with tokenized European properties. Setup takes under 2 minutes.
+          <p className="text-sm sm:text-base text-slate-300 max-w-xl mx-auto font-normal">
+            Review vetted European residential and commercial offerings, examine independent RICS appraisals, and access automated monthly rental settlements.
           </p>
 
-          <div className="flex flex-wrap items-center justify-center gap-4 pt-3">
+          <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
             <button
               onClick={onRegister}
-              className="px-8 py-4 rounded-2xl bg-gradient-to-r from-[#00E676] to-[#00C853] hover:from-[#00FF9D] hover:to-[#00E676] text-[#031914] font-extrabold text-sm shadow-xl shadow-[#00E676]/25 hover:shadow-[#00E676]/40 transition-all cursor-pointer flex items-center gap-2"
+              className="px-6 py-3 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm transition-colors cursor-pointer shadow-sm flex items-center gap-2"
             >
-              <span>Create Free Account</span>
+              <span>Create Investor Account</span>
               <ArrowRight className="w-4 h-4" />
             </button>
             <button
               onClick={onExplore}
-              className="px-7 py-4 rounded-2xl bg-emerald-950/80 hover:bg-emerald-900/80 border border-emerald-500/40 text-white font-bold text-sm backdrop-blur-md transition-all cursor-pointer"
+              className="px-5 py-3 rounded-lg bg-slate-900/80 hover:bg-slate-800 border border-slate-700 text-slate-200 font-medium text-sm transition-colors cursor-pointer"
             >
-              View Active Opportunities
+              View Active Offerings
             </button>
           </div>
 
-          <div className="flex flex-wrap items-center justify-center gap-6 text-xs font-semibold text-emerald-200/90 pt-6 border-t border-emerald-900/60">
+          <div className="flex flex-wrap items-center justify-center gap-6 text-xs text-slate-400 pt-6 border-t border-emerald-900/50">
             <span className="flex items-center gap-1.5">
-              <Check className="w-4 h-4 text-[#00FF9D]" /> Minimum Startup €1,000
+              <Check className="w-4 h-4 text-emerald-400" /> Minimum Investment from €750
             </span>
             <span className="flex items-center gap-1.5">
-              <Check className="w-4 h-4 text-[#00FF9D]" /> Institutional-Grade SPV Security
+              <Check className="w-4 h-4 text-emerald-400" /> Ring-Fenced SPV Legal Custody
             </span>
             <span className="flex items-center gap-1.5">
-              <Check className="w-4 h-4 text-[#00FF9D]" /> Automated Monthly Dividends
+              <Check className="w-4 h-4 text-emerald-400" /> Direct Monthly Distributions
             </span>
           </div>
         </div>

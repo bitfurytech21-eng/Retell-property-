@@ -28,7 +28,6 @@ export const WithdrawalModal: React.FC<WithdrawalModalProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [demoVerifying, setDemoVerifying] = useState<boolean>(false);
 
   if (!isOpen || !user) return null;
 
@@ -40,19 +39,6 @@ export const WithdrawalModal: React.FC<WithdrawalModalProps> = ({
     ETH: ['Ethereum (ERC20)', 'Arbitrum One', 'Optimism', 'Base'],
     BTC: ['Bitcoin Native SegWit', 'BNB Smart Chain (BEP20)'],
     SOL: ['Solana SPL']
-  };
-
-  const handleInstantDemoVerify = () => {
-    setDemoVerifying(true);
-    try {
-      ledger.updateKYCStatus(user.id, 'verified');
-      refreshUser();
-      setError(null);
-    } catch (e: any) {
-      setError(e.message || 'Verification failed');
-    } finally {
-      setDemoVerifying(false);
-    }
   };
 
   const handleWithdrawalSubmit = async (e: React.FormEvent) => {
@@ -151,31 +137,21 @@ export const WithdrawalModal: React.FC<WithdrawalModalProps> = ({
             <div className="pt-2 flex flex-col gap-2.5">
               <button
                 type="button"
-                onClick={handleInstantDemoVerify}
-                disabled={demoVerifying}
-                className="btn btn-primary text-xs font-bold w-full py-3 bg-[#27845D] hover:bg-[#1f6b4a] flex items-center justify-center gap-2 cursor-pointer shadow-sm"
-              >
-                <Sparkles className="w-4 h-4 text-[#B7E36A]" />
-                {demoVerifying ? 'Verifying Account...' : '⚡ Instant Verify KYC (Demo & Testing)'}
-              </button>
-
-              <button
-                type="button"
                 onClick={() => {
                   onClose();
                   onNavigateProfile();
                 }}
-                className="btn btn-secondary text-xs font-semibold w-full cursor-pointer"
+                className="btn btn-primary text-xs font-semibold w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white flex items-center justify-center gap-2 cursor-pointer shadow-xs"
               >
-                Upload ID Documents in Profile
+                <span>Submit Verification Documents in Profile</span>
               </button>
 
               <button 
                 type="button" 
                 onClick={onClose} 
-                className="text-xs font-medium dash-muted hover:opacity-80 cursor-pointer pt-1"
+                className="btn btn-secondary text-xs font-medium w-full cursor-pointer"
               >
-                Cancel
+                Return to Dashboard
               </button>
             </div>
           </div>

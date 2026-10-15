@@ -39,14 +39,14 @@ export const Benefits: React.FC = () => {
     <section className="section bg-white">
       <div className="container">
         <div className="section-heading">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#F6F7F4] border border-[#E3E8E3] text-xs font-semibold text-[#182D2A] mb-3">
-            <span>The Rental-log Advantage</span>
+          <div className="text-xs font-semibold text-emerald-800 tracking-wider uppercase mb-2">
+            BitfuryTech Institutional Governance · Asset Protections
           </div>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-[#18211F] mb-4">
-            Built for Modern, Discerning Real Estate Investors
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#18211F] mb-3">
+            Institutional Real Estate Fundamentals with Verified Custody
           </h2>
-          <p className="text-base text-[#69736F]">
-            Combining institutional real estate fundamentals with transparent blockchain ledger technology.
+          <p className="text-sm sm:text-base text-[#69736F] max-w-2xl mx-auto">
+            Every property offering adheres to rigorous European legal structuring, independent notarial recording, and ring-fenced balance sheets.
           </p>
         </div>
 

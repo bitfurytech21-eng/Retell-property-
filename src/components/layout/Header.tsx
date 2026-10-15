@@ -25,18 +25,18 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, onNavigate }) => {
         {/* Brand Zone */}
         <button
           onClick={() => handleNavClick('/')}
-          className="brand hover:opacity-90 transition-opacity flex items-center gap-2.5 text-left"
+          className="brand hover:opacity-90 transition-opacity flex items-center gap-2.5 text-left cursor-pointer"
           style={{ background: 'none', border: 'none', padding: 0 }}
         >
-          <div className="w-10 h-10 rounded-xl bg-[#182D2A] flex items-center justify-center text-[#B7E36A] shadow-sm">
+          <div className="w-9 h-9 rounded-lg bg-[#0F172A] flex items-center justify-center text-[#10B981] shadow-xs border border-slate-700/60">
             <Building2 className="w-5 h-5" />
           </div>
           <div className="flex flex-col">
-            <span className="text-xl font-bold tracking-tight text-[#182D2A] leading-none">
-              Rental<span className="text-[#27845D]">·log</span>
+            <span className="text-lg font-black tracking-tight text-[#0F172A] leading-none">
+              Bitfury<span className="text-[#059669]">Tech</span>
             </span>
-            <span className="text-[10px] uppercase tracking-wider text-[#69736F] font-semibold mt-0.5">
-              Real Estate Tokens
+            <span className="text-[10px] uppercase tracking-wider text-[#64748B] font-bold mt-0.5">
+              Capital & Asset Management
             </span>
           </div>
         </button>

@@ -15,17 +15,17 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
           {/* Brand & About */}
           <div className="space-y-4">
             <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-[#24423C] flex items-center justify-center text-[#B7E36A]">
+              <div className="w-9 h-9 rounded-lg bg-[#0F172A] flex items-center justify-center text-[#10B981] border border-slate-700/60">
                 <Building2 className="w-5 h-5" />
               </div>
-              <span className="text-xl font-bold tracking-tight text-white">
-                Rental<span className="text-[#B7E36A]">·log</span>
+              <span className="text-xl font-black tracking-tight text-white">
+                Bitfury<span className="text-[#10B981]">Tech</span>
               </span>
             </div>
             <p className="text-sm text-[#A0A8A5] leading-relaxed">
-              Institutional-grade fractional real estate investing. Own tokenized European and global properties with monthly rental dividends and transparent asset security.
+              Institutional-grade tokenized real estate and digital infrastructure. Ring-fenced SPV custody, independent RICS valuations, and automated monthly distributions.
             </p>
-            <div className="flex items-center gap-2 text-xs text-[#B7E36A] font-semibold pt-1">
+            <div className="flex items-center gap-2 text-xs text-[#10B981] font-semibold pt-1">
               <ShieldCheck className="w-4 h-4" />
               <span>EU Compliant SPV Asset Ring-Fencing</span>
             </div>
@@ -97,13 +97,13 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
             Statutory Investor Risk Notice & Regulatory Disclosure:
           </p>
           <p>
-            Participation in fractional real estate assets carries substantial risks, including the potential risk of total or partial capital loss, real estate market illiquidity, and tenancy vacancy risks. Past performance and projected returns displayed on this platform are estimates based on independent third-party appraisals and conservative financial modeling, not guarantees of future performance. Rental-log operates through registered Special Purpose Vehicles (SPVs) under applicable Spanish and European commercial legislation. Nothing on this platform should be construed as financial or tax advice. Investors should carefully review the legal offering documentation and risk disclosures before committing funds.
+            Participation in fractional real estate assets carries substantial risks, including the potential risk of total or partial capital loss, real estate market illiquidity, and tenancy vacancy risks. Past performance and projected returns displayed on this platform are estimates based on independent third-party appraisals and conservative financial modeling, not guarantees of future performance. BitfuryTech operates through registered Special Purpose Vehicles (SPVs) under applicable European commercial legislation. Nothing on this platform should be construed as financial or tax advice. Investors should carefully review the legal offering documentation and risk disclosures before committing funds.
           </p>
         </div>
 
         {/* Copyright */}
         <div className="pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-[#828D89] gap-4">
-          <p>© {new Date().getFullYear()} Rental-log Technologies SL. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} BitfuryTech Capital S.L. All rights reserved.</p>
           <div className="flex items-center gap-6">
             <button onClick={() => onNavigate('/privacy')} className="hover:text-white">Privacy Policy</button>
             <button onClick={() => onNavigate('/terms')} className="hover:text-white">Terms of Use</button>
