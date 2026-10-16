@@ -15,7 +15,6 @@ import {
   ChevronRight,
   Maximize2,
   X,
-  Sparkles,
   Bed,
   Bath,
   Check,
@@ -207,6 +206,13 @@ export const PropertyDetailView: React.FC<PropertyDetailViewProps> = ({
                 alt={property.title}
                 className="w-full h-full object-cover cursor-pointer transition-transform duration-500 group-hover:scale-102"
                 referrerPolicy="no-referrer"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  if (!target.dataset.fallback) {
+                    target.dataset.fallback = 'true';
+                    target.src = '/assets/images/hero_real_estate_1791998371047.jpg';
+                  }
+                }}
                 onClick={() => setLightboxOpen(true)}
               />
               
@@ -275,6 +281,13 @@ export const PropertyDetailView: React.FC<PropertyDetailViewProps> = ({
                       alt={`Thumb ${idx + 1}`}
                       className="w-full h-full object-cover"
                       referrerPolicy="no-referrer"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        if (!target.dataset.fallback) {
+                          target.dataset.fallback = 'true';
+                          target.src = '/assets/images/hero_real_estate_1791998371047.jpg';
+                        }
+                      }}
                     />
                     <span className="absolute bottom-1 right-1 text-[9px] bg-black/70 text-white font-bold px-1 rounded">
                       {idx + 1}
@@ -470,7 +483,7 @@ export const PropertyDetailView: React.FC<PropertyDetailViewProps> = ({
                 {property.amenities && property.amenities.length > 0 && (
                   <div>
                     <h4 className="text-sm font-bold text-[#18211F] uppercase tracking-wider mb-3 flex items-center gap-2">
-                      <Sparkles className="w-4 h-4 text-[#27845D]" />
+                      <CheckCircle2 className="w-4 h-4 text-[#27845D]" />
                       <span>Key Amenities & Specifications</span>
                     </h4>
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">

@@ -60,7 +60,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     if (!isConfigured) {
       // If Supabase credentials are not yet configured in environment variables,
-      // check if there is an existing local demo user or fallback to demo investor
+      // restore session only if a legitimate authenticated user was previously saved
       const storedId = localStorage.getItem(CURRENT_USER_KEY);
       if (storedId) {
         const found = ledger.getUserById(storedId);
@@ -68,20 +68,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setUser(found);
           setToken('sess_' + found.id);
         } else {
-          const demo = ledger.getUserByEmail('investor@kretz.com');
-          if (demo) {
-            setUser(demo);
-            setToken('sess_' + demo.id);
-            localStorage.setItem(CURRENT_USER_KEY, demo.id);
-          }
+          setUser(null);
+          setToken(null);
+          localStorage.removeItem(CURRENT_USER_KEY);
         }
       } else {
-        const demo = ledger.getUserByEmail('investor@kretz.com');
-        if (demo) {
-          setUser(demo);
-          setToken('sess_' + demo.id);
-          localStorage.setItem(CURRENT_USER_KEY, demo.id);
-        }
+        setUser(null);
+        setToken(null);
       }
       setIsLoading(false);
       return;

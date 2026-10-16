@@ -3,6 +3,7 @@ import { User, KYCStatus, UserRole, AccountType, getAccountTypeLabel } from '../
 import { Property } from '../types/property';
 import { Investment } from '../types/investment';
 import { INITIAL_PROPERTIES } from '../data/properties';
+import { MembershipTier, UserMembership, MembershipApplication, MembershipTierId, MembershipBillingCycle, INITIAL_MEMBERSHIP_TIERS } from '../types/membership';
 
 export interface AuditLog {
   id: string;
@@ -411,7 +412,7 @@ const DEFAULT_PAYMENT_CONFIG: PaymentConfig = {
 };
 
 // In-Memory & LocalStorage Persistent Ledger
-const STORAGE_PREFIX = 'rentallog_v2_';
+const STORAGE_PREFIX = 'rentallog_v3_';
 
 function getStorage<T>(key: string, defaultValue: T): T {
   if (typeof window === 'undefined') return defaultValue;
@@ -445,157 +446,26 @@ function generateTxHash(reference: string, amount: number, timestamp: string): s
   return '0x' + Math.abs(hash).toString(16).padStart(8, '0') + Math.random().toString(36).substring(2, 10);
 }
 
-// Initial Admin and Demo Investor
+// Authentic Platform Administrator (No fake investors or mock balances)
 const DEFAULT_USERS: User[] = [
   {
     id: 'usr-admin-1',
     email: 'admin@kretz.com',
     fullName: 'Platform Administrator',
     role: 'admin',
+    accountType: 'admin',
     kycStatus: 'verified',
-    walletBalance: 250000.00,
+    walletBalance: 0,
     investedBalance: 0,
     totalEarned: 0,
     createdAt: '2026-01-01T00:00:00Z',
     country: 'Spain',
     cryptoDepositAddress: '0x71C...B3fA (Platform Treasury)'
-  },
-  {
-    id: 'usr-investor-demo',
-    email: 'investor@kretz.com',
-    fullName: 'David Vance',
-    role: 'investor',
-    kycStatus: 'verified',
-    walletBalance: 2450.00,
-    investedBalance: 1200.00,
-    totalEarned: 136.80,
-    createdAt: '2026-01-15T12:00:00Z',
-    phoneNumber: '+34 612 345 678',
-    country: 'Spain',
-    cryptoDepositAddress: '0x39a9c29801869e94F2B85295c5Af646A9894A0b2'
   }
 ];
 
-const DEFAULT_INVESTMENTS: Investment[] = [
-  {
-    id: 'inv-101',
-    userId: 'usr-investor-demo',
-    propertyId: 'prop-kretz-kp1-102',
-    propertyTitle: 'ROQUEBRUNE-CAP-MARTIN - Ramingao - Golf Bleu',
-    propertyLocation: 'Roquebrune Cap Martin, Alpes-Maritimes',
-    propertyImage: 'https://files.kretzrealestate.com/5534a64054a86115d0d81384cb413d7c.jpg',
-    tokensPurchased: 10,
-    tokenPrice: 100,
-    totalAmountInvested: 1000,
-    purchasedAt: '2026-02-14T14:32:00Z',
-    estimatedAnnualYield: 7.5,
-    projectedMonthlyIncome: 6.25,
-    totalDividendsReceived: 62.50,
-    status: 'active',
-    transactionHash: '0x5a18b9c2409f872110c4d812',
-    certificateId: 'CERT-KTZ-102'
-  },
-  {
-    id: 'inv-102',
-    userId: 'usr-investor-demo',
-    propertyId: 'prop-kretz-kp1-117',
-    propertyTitle: 'Reception apartment',
-    propertyLocation: 'Paris, Paris',
-    propertyImage: 'https://files.kretzrealestate.com/6ad7ec3c06057549d91484987949c8f.jpg',
-    tokensPurchased: 10,
-    tokenPrice: 100,
-    totalAmountInvested: 1000,
-    purchasedAt: '2026-01-28T09:15:00Z',
-    estimatedAnnualYield: 11.2,
-    projectedMonthlyIncome: 9.33,
-    totalDividendsReceived: 93.30,
-    status: 'active',
-    transactionHash: '0x992cf014bca883921901a182',
-    certificateId: 'CERT-KTZ-117'
-  }
-];
-
-const DEFAULT_TRANSACTIONS: Transaction[] = [
-  {
-    id: 'tx-201',
-    userId: 'usr-investor-demo',
-    type: 'deposit',
-    amount: 3000,
-    currency: 'EUR',
-    status: 'completed',
-    description: 'SEPA Instant Transfer from BNP Paribas (FR76...)',
-    reference: 'DEP-SEPA-94821',
-    createdAt: '2026-01-20T10:00:00Z',
-    paymentMethod: 'SEPA Bank Transfer',
-    balanceAfter: 3000,
-    txHash: 'FR76-3000-4018-4502-0005-1829'
-  },
-  {
-    id: 'tx-202',
-    userId: 'usr-investor-demo',
-    type: 'investment',
-    amount: 1000,
-    currency: 'EUR',
-    status: 'completed',
-    description: 'Acquisition of 10 KTZ-117 Tokens in Reception Apartment Paris',
-    reference: 'INV-KTZ-117',
-    createdAt: '2026-01-28T09:15:00Z',
-    paymentMethod: 'Internal Balance',
-    balanceAfter: 2000,
-    txHash: '0x992cf014bca883921901a182',
-    metadata: {
-      propertyId: 'prop-kretz-kp1-117',
-      propertyTitle: 'Reception apartment',
-      tokens: 10
-    }
-  },
-  {
-    id: 'tx-203',
-    userId: 'usr-investor-demo',
-    type: 'investment',
-    amount: 1000,
-    currency: 'EUR',
-    status: 'completed',
-    description: 'Acquisition of 10 KTZ-102 Tokens in Roquebrune Cap Martin Luxury Villa',
-    reference: 'INV-KTZ-102',
-    createdAt: '2026-02-14T14:32:00Z',
-    paymentMethod: 'Internal Balance',
-    balanceAfter: 1000,
-    txHash: '0x5a18b9c2409f872110c4d812',
-    metadata: {
-      propertyId: 'prop-kretz-kp1-102',
-      propertyTitle: 'ROQUEBRUNE-CAP-MARTIN - Ramingao - Golf Bleu',
-      tokens: 10
-    }
-  },
-  {
-    id: 'tx-204',
-    userId: 'usr-investor-demo',
-    type: 'deposit',
-    amount: 1500,
-    currency: 'USDT',
-    status: 'completed',
-    description: 'Polygon Network USDT Deposit',
-    reference: 'DEP-CRYPTO-4182',
-    createdAt: '2026-02-25T16:45:00Z',
-    paymentMethod: 'Crypto USDT (Polygon)',
-    balanceAfter: 2500,
-    txHash: '0x4f82c18d37aa9081bb59218d6a8f114c0001891b'
-  },
-  {
-    id: 'tx-205',
-    userId: 'usr-investor-demo',
-    type: 'distribution',
-    amount: 50,
-    currency: 'EUR',
-    status: 'completed',
-    description: 'Monthly Net Rental Dividend Distribution for February 2026',
-    reference: 'DIST-2026-02',
-    createdAt: '2026-03-01T08:00:00Z',
-    paymentMethod: 'Rental Distribution',
-    balanceAfter: 2550
-  }
-];
+const DEFAULT_INVESTMENTS: Investment[] = [];
+const DEFAULT_TRANSACTIONS: Transaction[] = [];
 
 class LedgerService {
   private users: User[];
@@ -606,6 +476,9 @@ class LedgerService {
   private notifications: Notification[];
   private paymentConfig: PaymentConfig;
   private isProcessingLock: boolean = false;
+  private membershipTiers: MembershipTier[];
+  private memberships: UserMembership[];
+  private membershipApplications: MembershipApplication[];
 
   constructor() {
     this.users = getStorage('users', DEFAULT_USERS);
@@ -616,27 +489,20 @@ class LedgerService {
     this.investments = getStorage('investments', DEFAULT_INVESTMENTS);
     this.transactions = getStorage('transactions', DEFAULT_TRANSACTIONS);
     this.paymentConfig = getStorage('paymentConfig', DEFAULT_PAYMENT_CONFIG);
+    this.membershipTiers = getStorage('membershipTiers', INITIAL_MEMBERSHIP_TIERS);
+    this.memberships = getStorage('memberships', []);
+    this.membershipApplications = getStorage('membershipApplications', []);
     this.auditLogs = getStorage('auditLogs', [
       {
         id: 'audit-1',
         adminId: 'usr-admin-1',
         adminEmail: 'admin@kretz.com',
         action: 'SYSTEM_INITIALIZATION',
-        details: 'Auditable double-entry ledger initialized with strict balance protections.',
+        details: 'Double-entry ledger initialized for production custody.',
         timestamp: '2026-01-01T00:00:00Z'
       }
     ]);
-    this.notifications = getStorage('notifications', [
-      {
-        id: 'notif-1',
-        userId: 'usr-investor-demo',
-        title: 'Monthly Distribution Credited',
-        message: 'Your €50.00 February rental dividend has been deposited to your available cash balance.',
-        type: 'financial',
-        read: false,
-        createdAt: '2026-03-01T08:00:00Z'
-      }
-    ]);
+    this.notifications = getStorage('notifications', []);
   }
 
   private saveState() {
@@ -647,6 +513,9 @@ class LedgerService {
     setStorage('auditLogs', this.auditLogs);
     setStorage('notifications', this.notifications);
     setStorage('paymentConfig', this.paymentConfig);
+    setStorage('membershipTiers', this.membershipTiers);
+    setStorage('memberships', this.memberships);
+    setStorage('membershipApplications', this.membershipApplications);
   }
 
   public getPaymentConfig(): PaymentConfig {
@@ -1235,6 +1104,207 @@ class LedgerService {
       }
     });
     if (changed) {
+      this.saveState();
+    }
+  }
+
+  // ===================== KRETZ MEMBERSHIP CLUB METHODS =====================
+
+  public getMembershipTiers(): MembershipTier[] {
+    return JSON.parse(JSON.stringify(this.membershipTiers));
+  }
+
+  public updateMembershipTierConfig(updatedTier: MembershipTier, adminEmail: string = 'admin@kretz.com'): void {
+    const idx = this.membershipTiers.findIndex(t => t.id === updatedTier.id);
+    if (idx !== -1) {
+      this.membershipTiers[idx] = { ...updatedTier };
+      this.logAudit('usr-admin-1', adminEmail, 'MEMBERSHIP_TIER_CONFIG_UPDATED', `Updated configuration for tier: ${updatedTier.name}`);
+      this.saveState();
+    }
+  }
+
+  public getMemberships(): UserMembership[] {
+    return JSON.parse(JSON.stringify(this.memberships));
+  }
+
+  public getUserMembership(userId: string): UserMembership | null {
+    const mem = this.memberships.find(m => m.userId === userId && m.status !== 'cancelled');
+    return mem ? JSON.parse(JSON.stringify(mem)) : null;
+  }
+
+  public subscribeMembership(params: {
+    userId: string;
+    userEmail: string;
+    userName: string;
+    tierId: MembershipTierId;
+    billingCycle: MembershipBillingCycle;
+    paymentMethod: 'wallet_balance' | 'bank_wire' | 'credit_card' | 'complimentary_invitation';
+    specialRequests?: string;
+    preferredRegion?: string;
+  }): UserMembership {
+    const tier = this.membershipTiers.find(t => t.id === params.tierId) || this.membershipTiers[0];
+    const fee = params.billingCycle === 'annual' ? tier.priceAnnual : tier.priceMonthly;
+
+    // Check if user pays with wallet balance
+    const user = this.users.find(u => u.id === params.userId);
+    if (params.paymentMethod === 'wallet_balance') {
+      if (!user || user.walletBalance < fee) {
+        throw new Error(`Insufficient wallet balance (€${user?.walletBalance.toFixed(2) || '0.00'}). Required: €${fee.toFixed(2)}`);
+      }
+      user.walletBalance -= fee;
+
+      // Record transaction
+      const txId = 'tx-mem-' + Math.random().toString(36).substring(2, 9);
+      this.transactions.unshift({
+        id: txId,
+        userId: params.userId,
+        type: 'withdrawal',
+        amount: fee,
+        currency: 'EUR',
+        status: 'completed',
+        description: `Kretz Club ${tier.name} (${params.billingCycle}) Membership Dues`,
+        reference: `MEM-${tier.id.toUpperCase()}-${Math.floor(1000 + Math.random() * 9000)}`,
+        createdAt: new Date().toISOString(),
+        paymentMethod: 'Internal Balance',
+        balanceAfter: user.walletBalance,
+        txHash: '0x' + Math.random().toString(36).substring(2, 12)
+      });
+    }
+
+    const memberNumber = `KRTZ-ESP-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
+    const now = new Date();
+    const renewal = new Date(now);
+    if (params.billingCycle === 'annual') {
+      renewal.setFullYear(renewal.getFullYear() + 1);
+    } else {
+      renewal.setMonth(renewal.getMonth() + 1);
+    }
+
+    // Remove or cancel existing membership for this user if active
+    this.memberships = this.memberships.filter(m => m.userId !== params.userId);
+
+    const newMembership: UserMembership = {
+      id: 'mem-' + Math.random().toString(36).substring(2, 9),
+      userId: params.userId,
+      userEmail: params.userEmail,
+      userName: params.userName,
+      tierId: tier.id,
+      tierName: tier.name,
+      status: 'active',
+      billingCycle: params.billingCycle,
+      feePaid: fee,
+      currency: 'EUR',
+      memberNumber,
+      joinedDate: now.toISOString(),
+      renewalDate: renewal.toISOString(),
+      autoRenew: true,
+      paymentMethod: params.paymentMethod,
+      specialRequests: params.specialRequests,
+      preferredRegion: params.preferredRegion || 'Spain & International',
+      digitalCardIssued: true,
+    };
+
+    this.memberships.unshift(newMembership);
+
+    this.createNotification(
+      params.userId,
+      `Welcome to Kretz Club — ${tier.name}`,
+      `Your digital membership card #${memberNumber} has been issued. You now have full access to private concierge and off-market dossiers.`,
+      'success'
+    );
+
+    this.logAudit('usr-admin-1', 'system@kretz.com', 'MEMBERSHIP_SUBSCRIBED', `User ${params.userEmail} subscribed to ${tier.name} (${params.billingCycle})`);
+    this.saveState();
+    return newMembership;
+  }
+
+  public cancelMembership(membershipId: string, userId: string): void {
+    const mem = this.memberships.find(m => m.id === membershipId);
+    if (mem && (mem.userId === userId || userId === 'usr-admin-1')) {
+      mem.status = 'cancelled';
+      mem.autoRenew = false;
+      this.createNotification(
+        mem.userId,
+        'Membership Auto-Renewal Cancelled',
+        `Your ${mem.tierName} membership auto-renewal has been cancelled. Privileges remain active until ${new Date(mem.renewalDate).toLocaleDateString()}.`,
+        'info'
+      );
+      this.saveState();
+    }
+  }
+
+  public reactivateMembership(membershipId: string): void {
+    const mem = this.memberships.find(m => m.id === membershipId);
+    if (mem) {
+      mem.status = 'active';
+      mem.autoRenew = true;
+      this.saveState();
+    }
+  }
+
+  public adminUpdateUserMembership(membershipId: string, updates: Partial<UserMembership>, adminEmail: string = 'admin@kretz.com'): void {
+    const mem = this.memberships.find(m => m.id === membershipId);
+    if (mem) {
+      Object.assign(mem, updates);
+      this.logAudit('usr-admin-1', adminEmail, 'MEMBERSHIP_ADMIN_OVERRIDE', `Updated membership ${mem.memberNumber} for ${mem.userEmail}: ${JSON.stringify(updates)}`);
+      this.saveState();
+    }
+  }
+
+  public getMembershipApplications(): MembershipApplication[] {
+    return JSON.parse(JSON.stringify(this.membershipApplications));
+  }
+
+  public submitMembershipApplication(app: Omit<MembershipApplication, 'id' | 'submittedAt' | 'status'>): MembershipApplication {
+    const newApp: MembershipApplication = {
+      ...app,
+      id: 'app-' + Math.random().toString(36).substring(2, 9),
+      submittedAt: new Date().toISOString(),
+      status: 'pending'
+    };
+    this.membershipApplications.unshift(newApp);
+    this.saveState();
+    return newApp;
+  }
+
+  public reviewMembershipApplication(id: string, status: 'approved' | 'rejected', adminNotes?: string, adminEmail: string = 'admin@kretz.com'): void {
+    const app = this.membershipApplications.find(a => a.id === id);
+    if (app) {
+      app.status = status;
+      app.reviewedAt = new Date().toISOString();
+      if (adminNotes) app.adminNotes = adminNotes;
+
+      // If approved, create complimentary or pending active membership
+      if (status === 'approved') {
+        const tier = this.membershipTiers.find(t => t.id === app.tierId) || this.membershipTiers[0];
+        const memberNumber = `KRTZ-ESP-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
+        const now = new Date();
+        const renewal = new Date(now);
+        renewal.setFullYear(renewal.getFullYear() + 1);
+
+        this.memberships.unshift({
+          id: 'mem-' + Math.random().toString(36).substring(2, 9),
+          userId: 'usr-app-' + app.id,
+          userEmail: app.email,
+          userName: app.fullName,
+          tierId: tier.id,
+          tierName: tier.name,
+          status: 'active',
+          billingCycle: app.billingCycle,
+          feePaid: 0,
+          currency: 'EUR',
+          memberNumber,
+          joinedDate: now.toISOString(),
+          renewalDate: renewal.toISOString(),
+          autoRenew: true,
+          paymentMethod: 'complimentary_invitation',
+          specialRequests: app.notes,
+          preferredRegion: app.interestAreas.join(', ') || 'Spain',
+          digitalCardIssued: true,
+        });
+      }
+
+      this.logAudit('usr-admin-1', adminEmail, 'MEMBERSHIP_APPLICATION_REVIEWED', `Application ${id} (${app.email}) marked as ${status}`);
       this.saveState();
     }
   }

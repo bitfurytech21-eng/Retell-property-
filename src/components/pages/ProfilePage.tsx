@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import { useAuth } from '../../lib/auth';
 import { ledger } from '../../lib/ledger';
 import { KYCStatus, getAccountTypeLabel, getAccountTypeBadge } from '../../types/user';
-import { ShieldCheck, User as UserIcon, Building2, UploadCloud, CheckCircle2, Clock, XCircle, AlertCircle, Palette, Check, Sparkles } from 'lucide-react';
+import { ShieldCheck, User as UserIcon, Building2, UploadCloud, CheckCircle2, Clock, XCircle, AlertCircle, Palette, Check, Sparkles, Crown } from 'lucide-react';
 import { ImageUploader } from '../common/ImageUploader';
 import { AccountTypeSwitcher } from '../common/AccountTypeSwitcher';
+import { UserMembershipCard } from '../club/UserMembershipCard';
 
 export type DashboardThemeId = 'slate' | 'sandstone' | 'titanium' | 'obsidian';
 
@@ -178,6 +179,59 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
             </div>
           </div>
         </div>
+
+        {/* Kretz Club Privé Membership Status */}
+        {(() => {
+          const userMem = ledger.getUserMembership(user.id);
+          const tiers = ledger.getMembershipTiers();
+          return (
+            <div className="dash-card p-7 rounded-3xl border shadow-sm space-y-4">
+              <div className="flex items-center justify-between pb-4 border-b border-inherit/30">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-amber-500/15 text-amber-500 border border-amber-500/30 flex items-center justify-center">
+                    <Crown className="w-5 h-5 text-amber-500" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold dash-text">Kretz Club Privé Pass</h3>
+                    <p className="text-xs dash-muted">
+                      Your exclusive membership credentials, off-market privileges, and concierge code.
+                    </p>
+                  </div>
+                </div>
+                <a
+                  href="#/club"
+                  className="px-3.5 py-1.5 rounded-xl border border-inherit/30 text-xs font-semibold hover:bg-white/10 transition-colors"
+                >
+                  Club Portal →
+                </a>
+              </div>
+
+              {userMem ? (
+                <UserMembershipCard
+                  membership={userMem}
+                  tiers={tiers}
+                  onRefresh={refreshUser}
+                  onUpgradeClick={() => { window.location.hash = '/club'; }}
+                />
+              ) : (
+                <div className="p-6 rounded-2xl dash-inner border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                  <div className="space-y-1">
+                    <p className="font-bold dash-text text-sm">No Active Membership Pass</p>
+                    <p className="text-xs dash-muted">
+                      Unlock confidential off-market property dossiers, private salon cocktail invitations, and dedicated lifestyle advisory.
+                    </p>
+                  </div>
+                  <a
+                    href="#/club"
+                    className="px-5 py-2.5 rounded-xl bg-[#182D2A] text-[#B7E36A] font-bold text-xs hover:bg-[#24423C] transition-colors whitespace-nowrap"
+                  >
+                    Explore Membership Tiers
+                  </a>
+                </div>
+              )}
+            </div>
+          );
+        })()}
 
         {/* Account Type Switcher Component */}
         <AccountTypeSwitcher user={user} onRefresh={refreshUser} onMessage={(m) => setMessage(m)} />

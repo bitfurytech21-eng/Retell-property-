@@ -12,6 +12,10 @@ import { HowItWorks } from './components/home/HowItWorks';
 import { Benefits } from './components/home/Benefits';
 import { FAQSection } from './components/home/FAQSection';
 import { FinalCTA } from './components/home/FinalCTA';
+import { AgencyDisciplineSection } from './components/home/AgencyDisciplineSection';
+import { DreamDestinationsSection } from './components/home/DreamDestinationsSection';
+import { ClubTeaserSection } from './components/home/ClubTeaserSection';
+import { CasosDeExitoTeaser } from './components/home/CasosDeExitoTeaser';
 
 // Dedicated Pages
 import { PropertiesPage } from './components/pages/PropertiesPage';
@@ -23,6 +27,9 @@ import { ContactPage } from './components/pages/ContactPage';
 import { LegalPage } from './components/pages/LegalPage';
 import { TeamPage } from './components/pages/TeamPage';
 import { WealthPage } from './components/pages/WealthPage';
+import { MembershipPage } from './components/pages/MembershipPage';
+import { SuccessStoriesPage } from './components/pages/SuccessStoriesPage';
+import { BlogPage } from './components/pages/BlogPage';
 import { ProfilePage } from './components/pages/ProfilePage';
 import { AuthPages } from './components/pages/AuthPages';
 import { DashboardPage } from './components/pages/DashboardPage';
@@ -175,6 +182,39 @@ function MainApp() {
           <WealthPage
             onExplore={() => navigateTo('/properties')}
             onContact={() => navigateTo('/contact')}
+          />
+        );
+
+      case '/club':
+      case '/membership':
+      case '/club-prive':
+        return (
+          <MembershipPage
+            onNavigateHome={() => navigateTo('/')}
+            onNavigateContact={() => navigateTo('/contact')}
+            onNavigateProperties={() => navigateTo('/properties')}
+            onNavigateLogin={() => navigateTo('/login')}
+          />
+        );
+
+      case '/casos-de-exito':
+      case '/success-stories':
+      case '/exito':
+        return (
+          <SuccessStoriesPage
+            onExploreProperties={() => navigateTo('/properties')}
+            onNavigateContact={() => navigateTo('/contact')}
+          />
+        );
+
+      case '/blog':
+      case '/en/blog':
+      case '/es/blog':
+      case '/insights':
+        return (
+          <BlogPage
+            onExploreProperties={() => navigateTo('/properties')}
+            onNavigateContact={() => navigateTo('/contact')}
           />
         );
 
@@ -390,9 +430,31 @@ function MainApp() {
               </div>
             </section>
 
+            <DreamDestinationsSection
+              onExploreProperties={() => navigateTo('/properties')}
+              onContactAgency={() => navigateTo('/contact')}
+            />
+
+            <AgencyDisciplineSection
+              onNavigateTeam={() => navigateTo('/team')}
+              onNavigateContact={() => navigateTo('/contact')}
+              onNavigateProperties={() => navigateTo('/properties')}
+            />
+
             <HowItWorks />
 
+            <CasosDeExitoTeaser
+              onNavigateCasos={() => navigateTo('/casos-de-exito')}
+              onNavigateBlog={() => navigateTo('/blog')}
+              onNavigateProperties={() => navigateTo('/properties')}
+            />
+
             <Benefits />
+
+            <ClubTeaserSection
+              onExploreClub={() => navigateTo('/club')}
+              onContactDesk={() => navigateTo('/contact')}
+            />
 
             <FAQSection
               onNavigateFAQ={() => navigateTo('/faq')}
@@ -421,7 +483,7 @@ function MainApp() {
 
       {!isDashboardView && <Header currentPath={currentPath} onNavigate={navigateTo} />}
 
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className={`flex-1 flex flex-col ${isDashboardView ? 'overflow-hidden' : ''}`}>
         {renderContent()}
       </div>
 

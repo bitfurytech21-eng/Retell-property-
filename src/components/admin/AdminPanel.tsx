@@ -21,10 +21,12 @@ import {
   ToggleLeft,
   ToggleRight,
   AlertCircle,
-  FileText
+  FileText,
+  Crown
 } from 'lucide-react';
 
 import { PropertyDocumentsHub } from '../documents/PropertyDocumentsHub';
+import { AdminMembershipTab } from './AdminMembershipTab';
 
 export const AdminPanel: React.FC = () => {
   const { user } = useAuth();
@@ -36,7 +38,7 @@ export const AdminPanel: React.FC = () => {
     );
   }
 
-  const [activeTab, setActiveTab] = useState<'deposits' | 'withdrawals' | 'manual-payment' | 'kyc' | 'properties' | 'property-documents' | 'audit' | 'payment-settings'>('deposits');
+  const [activeTab, setActiveTab] = useState<'deposits' | 'withdrawals' | 'manual-payment' | 'kyc' | 'properties' | 'property-documents' | 'membership' | 'audit' | 'payment-settings'>('deposits');
   const [transactions, setTransactions] = useState(ledger.getTransactions());
   const [properties, setProperties] = useState(ledger.getProperties());
   const [users, setUsers] = useState(ledger.getUsers());
@@ -489,6 +491,16 @@ export const AdminPanel: React.FC = () => {
           >
             <FileText className="w-4 h-4 text-[#27845D]" />
             Property Documents ({properties.length})
+          </button>
+
+          <button
+            onClick={() => setActiveTab('membership')}
+            className={`pb-3 border-b-2 flex items-center gap-2 whitespace-nowrap cursor-pointer transition-colors ${
+              activeTab === 'membership' ? 'border-[#182D2A] text-[#182D2A]' : 'border-transparent text-[#69736F] hover:text-[#18211F]'
+            }`}
+          >
+            <Crown className="w-4 h-4 text-[#D4AF37]" />
+            Membership Club
           </button>
 
           <button
@@ -1428,6 +1440,13 @@ export const AdminPanel: React.FC = () => {
         {activeTab === 'property-documents' && (
           <div className="animate-in fade-in duration-200">
             <PropertyDocumentsHub properties={properties} />
+          </div>
+        )}
+
+        {/* Tab: Membership Club Management */}
+        {activeTab === 'membership' && (
+          <div className="animate-in fade-in duration-200">
+            <AdminMembershipTab />
           </div>
         )}
 

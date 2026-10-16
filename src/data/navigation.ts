@@ -6,10 +6,12 @@ export interface NavLink {
 export const MAIN_NAV_LINKS: NavLink[] = [
   { label: 'Home', path: '/' },
   { label: 'Marketplace', path: '/properties' },
+  { label: 'Success Stories', path: '/casos-de-exito' },
   { label: 'The Agency', path: '/agency' },
+  { label: 'Membership Club', path: '/club' },
   { label: 'Wealth Advisory', path: '/wealth' },
+  { label: 'Blog', path: '/blog' },
   { label: 'How It Works', path: '/investing' },
-  { label: 'Security Guide', path: '/guide' },
   { label: 'Tokenization', path: '/token' },
   { label: 'FAQ', path: '/faq' },
   { label: 'Contact', path: '/contact' },
@@ -18,6 +20,9 @@ export const MAIN_NAV_LINKS: NavLink[] = [
 export const FOOTER_LINKS = {
   platform: [
     { label: 'All Properties', path: '/properties' },
+    { label: 'Success Stories & Realized Exits', path: '/casos-de-exito' },
+    { label: 'Real Estate Blog & Insights', path: '/blog' },
+    { label: 'Kretz Club Privé', path: '/club' },
     { label: 'How It Works', path: '/investing' },
     { label: 'Token Model & Liquidity', path: '/token' },
     { label: 'Platform Performance', path: '/properties#performance' },

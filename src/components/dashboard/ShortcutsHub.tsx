@@ -129,7 +129,7 @@ export const ShortcutsHub: React.FC<ShortcutsHubProps> = ({
 
       {/* Brought DOWN to the bottom for an unobstructed clear view of the dashboard */}
       {isOpen && !activeTool && (
-        <div className="fixed bottom-20 md:bottom-6 right-3 sm:right-6 z-50 w-[calc(100vw-24px)] sm:w-[325px] max-w-sm dash-card rounded-2xl shadow-2xl border overflow-hidden animate-in slide-in-from-bottom-3 duration-200 flex flex-col max-h-[75vh]">
+        <div className="fixed bottom-20 md:bottom-6 right-3 sm:right-6 z-50 w-[calc(100%-24px)] sm:w-[325px] max-w-sm dash-card rounded-2xl shadow-2xl border overflow-hidden animate-in slide-in-from-bottom-3 duration-200 flex flex-col max-h-[75vh]">
           {/* Header */}
           <div className="px-3.5 py-2.5 bg-gradient-to-r from-[#0d221d] to-[#13302a] text-white flex items-center justify-between border-b border-[#1E3E37]">
             <div className="flex items-center gap-2">
@@ -327,7 +327,7 @@ export const ToolModalContainer: React.FC<{
         </div>
       ) : (
         /* Brought Down Tool Preview Modal */
-        <div className="dash-card w-[calc(100vw-24px)] sm:w-[335px] max-w-sm rounded-2xl shadow-2xl border overflow-hidden flex flex-col max-h-[76vh] animate-in zoom-in-95 duration-150">
+        <div className="dash-card w-[calc(100%-24px)] sm:w-[335px] max-w-sm rounded-2xl shadow-2xl border overflow-hidden flex flex-col max-h-[76vh] animate-in zoom-in-95 duration-150">
           {/* Top Bar with Back and Bring Down buttons for clear view */}
           <div className="bg-[#0d221d] px-3 py-1.5 flex items-center justify-between border-b border-[#1E3E37] text-[10px] text-slate-300">
             <div className="flex items-center gap-2">

@@ -58,8 +58,8 @@ export const WealthPage: React.FC<WealthPageProps> = ({ onExplore, onContact }) 
   return (
     <div className="min-h-screen bg-[#F6F7F4] text-[#18211F]">
       {/* Hero Section */}
-      <section className="bg-[#031914] text-white py-20 lg:py-28 relative overflow-hidden">
-        <div className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-[#00FF9D]/10 rounded-full blur-[140px] pointer-events-none" />
+      <section className="bg-[#031914] text-white py-20 lg:py-28 relative overflow-hidden max-w-full">
+        <div className="absolute top-0 right-1/4 w-72 sm:w-[600px] h-72 sm:h-[600px] max-w-full bg-[#00FF9D]/10 rounded-full blur-[140px] pointer-events-none" />
         
         <div className="container max-w-[1240px] mx-auto px-4 relative z-10">
           <div className="max-w-3xl space-y-6 text-left">
@@ -129,8 +129,8 @@ export const WealthPage: React.FC<WealthPageProps> = ({ onExplore, onContact }) 
       </section>
 
       {/* Consultation Request Form Section */}
-      <section className="py-20 bg-[#031914] text-white relative overflow-hidden" id="wealth-form">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] bg-[#00FF9D]/10 rounded-full blur-[150px] pointer-events-none" />
+      <section className="py-20 bg-[#031914] text-white relative overflow-hidden max-w-full" id="wealth-form">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 sm:w-[700px] h-60 sm:h-[400px] max-w-full bg-[#00FF9D]/10 rounded-full blur-[150px] pointer-events-none" />
 
         <div className="container max-w-[1240px] mx-auto px-4 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">

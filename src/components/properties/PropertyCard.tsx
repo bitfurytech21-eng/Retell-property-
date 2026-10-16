@@ -1,7 +1,7 @@
 import React from 'react';
 import { Property } from '../../types/property';
 import { formatCurrency, formatPercent } from '../../lib/utils';
-import { MapPin, TrendingUp, Users, Calendar, ArrowRight, ShieldCheck, CheckCircle2, Crown, Sparkles } from 'lucide-react';
+import { MapPin, TrendingUp, Users, Calendar, ArrowRight, ShieldCheck, CheckCircle2, Crown, Clock } from 'lucide-react';
 import { useAuth } from '../../lib/auth';
 import { ledger } from '../../lib/ledger';
 
@@ -74,7 +74,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
       case 'upcoming':
         return (
           <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-amber-950/90 text-amber-300 border border-amber-600/40 text-[11px] font-bold backdrop-blur-md">
-            <Sparkles className="w-3.5 h-3.5" />
+            <Clock className="w-3.5 h-3.5" />
             <span>Launching Soon</span>
           </span>
         );
@@ -107,7 +107,11 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-104"
           referrerPolicy="no-referrer"
           onError={(e) => {
-            (e.target as HTMLElement).style.display = 'none';
+            const target = e.target as HTMLImageElement;
+            if (!target.dataset.fallback) {
+              target.dataset.fallback = 'true';
+              target.src = '/assets/images/hero_real_estate_1791998371047.jpg';
+            }
           }}
         />
         

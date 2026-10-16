@@ -38,7 +38,7 @@ export const HouseBackgroundAnimation: React.FC = () => {
   return (
     <div
       ref={containerRef}
-      className="absolute inset-0 pointer-events-none overflow-hidden select-none z-0"
+      className="absolute inset-0 pointer-events-none overflow-hidden max-w-full select-none z-0"
       aria-hidden="true"
     >
       <style>{`
@@ -109,7 +109,7 @@ export const HouseBackgroundAnimation: React.FC = () => {
 
       {/* Primary Real Estate Photographic Backdrop with Ken Burns Animation & Desktop Parallax */}
       <div
-        className="absolute -inset-4 sm:-inset-6 transition-transform duration-700 ease-out animate-ken-burns"
+        className="absolute inset-0 scale-105 transition-transform duration-700 ease-out animate-ken-burns overflow-hidden"
         style={{
           transform: `translate3d(${parallaxX}px, ${parallaxY}px, 0)`
         }}
@@ -125,14 +125,14 @@ export const HouseBackgroundAnimation: React.FC = () => {
 
       {/* Atmospheric Twilight Lighting Shimmer Layer */}
       <div 
-        className="absolute top-[18%] right-[10%] sm:right-[18%] w-[380px] h-[380px] rounded-full bg-emerald-500/15 blur-3xl pointer-events-none animate-ambient-shimmer mix-blend-screen" 
+        className="absolute top-[18%] right-[10%] sm:right-[18%] w-64 sm:w-[380px] h-64 sm:h-[380px] max-w-full rounded-full bg-emerald-500/15 blur-3xl pointer-events-none animate-ambient-shimmer mix-blend-screen" 
       />
       <div 
-        className="absolute bottom-[20%] right-[5%] sm:right-[12%] w-[460px] h-[320px] rounded-full bg-teal-400/10 blur-3xl pointer-events-none animate-ambient-shimmer mix-blend-screen"
+        className="absolute bottom-[20%] right-[5%] sm:right-[12%] w-72 sm:w-[460px] h-60 sm:h-[320px] max-w-full rounded-full bg-teal-400/10 blur-3xl pointer-events-none animate-ambient-shimmer mix-blend-screen"
         style={{ animationDelay: '3s' }}
       />
       <div 
-        className="absolute top-[30%] left-[20%] w-[300px] h-[300px] rounded-full bg-amber-500/5 blur-3xl pointer-events-none animate-ambient-shimmer"
+        className="absolute top-[30%] left-[20%] w-56 sm:w-[300px] h-56 sm:h-[300px] max-w-full rounded-full bg-amber-500/5 blur-3xl pointer-events-none animate-ambient-shimmer"
         style={{ animationDelay: '5s' }}
       />
 
@@ -142,7 +142,7 @@ export const HouseBackgroundAnimation: React.FC = () => {
       <div className="absolute bottom-[35%] right-[32%] w-1 h-1 rounded-full bg-emerald-400/50 blur-[0.5px] animate-dust-1" style={{ animationDelay: '4s' }} />
 
       {/* Subtle Architectural Blueprint Isometric Coordinate Overlay (harmonizes technical SPV structure with photography) */}
-      <div className="absolute right-[0%] lg:right-[4%] top-[12%] w-[640px] sm:w-[780px] lg:w-[860px] opacity-25 lg:opacity-35 pointer-events-none">
+      <div className="absolute right-0 lg:right-[4%] top-[12%] w-full max-w-[320px] sm:max-w-[640px] lg:max-w-[860px] opacity-20 sm:opacity-25 lg:opacity-35 pointer-events-none overflow-hidden">
         <svg
           viewBox="0 0 1000 700"
           className="w-full h-auto"

@@ -70,7 +70,7 @@ export const DocumentViewerModal: React.FC<DocumentViewerModalProps> = ({
           </div>
         ) : (
           /* Brought Down Document Preview Modal */
-          <div className="dash-card rounded-2xl max-w-sm sm:max-w-md w-[320px] sm:w-[380px] p-4 sm:p-5 shadow-2xl border relative space-y-3 max-h-[82vh] overflow-y-auto">
+          <div className="dash-card rounded-2xl max-w-sm sm:max-w-md w-full max-w-[calc(100%-24px)] sm:w-[380px] p-4 sm:p-5 shadow-2xl border relative space-y-3 max-h-[82vh] overflow-y-auto">
             {/* Top Bar with Bring Down button for clearer view */}
             <div className="flex items-center justify-between pb-1.5 text-[9px] text-emerald-400 border-b border-inherit/20">
               <span className="font-semibold flex items-center gap-1">

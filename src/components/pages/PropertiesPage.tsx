@@ -30,6 +30,7 @@ export const PropertiesPage: React.FC<PropertiesPageProps> = ({
   const [selectedCountry, setSelectedCountry] = useState<string>('all');
   const [selectedType, setSelectedType] = useState<string>('all');
   const [sortBy, setSortBy] = useState<string>('yield_desc');
+  const [viewMode, setViewMode] = useState<'feed' | 'grid'>('feed');
   const [showFiltersModal, setShowFiltersModal] = useState<boolean>(false);
   const [minInvestmentFilter, setMinInvestmentFilter] = useState<number>(100);
 
@@ -219,8 +220,8 @@ export const PropertiesPage: React.FC<PropertiesPageProps> = ({
   return (
     <div className="min-h-screen bg-[#FDFEFC] text-[#142421]">
       {/* Reental-style Top Announcement & Metrics Ribbon */}
-      <section className="bg-[#0A1613] text-white py-14 border-b border-[#1E332E] relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#B7E36A]/10 rounded-full blur-[140px] pointer-events-none" />
+      <section className="bg-[#0A1613] text-white py-14 border-b border-[#1E332E] relative overflow-hidden max-w-full">
+        <div className="absolute top-0 right-0 w-72 sm:w-[500px] h-72 sm:h-[500px] max-w-full bg-[#B7E36A]/10 rounded-full blur-[140px] pointer-events-none" />
 
         <div className="container max-w-[1240px] mx-auto px-4 relative z-10">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8">
@@ -410,6 +411,32 @@ export const PropertiesPage: React.FC<PropertiesPageProps> = ({
               <option value="min_asc">Lowest Min. Investment</option>
               <option value="newest">Newest Opportunities</option>
             </select>
+
+            {/* Layout Toggle: Vertical Scroll Feed vs Grid */}
+            <div className="flex items-center gap-1 p-1 bg-[#F9FAF8] rounded-xl border border-[#E3E8E3] shrink-0">
+              <button
+                onClick={() => setViewMode('feed')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                  viewMode === 'feed'
+                    ? 'bg-[#142421] text-white shadow-xs'
+                    : 'text-[#52605C] hover:text-[#142421]'
+                }`}
+                title="Vertical Scroll Feed"
+              >
+                <span>Feed View ☰</span>
+              </button>
+              <button
+                onClick={() => setViewMode('grid')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                  viewMode === 'grid'
+                    ? 'bg-[#142421] text-white shadow-xs'
+                    : 'text-[#52605C] hover:text-[#142421]'
+                }`}
+                title="Multi-Column Grid View"
+              >
+                <span>Grid ⊞</span>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -458,7 +485,7 @@ export const PropertiesPage: React.FC<PropertiesPageProps> = ({
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7">
+          <div className={viewMode === 'feed' ? "max-w-2xl mx-auto flex flex-col gap-8 w-full" : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7"}>
             {filteredProperties.map((property) => (
               <PropertyCard
                 key={property.id}

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowRight, ShieldCheck, CheckCircle2, Calculator, TrendingUp, Sparkles, Building2, Coins, ExternalLink, ChevronRight, Star } from 'lucide-react';
+import { ArrowRight, ShieldCheck, CheckCircle2, Calculator, TrendingUp, Building2, Coins, ExternalLink, ChevronRight, Star } from 'lucide-react';
 import { HouseBackgroundAnimation } from './HouseBackgroundAnimation';
 
 interface HeroProps {
@@ -18,7 +18,7 @@ export const Hero: React.FC<HeroProps> = ({ onExplore, onHowItWorks }) => {
   const tokensCount = Math.floor(simAmount / 100);
 
   return (
-    <div className="relative bg-[#071714] text-white overflow-hidden border-b border-emerald-900/40">
+    <div className="relative bg-[#071714] text-white overflow-hidden max-w-full border-b border-emerald-900/40">
       {/* Restrained Architectural Blueprint Line Geometry */}
       <HouseBackgroundAnimation />
 

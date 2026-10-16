@@ -176,20 +176,6 @@ export const AuthPages: React.FC<AuthPageProps> = ({
     }
   };
 
-  // Fallback demo login helper (only used if reviewer wants to preview UI without Supabase credentials)
-  const handleDemoLogin = async (demoRole: 'investor' | 'admin') => {
-    setError(null);
-    setLoading(true);
-    try {
-      await quickDemoSession(demoRole);
-      onSuccess();
-    } catch (err: any) {
-      setError(err.message || 'Demo session failed.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
     <div className="auth-page py-12 px-4 bg-[#F6F7F4] min-h-[calc(100vh-160px)] flex items-center justify-center">
       <div className="auth-card max-w-md w-full bg-white p-7 sm:p-8 rounded-3xl border border-[#E3E8E3] shadow-lg">
@@ -308,32 +294,7 @@ export const AuthPages: React.FC<AuthPageProps> = ({
               )}
             </button>
 
-            {/* Local Preview Mode Switcher (strictly if Supabase keys are not yet configured) */}
-            {!isConfigured && (
-              <div className="pt-3 border-t border-[#E3E8E3] text-center">
-                <span className="text-[11px] text-[#69736F] block mb-2 font-medium">
-                  Quick Local Preview Session (Keys Pending):
-                </span>
-                <div className="flex gap-2">
-                  <button
-                    type="button"
-                    onClick={() => handleDemoLogin('investor')}
-                    className="btn btn-secondary btn-sm flex-1 text-[11px]"
-                  >
-                    Demo Investor
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleDemoLogin('admin')}
-                    className="btn btn-secondary btn-sm flex-1 text-[11px]"
-                  >
-                    Demo Admin
-                  </button>
-                </div>
-              </div>
-            )}
-
-            <div className="text-center pt-3 border-t border-[#E3E8E3]">
+            <div className="text-center pt-4 border-t border-[#E3E8E3]">
               <span className="text-xs text-[#69736F]">Don't have an account yet? </span>
               <button
                 type="button"
