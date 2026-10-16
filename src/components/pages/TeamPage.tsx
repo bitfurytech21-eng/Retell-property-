@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
   Building2, Users, ShieldCheck, Mail, Phone, Calendar, ArrowRight, 
-  Sparkles, CheckCircle2, Award, Globe, Heart, Send, X, ExternalLink,
+  CheckCircle2, Award, Globe, Heart, Send, X, ExternalLink,
   ChevronRight, Compass, KeyRound, Star, Tv, Search, MapPin
 } from 'lucide-react';
 import { ALL_KRETZ_MEMBERS, TeamMember } from '../../data/kretzTeam';
@@ -175,7 +175,7 @@ export const TeamPage: React.FC<TeamPageProps> = ({ onExplore, onContact }) => {
                   <p className="text-xs text-[#69736F] mt-1">Confidential off-market sales for discerning personalities & family offices.</p>
                 </div>
                 <div className="p-4 rounded-2xl bg-[#F6F8F5] border border-[#E3E8E3]">
-                  <Sparkles className="w-5 h-5 text-[#27845D] mb-2" />
+                  <Globe className="w-5 h-5 text-[#27845D] mb-2" />
                   <h4 className="font-bold text-sm text-[#142421]">Tokenized Access</h4>
                   <p className="text-xs text-[#69736F] mt-1">Fractional liquidity and instant monthly yields starting from €1,000.</p>
                 </div>
@@ -232,9 +232,10 @@ export const TeamPage: React.FC<TeamPageProps> = ({ onExplore, onContact }) => {
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery('')}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#8C9B96] hover:text-[#142421] text-xs"
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#8C9B96] hover:text-[#142421] cursor-pointer"
+                  title="Clear search"
                 >
-                  ✕
+                  <X className="w-3.5 h-3.5" />
                 </button>
               )}
             </div>

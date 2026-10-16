@@ -251,36 +251,78 @@ export const authApi = {
   getMe: () =>
     api.get<{ user: any }>('/auth/me'),
 
+  getSession: () =>
+    api.get<{ authenticated: boolean; user: any }>('/auth/session'),
+
   logout: () =>
     api.post<{ success: boolean }>('/auth/logout'),
 
   sendPasswordReset: (email: string) =>
-    api.post<{ success: boolean }>('/auth/forgot-password', { email }, { skipAuth: true }),
+    api.post<{ success: boolean; message: string }>('/auth/password/forgot', { email }, { skipAuth: true }),
 
-  updatePassword: (password: string) =>
-    api.post<{ success: boolean }>('/auth/update-password', { password }),
+  updatePassword: (password: string, token?: string) =>
+    api.post<{ success: boolean; message: string }>('/auth/password/reset', { newPassword: password, token }),
 };
 
 /**
- * Property Endpoints
+ * Property & Marketplace Endpoints
  */
+export const marketplaceApi = {
+  getListings: (params?: { type?: string; status?: string; search?: string }) =>
+    api.get<any[]>('/marketplace/listings', { params }),
+
+  getListing: (idOrSlug: string) =>
+    api.get<any>(`/marketplace/listings/${idOrSlug}`),
+};
+
 export const propertiesApi = {
   getAll: (params?: { type?: string; status?: string; search?: string }) =>
-    api.get<any[]>('/properties', { params }),
+    api.get<any[]>('/marketplace/listings', { params }),
 
   getByIdOrSlug: (idOrSlug: string) =>
-    api.get<any>(`/properties/${idOrSlug}`),
+    api.get<any>(`/marketplace/listings/${idOrSlug}`),
 };
 
 /**
- * Investment & Portfolio Endpoints
+ * User Profile, Dashboard & Portfolio Endpoints
  */
+export const userApi = {
+  getProfile: () =>
+    api.get<any>('/user/profile'),
+
+  getPortfolio: () =>
+    api.get<any>('/portfolio'),
+
+  getTransactions: () =>
+    api.get<any[]>('/transactions'),
+
+  getNotifications: () =>
+    api.get<any[]>('/notifications'),
+
+  submitKycDocument: (payload: { docType: string; documentName?: string; documentUrl?: string }) =>
+    api.post<any>('/users/kyc', payload),
+};
+
+/**
+ * Investment & Financial Endpoints
+ */
+export const financialApi = {
+  deposit: (payload: { amount: number; currency?: string; method?: string; txHash?: string; reference?: string }) =>
+    api.post<any>('/deposits', payload),
+
+  withdraw: (payload: { amount: number; destination: string; method?: string }) =>
+    api.post<any>('/withdrawals', payload),
+
+  invest: (payload: { propertyId: string; tokensCount: number; paymentMethod?: string; idempotencyKey?: string }) =>
+    api.post<any>('/investments', payload),
+};
+
 export const investmentsApi = {
   getMyInvestments: () =>
-    api.get<any[]>('/investments/my'),
+    api.get<any>('/portfolio'),
 
-  executeInvestment: (payload: { propertyId: string; tokensCount: number; paymentMethod: string }) =>
-    api.post<any>('/investments/execute', payload),
+  executeInvestment: (payload: { propertyId: string; tokensCount: number; paymentMethod: string; idempotencyKey?: string }) =>
+    api.post<any>('/investments', payload),
 };
 
 /**
@@ -291,13 +333,13 @@ export const walletApi = {
     api.get<{ balance: number; currency: string }>('/wallet/balance'),
 
   getTransactions: (params?: { limit?: number; offset?: number }) =>
-    api.get<any[]>('/wallet/transactions', { params }),
+    api.get<any[]>('/transactions', { params }),
 
   createDepositRequest: (payload: { amount: number; currency: string; method: string; txHash?: string }) =>
-    api.post<any>('/wallet/deposit', payload),
+    api.post<any>('/deposits', payload),
 
   createWithdrawalRequest: (payload: { amount: number; destination: string; method: string }) =>
-    api.post<any>('/wallet/withdraw', payload),
+    api.post<any>('/withdrawals', payload),
 };
 
 /**
@@ -314,6 +356,32 @@ export const paymentsApi = {
 export const adminApi = {
   getStats: () =>
     api.get<any>('/admin/stats'),
+
+  getSystemHealth: () =>
+    api.get<any>('/admin/system-health'),
+
+  getSettings: () =>
+    api.get<any>('/admin/settings'),
+
+  getServerLogs: (params?: {
+    category?: string;
+    level?: string;
+    route?: string;
+    search?: string;
+    requestId?: string;
+    limit?: number;
+    offset?: number;
+  }) =>
+    api.get<{ data?: any[]; logs?: any[]; total: number; metrics: any }>('/admin/logs', { params }),
+
+  exportServerLogs: (format: 'json' | 'csv' = 'json') => {
+    const base = getBaseUrl();
+    const token = getAuthToken();
+    const url = `${base}/admin/logs/export?format=${format}`;
+    return fetch(url, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {}
+    }).then(r => r.text());
+  },
 
   getUsers: () =>
     api.get<any[]>('/admin/users'),
@@ -356,16 +424,5 @@ export const adminApi = {
 
   getAuditLogs: (params?: { limit?: number }) =>
     api.get<any[]>('/admin/audit-logs', { params }),
-
-  getSystemHealth: () =>
-    api.get<any>('/admin/system-health'),
-
-  getLogs: (params?: { category?: string; severity?: string; route?: string; search?: string; limit?: number; offset?: number }) =>
-    api.get<{ success: boolean; total: number; metrics: any; data: any[] }>('/admin/logs', { params }),
-
-  exportLogsUrl: (format: 'json' | 'csv' = 'json') =>
-    `${getBaseUrl()}/admin/logs/export?format=${format}`,
-
-  clearLogs: () =>
-    api.post<any>('/admin/logs/clear'),
 };
+

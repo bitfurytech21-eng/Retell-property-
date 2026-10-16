@@ -6,7 +6,7 @@ import { formatCurrency } from '../../lib/utils';
 import { 
   Crown, ShieldCheck, CheckCircle2, AlertTriangle, 
   CreditCard, Wallet, Building2, Lock, ArrowRight, 
-  Sparkles, Check, Info, FileText
+  X, Check, Info, FileText
 } from 'lucide-react';
 
 interface MembershipApplicationModalProps {
@@ -113,8 +113,9 @@ export const MembershipApplicationModal: React.FC<MembershipApplicationModalProp
         <button
           onClick={onClose}
           className="absolute top-6 right-6 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center cursor-pointer transition-colors"
+          title="Close application modal"
         >
-          ✕
+          <X className="w-4 h-4" />
         </button>
 
         {/* Modal Header */}
@@ -322,7 +323,7 @@ export const MembershipApplicationModal: React.FC<MembershipApplicationModalProp
                     : 'border-slate-200 text-slate-600 hover:border-slate-300'
                 }`}
               >
-                <Sparkles className="w-4 h-4 text-emerald-800 mb-1" />
+                <ShieldCheck className="w-4 h-4 text-emerald-800 mb-1" />
                 <p className="text-xs">Invite Code</p>
                 <p className="text-[10px] text-slate-500 font-normal">VIP Pass</p>
               </button>

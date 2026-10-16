@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAuth } from '../../lib/auth';
-import { ShieldAlert, Lock, ArrowRight, ShieldCheck } from 'lucide-react';
+import { ShieldAlert, Lock, ArrowRight, ShieldCheck, Shield } from 'lucide-react';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -17,13 +17,13 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   title = 'Investor Authentication Required',
   description = 'This section contains private financial data, wallet balances, and tokenized investment assets. Please sign in to your verified account to continue.',
 }) => {
-  const { user, isAuthenticated, isLoading } = useAuth();
+  const { user, isAuthenticated, isLoading, quickDemoSession } = useAuth();
 
   if (isLoading) {
     return (
-      <div className="min-h-[50vh] flex flex-col items-center justify-center py-20 px-4 bg-[#F6F7F4]">
+      <div className="min-h-[60vh] flex flex-col items-center justify-center py-20 px-4 bg-[#F6F7F4]">
         <div className="w-10 h-10 border-3 border-[#182D2A] border-t-transparent rounded-full animate-spin mb-4" />
-        <span className="text-xs font-bold text-[#69736F]">Verifying Supabase session...</span>
+        <span className="text-xs font-bold text-[#69736F]">Verifying session security...</span>
       </div>
     );
   }
@@ -40,20 +40,53 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
           <div className="space-y-2">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#F6F7F4] border border-[#E3E8E3] text-[11px] font-bold text-[#182D2A]">
               <ShieldCheck className="w-3.5 h-3.5 text-[#27845D]" />
-              <span>Protected Route · Access Restricted</span>
+              <span>{requireAdmin ? 'Admin Route' : 'Protected Route'} · Access Restricted</span>
             </div>
-            <h2 className="text-2xl font-black text-[#18211F]">{title}</h2>
-            <p className="text-xs text-[#69736F] leading-relaxed">{description}</p>
+            <h2 className="text-2xl font-black text-[#18211F]">
+              {requireAdmin ? 'Administrator Access Required' : title}
+            </h2>
+            <p className="text-xs text-[#69736F] leading-relaxed">
+              {requireAdmin 
+                ? 'Sign in with administrator credentials (admin@kretz.com) to access the system console, audit logs, and transaction approvals.'
+                : description}
+            </p>
           </div>
 
-          <div className="pt-2 flex flex-col gap-3">
-            <button
-              onClick={onNavigateLogin}
-              className="btn btn-primary w-full text-xs font-bold py-3.5 flex items-center justify-center gap-2 cursor-pointer shadow-sm"
-            >
-              <span>Sign In to Access Route</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
+          <div className="pt-2 flex flex-col gap-2.5">
+            {requireAdmin ? (
+              <>
+                <button
+                  type="button"
+                  onClick={onNavigateLogin}
+                  className="btn btn-primary w-full text-xs font-bold py-3.5 flex items-center justify-center gap-2 cursor-pointer shadow-sm"
+                >
+                  <ShieldCheck className="w-4 h-4" />
+                  <span>Sign In with Administrator Credentials</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  onClick={onNavigateLogin}
+                  className="btn btn-primary w-full text-xs font-bold py-3.5 flex items-center justify-center gap-2 cursor-pointer shadow-sm"
+                >
+                  <span>Sign In to Your Account</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (typeof window !== 'undefined') {
+                      window.location.hash = '/register';
+                    }
+                  }}
+                  className="btn btn-secondary w-full text-xs font-semibold py-3 flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <span>Create an Investor Account</span>
+                </button>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -75,9 +108,20 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
             </span>
             <h2 className="text-2xl font-black text-[#18211F]">Administrator Access Only</h2>
             <p className="text-xs text-[#69736F] leading-relaxed">
-              Your active session (<strong>{user.email}</strong>) does not have administrative rights. 
+              Your active session (<strong>{user.email}</strong>) has the <strong>{user.role}</strong> role. 
               Only accounts with the <code>admin</code> role can view this console.
             </p>
+          </div>
+
+          <div className="pt-2 flex flex-col gap-2">
+            <button
+              type="button"
+              onClick={onNavigateLogin}
+              className="btn btn-primary w-full text-xs font-bold py-3 flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <span>Sign In with Administrator Credentials</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
           </div>
         </div>
       </div>

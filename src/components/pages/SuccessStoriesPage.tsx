@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { CASE_STUDIES, CaseStudy, INVESTOR_TESTIMONIALS } from '../../data/caseStudies';
+import { CASE_STUDIES, CaseStudy } from '../../data/caseStudies';
 import { formatCurrency } from '../../lib/utils';
 import { 
   Trophy, TrendingUp, CheckCircle2, Calendar, MapPin, 
   Users, ArrowRight, ShieldCheck, FileCheck, Filter, 
   Coins, ExternalLink, Quote, ChevronRight, Layers, 
-  Search, Building2, Landmark, Clock, Copy, Check
+  Search, Building2, Landmark, Clock, Copy, Check, X
 } from 'lucide-react';
 
 interface SuccessStoriesPageProps {
@@ -418,8 +418,9 @@ export const SuccessStoriesPage: React.FC<SuccessStoriesPageProps> = ({
               <button
                 onClick={() => setActiveModalStudy(null)}
                 className="absolute top-4 right-4 w-9 h-9 rounded-full bg-black/60 text-white flex items-center justify-center hover:bg-black transition-colors cursor-pointer z-10"
+                title="Close case study"
               >
-                ✕
+                <X className="w-4 h-4" />
               </button>
 
               {/* Photo Thumbnails Switcher */}

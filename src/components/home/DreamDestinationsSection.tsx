@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
   Compass, MapPin, ArrowRight, Building, 
-  ExternalLink, Waves, Mountain, Palmtree, Sun, Eye, ChevronRight
+  ExternalLink, Waves, Mountain, Palmtree, Sun, Eye, ChevronRight, X
 } from 'lucide-react';
 
 interface DreamDestinationsSectionProps {
@@ -333,8 +333,9 @@ export const DreamDestinationsSection: React.FC<DreamDestinationsSectionProps> =
               <button
                 onClick={() => setSelectedDestination(null)}
                 className="absolute top-4 right-4 w-8 h-8 rounded-full bg-black/60 text-white flex items-center justify-center hover:bg-black transition-colors cursor-pointer"
+                title="Close destination details"
               >
-                ✕
+                <X className="w-4 h-4" />
               </button>
               <div className="absolute bottom-4 left-4 right-4 text-left">
                 <span className="text-xs font-bold text-[#B7E36A] uppercase tracking-wider">Dream Destination</span>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Crown, ShieldCheck, CheckCircle2, ArrowRight, Building2, TrendingUp, Users, Headphones, Lock, Sparkles, PhoneCall } from 'lucide-react';
+import { Crown, ShieldCheck, CheckCircle2, ArrowRight, Building2, TrendingUp, Users, Headphones, Lock, Shield, PhoneCall } from 'lucide-react';
 
 interface WealthPageProps {
   onExplore: () => void;
@@ -29,7 +29,7 @@ export const WealthPage: React.FC<WealthPageProps> = ({ onExplore, onContact }) 
       description: 'Direct priority communication channel with a personal senior account manager for portfolio structuring and asset allocation.',
     },
     {
-      icon: Sparkles,
+      icon: Shield,
       title: 'Early Allocation Access',
       description: 'Get exclusive 48-hour advance access and guaranteed token allocations on high-yield prime European and US properties before public release.',
     },

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { BLOG_POSTS, BlogPost } from '../../data/blogPosts';
 import { 
   BookOpen, Search, Filter, Clock, Calendar, 
-  ArrowRight, Tag, Share2, ChevronRight, User as UserIcon, Sparkles
+  ArrowRight, Tag, Share2, ChevronRight, User as UserIcon, X
 } from 'lucide-react';
 
 interface BlogPageProps {
@@ -221,8 +221,9 @@ export const BlogPage: React.FC<BlogPageProps> = ({
               <button
                 onClick={() => setActiveArticle(null)}
                 className="absolute top-4 right-4 w-9 h-9 rounded-full bg-black/60 text-white flex items-center justify-center hover:bg-black transition-colors cursor-pointer"
+                title="Close article"
               >
-                ✕
+                <X className="w-4 h-4" />
               </button>
 
               <div className="absolute bottom-5 left-6 right-6">

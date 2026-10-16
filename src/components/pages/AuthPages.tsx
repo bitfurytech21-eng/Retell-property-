@@ -7,6 +7,7 @@ import { AccountType, ACCOUNT_TYPES, UserRole } from '../../types/user';
 import {
   Building2,
   Shield,
+  ShieldCheck,
   ArrowRight,
   CheckCircle2,
   Mail,
@@ -176,20 +177,6 @@ export const AuthPages: React.FC<AuthPageProps> = ({
     }
   };
 
-  // Fallback demo login helper (only used if reviewer wants to preview UI without Supabase credentials)
-  const handleDemoLogin = async (demoRole: 'investor' | 'admin') => {
-    setError(null);
-    setLoading(true);
-    try {
-      await quickDemoSession(demoRole);
-      onSuccess();
-    } catch (err: any) {
-      setError(err.message || 'Demo session failed.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
     <div className="auth-page py-12 px-4 bg-[#F6F7F4] min-h-[calc(100vh-160px)] flex items-center justify-center">
       <div className="auth-card max-w-md w-full bg-white p-7 sm:p-8 rounded-3xl border border-[#E3E8E3] shadow-lg">
@@ -258,6 +245,7 @@ export const AuthPages: React.FC<AuthPageProps> = ({
         {/* 1. LOGIN FORM */}
         {mode === 'login' && (
           <form onSubmit={handleLogin} className="space-y-4">
+
             <div className="form-field space-y-1">
               <label className="text-xs font-bold text-[#18211F]">Email Address</label>
               <input
@@ -299,7 +287,7 @@ export const AuthPages: React.FC<AuthPageProps> = ({
               {loading ? (
                 <>
                   <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  <span>Authenticating with Supabase...</span>
+                  <span>Authenticating...</span>
                 </>
               ) : preservedProperty ? (
                 `Sign In & Continue to ${preservedProperty.title.split(' ')[0]}`
@@ -308,40 +296,17 @@ export const AuthPages: React.FC<AuthPageProps> = ({
               )}
             </button>
 
-            {/* Local Preview Mode Switcher (strictly if Supabase keys are not yet configured) */}
-            {!isConfigured && (
-              <div className="pt-3 border-t border-[#E3E8E3] text-center">
-                <span className="text-[11px] text-[#69736F] block mb-2 font-medium">
-                  Quick Local Preview Session (Keys Pending):
-                </span>
-                <div className="flex gap-2">
-                  <button
-                    type="button"
-                    onClick={() => handleDemoLogin('investor')}
-                    className="btn btn-secondary btn-sm flex-1 text-[11px]"
-                  >
-                    Demo Investor
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleDemoLogin('admin')}
-                    className="btn btn-secondary btn-sm flex-1 text-[11px]"
-                  >
-                    Demo Admin
-                  </button>
-                </div>
+            <div className="text-center pt-3 border-t border-[#E3E8E3] space-y-2">
+              <div>
+                <span className="text-xs text-[#69736F]">Don't have an account yet? </span>
+                <button
+                  type="button"
+                  onClick={() => switchMode('register')}
+                  className="text-xs font-bold text-[#182D2A] hover:underline cursor-pointer"
+                >
+                  Register Here
+                </button>
               </div>
-            )}
-
-            <div className="text-center pt-3 border-t border-[#E3E8E3]">
-              <span className="text-xs text-[#69736F]">Don't have an account yet? </span>
-              <button
-                type="button"
-                onClick={() => switchMode('register')}
-                className="text-xs font-bold text-[#182D2A] hover:underline cursor-pointer"
-              >
-                Register Here
-              </button>
             </div>
           </form>
         )}

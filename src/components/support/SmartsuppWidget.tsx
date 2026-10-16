@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../lib/auth';
-import { MessageSquare, X, Send, Bot, ShieldCheck, Mail, Phone, ExternalLink, ChevronDown, CheckCircle2, Clock } from 'lucide-react';
+import { MessageSquare, X, Send, Headphones, ShieldCheck, Mail, Phone, ExternalLink, ChevronDown, CheckCircle2, Clock } from 'lucide-react';
 
 declare global {
   interface Window {
@@ -155,14 +155,14 @@ export const SmartsuppWidget: React.FC = () => {
           <div className="bg-[#182D2A] p-4 text-white flex items-center justify-between border-b border-[#24423C]">
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-2xl bg-[#24423C] border border-emerald-500/30 flex items-center justify-center text-[#B7E36A] relative">
-                <Bot className="w-5 h-5" />
+                <Headphones className="w-5 h-5" />
                 <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-400 rounded-full ring-2 ring-[#182D2A]" />
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <h3 className="font-bold text-xs text-white">Smartsupp Support</h3>
+                  <h3 className="font-bold text-xs text-white">Investor Support Desk</h3>
                   <span className="bg-emerald-500/20 text-[#B7E36A] text-[9px] font-extrabold px-2 py-0.2 rounded-full border border-[#B7E36A]/30">
-                    Live
+                    Online
                   </span>
                 </div>
                 <p className="text-[10px] text-slate-300 flex items-center gap-1 mt-0.5">

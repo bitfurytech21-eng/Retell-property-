@@ -119,6 +119,8 @@ export interface User {
   accountType?: AccountType;
   kycStatus: KYCStatus;
   kycDocumentType?: string;
+  kycDocumentUrl?: string;
+  kycDocumentName?: string;
   kycSubmittedAt?: string;
   walletBalance: number; // Available EUR
   investedBalance: number; // In active properties

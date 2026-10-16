@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../lib/auth';
 import { ledger } from '../../lib/ledger';
 import { BalanceCard } from '../dashboard/BalanceCard';
@@ -6,6 +6,7 @@ import { PortfolioOverview } from '../dashboard/PortfolioOverview';
 import { TransactionTable } from '../dashboard/TransactionTable';
 import { DistributionsView } from '../dashboard/DistributionsView';
 import { WithdrawalModal } from '../dashboard/WithdrawalModal';
+import { DepositModal } from '../dashboard/DepositModal';
 import { DocumentViewerModal } from '../dashboard/DocumentViewerModal';
 import { ProfilePage } from './ProfilePage';
 import { PropertyCard } from '../properties/PropertyCard';
@@ -36,12 +37,21 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
   onNavigateHome,
 }) => {
   const { user, refreshUser } = useAuth();
-  const [activeTab, setActiveTab] = useState<string>(defaultTab);
-  const [isDepositOpen, setIsDepositOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<string>(defaultTab === 'deposit' ? 'wallet' : defaultTab);
+  const [isDepositOpen, setIsDepositOpen] = useState(defaultTab === 'deposit');
   const [isWithdrawOpen, setIsWithdrawOpen] = useState(false);
   const [selectedDocInvestment, setSelectedDocInvestment] = useState<any | null>(null);
   const [copiedLink, setCopiedLink] = useState(false);
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
+
+  useEffect(() => {
+    if (defaultTab === 'deposit') {
+      setActiveTab('wallet');
+      setIsDepositOpen(true);
+    } else if (defaultTab) {
+      setActiveTab(defaultTab);
+    }
+  }, [defaultTab]);
 
   if (!user) {
     return (
@@ -148,13 +158,19 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
           })}
         </nav>
 
-        {/* Sidebar Footer / Deposit Button */}
+        {/* Sidebar Footer / Quick Cash Actions */}
         <div className="p-4 border-t border-[#1E332E] space-y-2 bg-[#142421]">
           <button
-            onClick={() => setIsWithdrawOpen(true)}
-            className="w-full btn btn-secondary text-xs font-semibold justify-center bg-transparent text-white border-[#2D4540] hover:bg-[#1E332E]"
+            onClick={() => setIsDepositOpen(true)}
+            className="w-full py-2.5 px-3 rounded-xl bg-[#B7E36A] text-[#182D2A] text-xs font-black hover:bg-[#cbf086] transition-all flex items-center justify-center gap-1.5 shadow-sm cursor-pointer"
           >
-            <ArrowUpRight className="w-3.5 h-3.5 mr-1.5" /> Withdraw
+            <ArrowDownLeft className="w-3.5 h-3.5" /> Deposit Funds
+          </button>
+          <button
+            onClick={() => setIsWithdrawOpen(true)}
+            className="w-full py-2 px-3 rounded-xl bg-[#1E332E] text-white hover:bg-[#24423C] border border-[#2D4540] text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+          >
+            <ArrowUpRight className="w-3.5 h-3.5" /> Withdraw
           </button>
         </div>
       </aside>
@@ -222,10 +238,12 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
                         )}
                       </div>
                       <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-                        Welcome back, {user.fullName}! 👋
+                        Welcome back, {user.fullName}
                       </h2>
                       <p className="text-xs text-[#A0A8A5] mt-1">
-                        Your real estate portfolio is generating stable monthly distributions across {investments.length} properties.
+                        {investments.length > 0 
+                          ? `Your real estate portfolio is generating monthly distributions across ${investments.length} ${investments.length === 1 ? 'property' : 'properties'}.` 
+                          : 'Review institutional property offerings and monitor your capital allocations in real time.'}
                       </p>
                     </div>
                   </div>
@@ -389,10 +407,42 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
                     onWithdraw={() => setIsWithdrawOpen(true)}
                   />
 
-                  <div className="p-6 rounded-2xl bg-[#F6F7F4] border border-[#E3E8E3] space-y-3">
-                    <button onClick={() => setIsWithdrawOpen(true)} className="btn btn-secondary btn-sm text-xs font-bold w-full">
-                      Withdraw
-                    </button>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="p-5 rounded-2xl bg-[#EEF1EC] border border-[#E3E8E3] flex flex-col justify-between space-y-3">
+                      <div>
+                        <div className="flex items-center gap-2 text-xs font-bold text-[#182D2A] mb-1">
+                          <ArrowDownLeft className="w-4 h-4 text-[#27845D]" />
+                          <span>Fund Account Balance</span>
+                        </div>
+                        <p className="text-xs text-[#69736F]">
+                          Add capital via SEPA Euro bank transfer (CaixaBank Escrow), instant card top-up, or multi-chain cryptocurrency.
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => setIsDepositOpen(true)}
+                        className="btn btn-primary text-xs font-bold w-full py-2.5 shadow-sm"
+                      >
+                        <ArrowDownLeft className="w-3.5 h-3.5 mr-1" /> Deposit Funds
+                      </button>
+                    </div>
+
+                    <div className="p-5 rounded-2xl bg-[#F6F7F4] border border-[#E3E8E3] flex flex-col justify-between space-y-3">
+                      <div>
+                        <div className="flex items-center gap-2 text-xs font-bold text-[#18211F] mb-1">
+                          <ArrowUpRight className="w-4 h-4 text-emerald-700" />
+                          <span>Withdraw Uninvested Cash</span>
+                        </div>
+                        <p className="text-xs text-[#69736F]">
+                          Transfer available liquidity to your verified European IBAN or external cryptocurrency wallet with zero exit fees.
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => setIsWithdrawOpen(true)}
+                        className="btn btn-secondary text-xs font-bold w-full py-2.5"
+                      >
+                        <ArrowUpRight className="w-3.5 h-3.5 mr-1" /> Request Withdrawal
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -653,6 +703,15 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
           </div>
         </div>
       )}
+
+      {/* Deposit Modal */}
+      <DepositModal
+        isOpen={isDepositOpen}
+        onClose={() => setIsDepositOpen(false)}
+        onSuccess={() => {
+          refreshUser();
+        }}
+      />
 
       {/* Withdrawal Modal */}
       <WithdrawalModal

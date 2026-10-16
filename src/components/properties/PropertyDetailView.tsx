@@ -30,7 +30,9 @@ import {
   Clock,
   Layers,
   Receipt,
-  UserCheck
+  UserCheck,
+  Camera,
+  Star
 } from 'lucide-react';
 
 interface PropertyDetailViewProps {
@@ -153,8 +155,9 @@ export const PropertyDetailView: React.FC<PropertyDetailViewProps> = ({
                 </span>
               )}
               {property.isExclusive && (
-                <span className="text-xs font-bold text-amber-800 bg-amber-50 border border-amber-200 px-2.5 py-0.5 rounded-full flex items-center gap-1">
-                  <span>★</span> Exclusive Mandate
+                <span className="text-xs font-bold text-amber-800 bg-amber-50 border border-amber-200 px-2.5 py-0.5 rounded-full flex items-center gap-1.5">
+                  <Star className="w-3.5 h-3.5 fill-amber-500 text-amber-600 inline" />
+                  <span>Exclusive Mandate</span>
                 </span>
               )}
               {property.isOffMarket && (
@@ -218,8 +221,9 @@ export const PropertyDetailView: React.FC<PropertyDetailViewProps> = ({
 
               {/* Photo Counter & Fullscreen Lightbox Button */}
               <div className="absolute top-4 right-4 flex items-center gap-2">
-                <span className="bg-black/65 backdrop-blur-md text-white text-xs font-semibold px-3 py-1.5 rounded-full">
-                  📷 {selectedImageIndex + 1} / {property.images.length}
+                <span className="bg-black/65 backdrop-blur-md text-white text-xs font-semibold px-3 py-1.5 rounded-full flex items-center gap-1.5">
+                  <Camera className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>{selectedImageIndex + 1} / {property.images.length}</span>
                 </span>
                 <button
                   onClick={() => setLightboxOpen(true)}
@@ -531,7 +535,7 @@ export const PropertyDetailView: React.FC<PropertyDetailViewProps> = ({
                                 : 'bg-[#E3E8E3] text-[#69736F]'
                             }`}
                           >
-                            {step.status === 'completed' ? '✓' : idx + 1}
+                            {step.status === 'completed' ? <Check className="w-3.5 h-3.5" /> : idx + 1}
                           </div>
                           <div className="bg-[#F6F7F4] p-3.5 rounded-2xl border border-[#E3E8E3] flex-1 text-xs">
                             <div className="flex flex-wrap items-center justify-between gap-1 mb-1">
@@ -834,7 +838,9 @@ export const PropertyDetailView: React.FC<PropertyDetailViewProps> = ({
               {docNotification && (
                 <div className="p-3.5 bg-green-50 border border-green-200 text-green-800 rounded-xl text-xs font-semibold flex items-center justify-between">
                   <span>{docNotification}</span>
-                  <button onClick={() => setDocNotification(null)} className="text-gray-400 hover:text-gray-600">✕</button>
+                  <button onClick={() => setDocNotification(null)} className="text-gray-400 hover:text-gray-600 cursor-pointer" title="Dismiss notification">
+                    <X className="w-4 h-4" />
+                  </button>
                 </div>
               )}
 
@@ -940,9 +946,10 @@ export const PropertyDetailView: React.FC<PropertyDetailViewProps> = ({
                   </div>
                   <button
                     onClick={() => setIsInvestModalOpen(false)}
-                    className="text-gray-400 hover:text-gray-600 text-xl font-bold p-1"
+                    className="text-gray-400 hover:text-gray-600 p-1 cursor-pointer"
+                    title="Close investment modal"
                   >
-                    ✕
+                    <X className="w-5 h-5" />
                   </button>
                 </div>
 

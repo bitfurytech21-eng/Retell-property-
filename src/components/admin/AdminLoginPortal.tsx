@@ -68,9 +68,10 @@ export const AdminLoginPortal: React.FC<AdminLoginPortalProps> = ({
 
       // 3. Try calling the dedicated backend API endpoint if online
       try {
-        const res = await authApi.login(cleanEmail, password);
-        if (res?.data?.token) {
-          setAuthToken(res.data.token);
+        const res: any = await authApi.login(cleanEmail, password);
+        const tokenVal = res?.token || res?.data?.token;
+        if (tokenVal) {
+          setAuthToken(tokenVal);
         }
       } catch (backendErr) {
         // Fallback gracefully in standalone or preview environments
@@ -195,6 +196,35 @@ export const AdminLoginPortal: React.FC<AdminLoginPortalProps> = ({
             </button>
           </div>
 
+          {/* Supabase Admin Access Configuration Accordion */}
+          <div className="p-3.5 rounded-2xl bg-slate-900/60 border border-slate-800/90 text-left space-y-2">
+            <details className="group">
+              <summary className="text-[11px] font-bold text-slate-300 flex items-center justify-between cursor-pointer list-none select-none">
+                <span className="flex items-center gap-1.5 text-emerald-400">
+                  <Terminal className="w-3.5 h-3.5" />
+                  <span>How to configure Admin in Supabase</span>
+                </span>
+                <span className="text-[10px] text-slate-500 font-mono transition-transform group-open:rotate-180">▼</span>
+              </summary>
+              <div className="mt-2.5 pt-2 border-t border-slate-800 text-[11px] text-slate-300 space-y-2 font-sans">
+                <p className="text-[10px] text-slate-400 leading-relaxed">
+                  Supabase users require <code className="text-emerald-300 font-mono bg-slate-950 px-1 py-0.5 rounded">role: 'admin'</code> in their user metadata. You can grant admin authority via the Supabase SQL editor:
+                </p>
+                <pre className="bg-slate-950 p-2.5 rounded-xl border border-slate-800 font-mono text-[10px] text-emerald-300 overflow-x-auto select-all whitespace-pre-wrap">
+{`UPDATE auth.users
+SET raw_user_meta_data = raw_user_meta_data || '{"role": "admin"}'::jsonb
+WHERE email = '${email || 'your-email@kretz.site'}';`}
+                </pre>
+                <div className="flex items-center justify-between text-[10px] text-slate-400">
+                  <span>Backend status:</span>
+                  <span className={isConfigured ? "text-emerald-400 font-semibold" : "text-amber-400 font-semibold"}>
+                    {isConfigured ? '● Supabase Connected' : '○ Standalone Preview Mode'}
+                  </span>
+                </div>
+              </div>
+            </details>
+          </div>
+
           {error && (
             <div className="p-3.5 rounded-2xl bg-red-950/50 border border-red-800/80 text-red-200 text-xs font-semibold flex items-start gap-2.5 text-left animate-in fade-in">
               <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
@@ -294,17 +324,6 @@ export const AdminLoginPortal: React.FC<AdminLoginPortalProps> = ({
                   <ArrowRight className="w-4 h-4" />
                 </>
               )}
-            </button>
-
-            {/* 1-Click Instant Demo Admin Session */}
-            <button
-              type="button"
-              onClick={handleQuickDemoAdmin}
-              disabled={loading}
-              className="w-full py-2.5 px-4 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white font-semibold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer"
-            >
-              <Cpu className="w-3.5 h-3.5 text-emerald-400" />
-              <span>1-Click Instant Demo Admin Access</span>
             </button>
           </form>
 

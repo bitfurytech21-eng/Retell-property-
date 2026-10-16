@@ -155,6 +155,37 @@ let mockAuditLogs = [
   }
 ];
 
+let mockPaymentConfig = {
+  traditional: {
+    beneficiary: 'Kretz Escrow Services S.L.',
+    iban: 'ES91 2100 0418 4502 0005 1829',
+    bic: 'CAIXESBBXXX',
+    bankName: 'CaixaBank Institutional Escrow',
+    supportEmail: 'info@kretz.site',
+    instructions: 'Include your unique transfer reference in the wire concept and forward receipt to info@kretz.site.',
+    routingNumber: 'ES912100'
+  },
+  cryptoNetworks: [
+    {
+      id: 'net-usdt-erc20',
+      name: 'Ethereum (ERC20)',
+      token: 'USDT',
+      network: 'Ethereum',
+      walletAddress: '0x71C8135C0e41B3fA128912389128f9A19b28A0bf',
+      contractEnd: '831ec7',
+      enabled: true
+    },
+    {
+      id: 'net-usdt-base',
+      name: 'Base Network',
+      token: 'USDC',
+      network: 'Base',
+      walletAddress: '0x71C8135C0e41B3fA128912389128f9A19b28A0bf',
+      enabled: true
+    }
+  ]
+};
+
 // Processed webhook idempotency set to prevent duplicate financial processing
 const processedWebhooks = new Set<string>();
 
@@ -563,6 +594,67 @@ router.get('/auth/session', requireAuth, (req: AuthenticatedRequest, res: Respon
   });
 });
 
+/**
+ * POST /api/v1/users/kyc
+ * Submit identity documents for compliance verification
+ */
+router.post('/users/kyc', requireAuth, (req: AuthenticatedRequest, res: Response) => {
+  const { docType, documentName, documentUrl } = req.body || {};
+
+  let target = mockUsers.find(u => u.id === req.user?.id || u.email === req.user?.email);
+  if (!target && req.user) {
+    target = {
+      id: req.user.id,
+      email: req.user.email,
+      fullName: req.user.fullName || 'Investor',
+      role: (req.user.role as any) || 'investor',
+      kycStatus: 'pending',
+      balance: 100000,
+      currency: 'EUR',
+      createdAt: new Date().toISOString()
+    };
+    mockUsers.push(target);
+  }
+
+  if (target) {
+    target.kycStatus = 'pending';
+    (target as any).kycDocumentType = docType || 'Passport';
+    if (documentName) (target as any).kycDocumentName = documentName;
+    if (documentUrl) (target as any).kycDocumentUrl = documentUrl;
+    (target as any).kycSubmittedAt = new Date().toISOString();
+  }
+
+  mockAuditLogs.unshift({
+    id: `audit-${Date.now()}`,
+    adminId: 'system',
+    adminEmail: req.user?.email || 'user',
+    action: 'KYC_DOCUMENT_SUBMITTED',
+    details: `Investor ${req.user?.email} submitted ${docType || 'identity document'} (${documentName || 'scanned document'}) for compliance review.`,
+    timestamp: new Date().toISOString()
+  });
+
+  logger.log({
+    level: 'info',
+    category: 'security',
+    requestId: req.id || 'req-kyc-upload',
+    method: 'POST',
+    route: '/api/v1/users/kyc',
+    statusCode: 200,
+    userId: req.user?.id,
+    eventType: 'KYC_DOCUMENT_UPLOADED',
+    outcome: 'pending',
+    message: `User ${req.user?.email} uploaded ${docType || 'Passport'}: ${documentName || 'file'}`,
+    metadata: { docType, documentName }
+  });
+
+  res.json({
+    success: true,
+    data: target,
+    message: 'Identity verification document uploaded successfully. Awaiting compliance review.',
+    requestId: req.id
+  });
+});
+
 // ============================================================================
 // 2. ADMINISTRATION ROUTES (/api/v1/admin)
 // ============================================================================
@@ -823,6 +915,359 @@ router.post('/admin/users/:id/credit', requireAdmin, (req: AuthenticatedRequest,
   });
 });
 
+/**
+ * GET /api/v1/admin/stats
+ */
+router.get('/admin/stats', requireAdmin, (req: AuthenticatedRequest, res: Response) => {
+  const totalDeposits = mockTransactions
+    .filter(t => t.type === 'deposit' && t.status === 'completed')
+    .reduce((acc, t) => acc + (t.amount || 0), 0);
+
+  const pendingDepositsCount = mockTransactions
+    .filter(t => t.type === 'deposit' && t.status === 'pending').length;
+
+  const totalWithdrawals = mockTransactions
+    .filter(t => t.type === 'withdrawal' && t.status === 'completed')
+    .reduce((acc, t) => acc + (t.amount || 0), 0);
+
+  const pendingWithdrawalsCount = mockTransactions
+    .filter(t => t.type === 'withdrawal' && t.status === 'pending').length;
+
+  const totalInvestments = mockTransactions
+    .filter(t => t.type === 'investment' && t.status === 'completed')
+    .reduce((acc, t) => acc + (t.amount || 0), 0);
+
+  res.json({
+    success: true,
+    data: {
+      totalUsers: mockUsers.length,
+      activeInvestors: mockUsers.filter(u => u.role === 'investor').length,
+      totalDepositsVolume: totalDeposits,
+      pendingDepositsCount,
+      totalWithdrawalsVolume: totalWithdrawals,
+      pendingWithdrawalsCount,
+      totalInvestmentsVolume: totalInvestments,
+      totalListings: mockListings.length,
+      auditLogsCount: mockAuditLogs.length
+    },
+    requestId: req.id
+  });
+});
+
+/**
+ * GET /api/v1/admin/deposits
+ */
+router.get('/admin/deposits', requireAdmin, (req: AuthenticatedRequest, res: Response) => {
+  const deposits = mockTransactions.filter(t => t.type === 'deposit');
+  res.json({
+    success: true,
+    data: deposits,
+    total: deposits.length,
+    requestId: req.id
+  });
+});
+
+/**
+ * POST /api/v1/admin/deposits/:id/approve
+ */
+router.post('/admin/deposits/:id/approve', requireAdmin, (req: AuthenticatedRequest, res: Response) => {
+  const { id } = req.params;
+  const { notes } = req.body || {};
+
+  const tx = mockTransactions.find(t => t.id === id);
+  if (!tx || tx.type !== 'deposit') {
+    return res.status(404).json({ success: false, error: 'Deposit transaction record not found.', code: 'NOT_FOUND', requestId: req.id });
+  }
+
+  if (tx.status === 'completed') {
+    return res.status(400).json({ success: false, error: 'Deposit has already been verified and credited.', code: 'ALREADY_COMPLETED', requestId: req.id });
+  }
+
+  tx.status = 'completed';
+  if (notes) (tx as any).notes = notes;
+
+  // Credit user's wallet balance on server
+  const user = mockUsers.find(u => u.id === tx.userId || u.email === tx.userEmail);
+  if (user) {
+    user.balance = (user.balance || 0) + tx.amount;
+  }
+
+  mockAuditLogs.unshift({
+    id: `audit-${Date.now()}`,
+    adminId: req.user!.id,
+    adminEmail: req.user!.email,
+    action: 'DEPOSIT_APPROVED',
+    details: `Approved deposit ${tx.reference || tx.id} of €${tx.amount} for ${tx.userEmail}. ${notes ? 'Notes: ' + notes : ''}`,
+    timestamp: new Date().toISOString()
+  });
+
+  logger.log({
+    level: 'info',
+    category: 'payments',
+    requestId: req.id || 'req-dep-appr',
+    method: 'POST',
+    route: `/api/v1/admin/deposits/${id}/approve`,
+    statusCode: 200,
+    userId: req.user?.id,
+    eventType: 'DEPOSIT_APPROVED',
+    outcome: 'success',
+    message: `Admin ${req.user?.email} approved deposit €${tx.amount} for ${tx.userEmail}`,
+    metadata: { transactionId: tx.id, amount: tx.amount, userEmail: tx.userEmail }
+  });
+
+  res.json({
+    success: true,
+    data: { transaction: tx, userBalance: user?.balance },
+    message: `Deposit ${tx.reference || tx.id} successfully approved and credited.`,
+    requestId: req.id
+  });
+});
+
+/**
+ * POST /api/v1/admin/deposits/:id/reject
+ */
+router.post('/admin/deposits/:id/reject', requireAdmin, (req: AuthenticatedRequest, res: Response) => {
+  const { id } = req.params;
+  const { reason = 'Wire reference or blockchain transaction hash could not be verified in escrow feed.' } = req.body || {};
+
+  const tx = mockTransactions.find(t => t.id === id);
+  if (!tx || tx.type !== 'deposit') {
+    return res.status(404).json({ success: false, error: 'Deposit record not found.', code: 'NOT_FOUND', requestId: req.id });
+  }
+
+  tx.status = 'rejected';
+  (tx as any).rejectReason = reason;
+
+  mockAuditLogs.unshift({
+    id: `audit-${Date.now()}`,
+    adminId: req.user!.id,
+    adminEmail: req.user!.email,
+    action: 'DEPOSIT_REJECTED',
+    details: `Declined deposit ${tx.reference || tx.id} of €${tx.amount} for ${tx.userEmail}. Reason: ${reason}`,
+    timestamp: new Date().toISOString()
+  });
+
+  logger.log({
+    level: 'warn',
+    category: 'payments',
+    requestId: req.id || 'req-dep-rej',
+    method: 'POST',
+    route: `/api/v1/admin/deposits/${id}/reject`,
+    statusCode: 200,
+    userId: req.user?.id,
+    eventType: 'DEPOSIT_REJECTED',
+    outcome: 'warning',
+    message: `Admin ${req.user?.email} rejected deposit ${tx.id}. Reason: ${reason}`
+  });
+
+  res.json({
+    success: true,
+    data: tx,
+    message: `Deposit request marked as declined.`,
+    requestId: req.id
+  });
+});
+
+/**
+ * GET /api/v1/admin/withdrawals
+ */
+router.get('/admin/withdrawals', requireAdmin, (req: AuthenticatedRequest, res: Response) => {
+  const withdrawals = mockTransactions.filter(t => t.type === 'withdrawal');
+  res.json({
+    success: true,
+    data: withdrawals,
+    total: withdrawals.length,
+    requestId: req.id
+  });
+});
+
+/**
+ * POST /api/v1/admin/withdrawals/:id/approve
+ */
+router.post('/admin/withdrawals/:id/approve', requireAdmin, (req: AuthenticatedRequest, res: Response) => {
+  const { id } = req.params;
+  const { txHash, notes } = req.body || {};
+
+  const tx = mockTransactions.find(t => t.id === id);
+  if (!tx || tx.type !== 'withdrawal') {
+    return res.status(404).json({ success: false, error: 'Withdrawal record not found.', code: 'NOT_FOUND', requestId: req.id });
+  }
+
+  if (tx.status === 'completed') {
+    return res.status(400).json({ success: false, error: 'Withdrawal has already been marked completed.', code: 'ALREADY_COMPLETED', requestId: req.id });
+  }
+
+  tx.status = 'completed';
+  if (txHash) (tx as any).txHash = txHash;
+  if (notes) (tx as any).notes = notes;
+
+  mockAuditLogs.unshift({
+    id: `audit-${Date.now()}`,
+    adminId: req.user!.id,
+    adminEmail: req.user!.email,
+    action: 'WITHDRAWAL_APPROVED',
+    details: `Approved withdrawal of €${tx.amount} for ${tx.userEmail}. Ref: ${tx.reference}. Dest: ${(tx as any).destination || 'wire'}`,
+    timestamp: new Date().toISOString()
+  });
+
+  logger.log({
+    level: 'info',
+    category: 'payments',
+    requestId: req.id || 'req-wth-appr',
+    method: 'POST',
+    route: `/api/v1/admin/withdrawals/${id}/approve`,
+    statusCode: 200,
+    userId: req.user?.id,
+    eventType: 'WITHDRAWAL_APPROVED',
+    outcome: 'success',
+    message: `Admin ${req.user?.email} approved withdrawal of €${tx.amount} for ${tx.userEmail}`,
+    metadata: { transactionId: tx.id, amount: tx.amount, txHash }
+  });
+
+  res.json({
+    success: true,
+    data: tx,
+    message: `Withdrawal approved and settlement broadcasted.`,
+    requestId: req.id
+  });
+});
+
+/**
+ * POST /api/v1/admin/withdrawals/:id/reject
+ */
+router.post('/admin/withdrawals/:id/reject', requireAdmin, (req: AuthenticatedRequest, res: Response) => {
+  const { id } = req.params;
+  const { reason = 'Compliance check flagged unverified recipient details or KYC mismatch.' } = req.body || {};
+
+  const tx = mockTransactions.find(t => t.id === id);
+  if (!tx || tx.type !== 'withdrawal') {
+    return res.status(404).json({ success: false, error: 'Withdrawal record not found.', code: 'NOT_FOUND', requestId: req.id });
+  }
+
+  tx.status = 'rejected';
+  (tx as any).rejectReason = reason;
+
+  // Refund the deducted funds back to the user's available balance
+  const user = mockUsers.find(u => u.id === tx.userId || u.email === tx.userEmail);
+  if (user) {
+    user.balance = (user.balance || 0) + tx.amount;
+  }
+
+  mockAuditLogs.unshift({
+    id: `audit-${Date.now()}`,
+    adminId: req.user!.id,
+    adminEmail: req.user!.email,
+    action: 'WITHDRAWAL_REJECTED',
+    details: `Declined withdrawal of €${tx.amount} for ${tx.userEmail}. Capital restored to investor balance. Reason: ${reason}`,
+    timestamp: new Date().toISOString()
+  });
+
+  logger.log({
+    level: 'warn',
+    category: 'payments',
+    requestId: req.id || 'req-wth-rej',
+    method: 'POST',
+    route: `/api/v1/admin/withdrawals/${id}/reject`,
+    statusCode: 200,
+    userId: req.user?.id,
+    eventType: 'WITHDRAWAL_REJECTED',
+    outcome: 'warning',
+    message: `Admin ${req.user?.email} rejected withdrawal ${tx.id}. Refunded €${tx.amount} to user.`
+  });
+
+  res.json({
+    success: true,
+    data: { transaction: tx, refundedBalance: user?.balance },
+    message: `Withdrawal declined and €${tx.amount} refunded to investor balance.`,
+    requestId: req.id
+  });
+});
+
+/**
+ * GET /api/v1/admin/payment-config
+ */
+router.get('/admin/payment-config', requireAdmin, (req: AuthenticatedRequest, res: Response) => {
+  res.json({
+    success: true,
+    data: mockPaymentConfig,
+    requestId: req.id
+  });
+});
+
+/**
+ * PUT /api/v1/admin/payment-config
+ */
+router.put('/admin/payment-config', requireAdmin, (req: AuthenticatedRequest, res: Response) => {
+  const { traditional, cryptoNetworks } = req.body || {};
+
+  if (traditional) {
+    mockPaymentConfig.traditional = { ...mockPaymentConfig.traditional, ...traditional };
+  }
+  if (Array.isArray(cryptoNetworks)) {
+    mockPaymentConfig.cryptoNetworks = cryptoNetworks;
+  }
+
+  mockAuditLogs.unshift({
+    id: `audit-${Date.now()}`,
+    adminId: req.user!.id,
+    adminEmail: req.user!.email,
+    action: 'PAYMENT_CONFIG_UPDATED',
+    details: `Updated institutional payment configuration and crypto settlement addresses.`,
+    timestamp: new Date().toISOString()
+  });
+
+  logger.log({
+    level: 'info',
+    category: 'admin',
+    requestId: req.id || 'req-pay-cfg',
+    method: 'PUT',
+    route: '/api/v1/admin/payment-config',
+    statusCode: 200,
+    userId: req.user?.id,
+    eventType: 'PAYMENT_SETTINGS_MODIFIED',
+    outcome: 'success',
+    message: `Admin ${req.user?.email} updated platform escrow configuration.`
+  });
+
+  res.json({
+    success: true,
+    data: mockPaymentConfig,
+    message: 'Payment configuration saved and active.',
+    requestId: req.id
+  });
+});
+
+/**
+ * PUT /api/v1/admin/properties/:id
+ */
+router.put(['/admin/properties/:id', '/marketplace/listings/:id'], requireAdmin, (req: AuthenticatedRequest, res: Response) => {
+  const { id } = req.params;
+  const updates = req.body || {};
+
+  const propIndex = mockListings.findIndex(p => p.id === id || p.slug === id);
+  if (propIndex === -1) {
+    return res.status(404).json({ success: false, error: 'Property not found.', code: 'NOT_FOUND', requestId: req.id });
+  }
+
+  mockListings[propIndex] = { ...mockListings[propIndex], ...updates };
+
+  mockAuditLogs.unshift({
+    id: `audit-${Date.now()}`,
+    adminId: req.user!.id,
+    adminEmail: req.user!.email,
+    action: 'PROPERTY_UPDATED',
+    details: `Updated property listing ${mockListings[propIndex].title} (${id}).`,
+    timestamp: new Date().toISOString()
+  });
+
+  res.json({
+    success: true,
+    data: mockListings[propIndex],
+    message: 'Property updated successfully.',
+    requestId: req.id
+  });
+});
+
 // ============================================================================
 // 3. MARKETPLACE ROUTES (/api/v1/marketplace)
 // ============================================================================
@@ -1061,19 +1506,19 @@ router.get('/notifications', requireAuth, (req: AuthenticatedRequest, res: Respo
  * POST /api/v1/deposits
  */
 router.post('/deposits', requireAuth, (req: AuthenticatedRequest, res: Response) => {
-  const { amount, currency = 'EUR', method = 'SEPA Bank Wire', txHash } = req.body || {};
+  const { amount, currency = 'EUR', method = 'SEPA Bank Wire', txHash, reference } = req.body || {};
 
-  if (!amount || Number(amount) < 100) {
+  if (!amount || Number(amount) < 50) {
     return res.status(400).json({
       success: false,
-      error: 'Minimum deposit amount is €100.',
+      error: 'Minimum deposit amount is €50.',
       code: 'INVALID_DEPOSIT_AMOUNT',
       requestId: req.id
     });
   }
 
   const numAmount = Number(amount);
-  const ref = `KZ-DEP-${Math.floor(100000 + Math.random() * 900000)}`;
+  const ref = reference || `KZ-DEP-${Math.floor(100000 + Math.random() * 900000)}`;
 
   const depositTx = {
     id: `tx-dep-${Date.now()}`,
@@ -1120,10 +1565,10 @@ router.post('/deposits', requireAuth, (req: AuthenticatedRequest, res: Response)
 router.post('/withdrawals', requireAuth, (req: AuthenticatedRequest, res: Response) => {
   const { amount, destination, method = 'Bank Wire SEPA' } = req.body || {};
 
-  if (!amount || Number(amount) < 250) {
+  if (!amount || Number(amount) < 50) {
     return res.status(400).json({
       success: false,
-      error: 'Minimum withdrawal amount is €250.',
+      error: 'Minimum withdrawal amount is €50.',
       code: 'INVALID_AMOUNT',
       requestId: req.id
     });
@@ -1139,7 +1584,21 @@ router.post('/withdrawals', requireAuth, (req: AuthenticatedRequest, res: Respon
   }
 
   const numAmount = Number(amount);
-  const userRecord = mockUsers.find(u => u.id === req.user?.id);
+  let userRecord = mockUsers.find(u => u.id === req.user?.id || u.email === req.user?.email);
+
+  if (!userRecord && req.user) {
+    userRecord = {
+      id: req.user.id,
+      email: req.user.email,
+      fullName: req.user.fullName || 'Investor',
+      role: (req.user.role as any) || 'investor',
+      kycStatus: 'approved',
+      balance: 100000,
+      currency: 'EUR',
+      createdAt: new Date().toISOString()
+    };
+    mockUsers.push(userRecord);
+  }
 
   if (userRecord && userRecord.balance < numAmount) {
     logger.log({
@@ -1332,9 +1791,11 @@ router.post('/investments', requireAuth, (req: AuthenticatedRequest, res: Respon
  * Secure payment provider webhook processing with signature verification & idempotency
  */
 router.post('/payments/webhooks', (req: AuthenticatedRequest, res: Response) => {
-  const providerSignature = req.headers['x-signature'] || req.headers['stripe-signature'];
+  const providerSignature = req.headers['x-signature'] || req.headers['stripe-signature'] || req.headers['x-webhook-signature'];
+  const timestampHeader = req.headers['x-webhook-timestamp'];
   const event = req.body || {};
   const eventId = event.id || req.headers['x-event-id'];
+  const webhookSecret = process.env.PAYMENT_WEBHOOK_SECRET || process.env.STRIPE_WEBHOOK_SECRET;
 
   if (!eventId) {
     logger.log({
@@ -1350,6 +1811,56 @@ router.post('/payments/webhooks', (req: AuthenticatedRequest, res: Response) => 
     });
 
     return res.status(400).json({ success: false, error: 'Missing webhook event identifier.', requestId: req.id });
+  }
+
+  // Replay protection: verify event timestamp freshness if header provided (5 minute tolerance)
+  if (timestampHeader) {
+    const timestampSec = parseInt(String(timestampHeader), 10);
+    const nowSec = Math.floor(Date.now() / 1000);
+    if (!isNaN(timestampSec) && Math.abs(nowSec - timestampSec) > 300) {
+      logger.log({
+        level: 'warn',
+        category: 'security',
+        requestId: req.id || 'req-wh-replay',
+        method: 'POST',
+        route: '/api/v1/payments/webhooks',
+        statusCode: 401,
+        eventType: 'WEBHOOK_TIMESTAMP_EXPIRED',
+        outcome: 'failure',
+        message: 'Payment webhook rejected: timestamp exceeds 300s tolerance window.'
+      });
+      return res.status(401).json({ success: false, error: 'Webhook timestamp tolerance exceeded.', requestId: req.id });
+    }
+  }
+
+  // Cryptographic HMAC SHA-256 verification when secret is configured
+  if (webhookSecret && providerSignature) {
+    try {
+      const rawPayload = JSON.stringify(req.body);
+      const computedHash = crypto.createHmac('sha256', webhookSecret).update(rawPayload).digest('hex');
+      const sigString = String(providerSignature).replace(/^t=\d+,v1=/, '');
+
+      const sigBuf = Buffer.from(sigString);
+      const computedBuf = Buffer.from(computedHash);
+      const matches = sigBuf.length === computedBuf.length && crypto.timingSafeEqual(sigBuf, computedBuf);
+
+      if (!matches) {
+        logger.log({
+          level: 'error',
+          category: 'security',
+          requestId: req.id || 'req-wh-bad-sig',
+          method: 'POST',
+          route: '/api/v1/payments/webhooks',
+          statusCode: 401,
+          eventType: 'WEBHOOK_SIGNATURE_MISMATCH',
+          outcome: 'failure',
+          message: 'Payment webhook rejected: cryptographic signature mismatch.'
+        });
+        return res.status(401).json({ success: false, error: 'Invalid HMAC signature.', requestId: req.id });
+      }
+    } catch (e: any) {
+      return res.status(401).json({ success: false, error: 'Webhook verification error.', requestId: req.id });
+    }
   }
 
   // Idempotency check: prevent duplicate replay attacks
@@ -1371,6 +1882,30 @@ router.post('/payments/webhooks', (req: AuthenticatedRequest, res: Response) => 
   }
 
   processedWebhooks.add(String(eventId));
+
+  // If webhook contains successful payment information, credit user balance idempotently
+  if (event.type === 'deposit.verified' || event.type === 'payment_intent.succeeded') {
+    const depositAmount = Number(event.data?.amount || event.amount || 0);
+    const userEmail = event.data?.userEmail || event.userEmail;
+    if (depositAmount > 0 && userEmail) {
+      const user = mockUsers.find(u => u.email.toLowerCase() === String(userEmail).toLowerCase());
+      if (user) {
+        user.balance = (user.balance || 0) + depositAmount;
+        mockTransactions.unshift({
+          id: `tx-wh-${Date.now()}`,
+          userId: user.id,
+          userEmail: user.email,
+          type: 'deposit',
+          amount: depositAmount,
+          currency: event.data?.currency || 'EUR',
+          status: 'completed',
+          method: 'Automated Gateway Webhook',
+          reference: `KZ-WH-${eventId.slice(0, 8)}`,
+          createdAt: new Date().toISOString()
+        });
+      }
+    }
+  }
 
   logger.log({
     level: 'info',
@@ -1398,39 +1933,12 @@ router.post('/payments/webhooks', (req: AuthenticatedRequest, res: Response) => 
 });
 
 /**
- * GET /api/v1/payments/config (Public view of escrow instructions)
+ * GET /api/v1/payments/config (Public view of active escrow & crypto instructions)
  */
 router.get('/payments/config', (req: AuthenticatedRequest, res: Response) => {
   res.json({
     success: true,
-    data: {
-      traditional: {
-        beneficiary: 'Kretz Escrow Services S.L.',
-        iban: 'ES91 2100 0418 4502 0005 1829',
-        bic: 'CAIXESBBXXX',
-        bankName: 'CaixaBank Institutional Escrow',
-        instructions: 'Include your unique investor reference in the concept concept wire transfer.'
-      },
-      cryptoNetworks: [
-        {
-          id: 'net-usdt-erc20',
-          name: 'Ethereum (ERC20)',
-          token: 'USDT',
-          network: 'Ethereum',
-          walletAddress: '0x71C8135C0e41B3fA128912389128f9A19b28A0bf',
-          contractEnd: '831ec7',
-          enabled: true
-        },
-        {
-          id: 'net-usdt-base',
-          name: 'Base Network',
-          token: 'USDC',
-          network: 'Base',
-          walletAddress: '0x71C8135C0e41B3fA128912389128f9A19b28A0bf',
-          enabled: true
-        }
-      ]
-    },
+    data: mockPaymentConfig,
     requestId: req.id
   });
 });

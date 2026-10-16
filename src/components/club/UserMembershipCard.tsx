@@ -3,7 +3,7 @@ import { UserMembership, MembershipTier } from '../../types/membership';
 import { ledger } from '../../lib/ledger';
 import { formatCurrency, formatDate } from '../../lib/utils';
 import { 
-  Crown, ShieldCheck, Sparkles, QrCode, Calendar, 
+  Crown, ShieldCheck, QrCode, Calendar, 
   CreditCard, CheckCircle2, AlertTriangle, ArrowRight, 
   ExternalLink, Download, Clock, RefreshCw, X
 } from 'lucide-react';
@@ -53,8 +53,8 @@ export const UserMembershipCard: React.FC<UserMembershipCardProps> = ({
             <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
             <span>{actionMessage}</span>
           </div>
-          <button onClick={() => setActionMessage(null)} className="text-emerald-700 hover:text-emerald-900 text-sm font-bold">
-            ✕
+          <button onClick={() => setActionMessage(null)} className="text-emerald-700 hover:text-emerald-900 cursor-pointer" title="Dismiss message">
+            <X className="w-4 h-4" />
           </button>
         </div>
       )}
@@ -136,7 +136,7 @@ export const UserMembershipCard: React.FC<UserMembershipCardProps> = ({
                 onClick={() => setShowPerksModal(true)}
                 className="px-3.5 py-2 rounded-xl bg-white/15 hover:bg-white/25 text-white text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
               >
-                <Sparkles className="w-3.5 h-3.5 text-[#B7E36A]" />
+                <Crown className="w-3.5 h-3.5 text-[#B7E36A]" />
                 <span>View Member Perquisites</span>
               </button>
 
@@ -187,8 +187,9 @@ export const UserMembershipCard: React.FC<UserMembershipCardProps> = ({
               <button 
                 onClick={() => setShowPerksModal(false)}
                 className="w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:text-slate-900 flex items-center justify-center cursor-pointer"
+                title="Close perquisites modal"
               >
-                ✕
+                <X className="w-4 h-4" />
               </button>
             </div>
 

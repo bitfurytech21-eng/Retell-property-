@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../lib/auth';
 import { ledger } from '../../lib/ledger';
+import { financialApi } from '../../lib/api';
 import { formatCurrency } from '../../lib/utils';
 import { isValidIBAN } from '../../lib/validation';
-import { ArrowUpRight, ShieldAlert, CheckCircle2, Building2, Coins, Sparkles, AlertCircle } from 'lucide-react';
+import { ArrowUpRight, ShieldAlert, CheckCircle2, Building2, Coins, X, AlertCircle } from 'lucide-react';
 
 interface WithdrawalModalProps {
   isOpen: boolean;
@@ -50,8 +51,8 @@ export const WithdrawalModal: React.FC<WithdrawalModalProps> = ({
       return;
     }
 
-    if (amount <= 0) {
-      setError('Withdrawal amount must be greater than €0.00.');
+    if (amount < 50) {
+      setError('Minimum withdrawal amount is €50.00.');
       return;
     }
 
@@ -74,6 +75,25 @@ export const WithdrawalModal: React.FC<WithdrawalModalProps> = ({
 
     setIsSubmitting(true);
     try {
+      const destinationStr = method === 'sepa' 
+        ? iban.trim().toUpperCase() 
+        : `${cryptoToken} (${cryptoNetwork}): ${cryptoAddress.trim()}`;
+      const methodStr = method === 'sepa' 
+        ? 'SEPA Bank Wire' 
+        : `Crypto ${cryptoToken} (${cryptoNetwork})`;
+
+      // 1. Submit to Backend API server
+      try {
+        await financialApi.withdraw({
+          amount,
+          destination: destinationStr,
+          method: methodStr
+        });
+      } catch (apiErr: any) {
+        console.warn('Backend withdrawal sync notice:', apiErr);
+      }
+
+      // 2. Submit to local ledger to lock funds and record transaction
       if (method === 'sepa') {
         await ledger.requestWithdrawal(user.id, amount, 'SEPA Bank Wire', { 
           bankIban: iban.trim().toUpperCase() 
@@ -118,9 +138,10 @@ export const WithdrawalModal: React.FC<WithdrawalModalProps> = ({
           </div>
           <button 
             onClick={onClose} 
-            className="dash-muted hover:opacity-80 text-xl font-bold p-1 cursor-pointer"
+            className="dash-muted hover:opacity-80 p-1 cursor-pointer"
+            title="Close withdrawal modal"
           >
-            ✕
+            <X className="w-5 h-5" />
           </button>
         </div>
 
@@ -193,11 +214,14 @@ export const WithdrawalModal: React.FC<WithdrawalModalProps> = ({
 
             {/* Withdrawal Amount */}
             <div className="form-field">
-              <label>Withdrawal Amount (EUR)</label>
+              <div className="flex justify-between items-center mb-1">
+                <label className="text-xs font-bold">Withdrawal Amount (EUR)</label>
+                <span className="text-[10px] text-gray-400">Min: €50.00</span>
+              </div>
               <div className="relative">
                 <input
                   type="number"
-                  min={10}
+                  min={50}
                   max={user.walletBalance}
                   step={10}
                   value={amount}

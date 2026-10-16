@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
   Building2, Users, ShieldCheck, EyeOff, Share2, Compass, 
-  MapPin, Sparkles, ArrowRight, Lock, Globe, Award, 
+  MapPin, ArrowRight, Lock, Globe, Award, 
   CheckCircle2, ChevronRight, PhoneCall, HeartHandshake
 } from 'lucide-react';
 

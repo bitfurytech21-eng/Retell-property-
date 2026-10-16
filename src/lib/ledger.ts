@@ -843,16 +843,33 @@ class LedgerService {
     return newUser;
   }
 
-  public updateKYCStatus(userId: string, status: KYCStatus, docType?: string): User {
+  public updateKYCStatus(
+    userId: string, 
+    status: KYCStatus, 
+    docType?: string,
+    documentUrl?: string,
+    documentName?: string
+  ): User {
     const user = this.getUserById(userId);
     if (!user) throw new Error('User not found');
 
     user.kycStatus = status;
     if (docType) user.kycDocumentType = docType;
+    if (documentUrl !== undefined) user.kycDocumentUrl = documentUrl;
+    if (documentName !== undefined) user.kycDocumentName = documentName;
     if (status === 'pending') user.kycSubmittedAt = new Date().toISOString();
 
-    this.logAudit('usr-admin-1', 'admin@kretz.com', 'KYC_STATUS_UPDATED', `User ${user.email} KYC status set to ${status}`);
-    this.createNotification(user.id, `Identity Verification: ${status.toUpperCase()}`, `Your KYC verification is now ${status}.`, status === 'verified' ? 'success' : 'info');
+    this.logAudit('usr-admin-1', 'admin@kretz.com', 'KYC_STATUS_UPDATED', `User ${user.email} KYC status set to ${status}${documentName ? ` (Uploaded: ${documentName})` : ''}`);
+    this.createNotification(
+      user.id, 
+      `Identity Verification: ${status.toUpperCase()}`, 
+      status === 'verified' 
+        ? 'Your KYC verification has been approved. You now have unlimited investment and withdrawal access.' 
+        : status === 'pending'
+          ? `Your ${docType || 'identity document'} (${documentName || 'official file'}) has been received and is pending compliance review.`
+          : 'Your KYC verification was declined. Please upload updated valid documentation.', 
+      status === 'verified' ? 'success' : status === 'pending' ? 'info' : 'warning'
+    );
     this.saveState();
     return user;
   }

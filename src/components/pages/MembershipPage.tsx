@@ -4,9 +4,9 @@ import { ledger } from '../../lib/ledger';
 import { MembershipTier, MembershipTierId, MembershipBillingCycle, UserMembership } from '../../types/membership';
 import { formatCurrency } from '../../lib/utils';
 import { 
-  Crown, ShieldCheck, CheckCircle2, Sparkles, ArrowRight, 
+  Crown, ShieldCheck, CheckCircle2, ArrowRight, 
   Lock, KeyRound, Building2, Users, Compass, Globe, 
-  Calendar, PhoneCall, QrCode, AlertCircle, FileText, ChevronRight, Check
+  Calendar, PhoneCall, QrCode, AlertCircle, FileText, ChevronRight, Check, X
 } from 'lucide-react';
 import { MembershipApplicationModal } from '../club/MembershipApplicationModal';
 import { UserMembershipCard } from '../club/UserMembershipCard';
@@ -64,7 +64,9 @@ export const MembershipPage: React.FC<MembershipPageProps> = ({
             <p className="font-bold text-white">Membership Activated</p>
             <p className="text-[#C6D8D4]">{successToast}</p>
           </div>
-          <button onClick={() => setSuccessToast(null)} className="text-white/60 hover:text-white ml-auto">✕</button>
+          <button onClick={() => setSuccessToast(null)} className="text-white/60 hover:text-white ml-auto cursor-pointer" title="Dismiss message">
+            <X className="w-4 h-4" />
+          </button>
         </div>
       )}
 
@@ -146,7 +148,7 @@ export const MembershipPage: React.FC<MembershipPageProps> = ({
           
           <div className="max-w-2xl mx-auto mb-14 space-y-4">
             <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white border border-[#D5DDD5] text-emerald-900 text-xs font-bold uppercase tracking-wider">
-              <Sparkles className="w-3.5 h-3.5 text-emerald-700" />
+              <Crown className="w-3.5 h-3.5 text-emerald-700" />
               <span>Tailored Membership Tiers</span>
             </div>
 
@@ -246,8 +248,9 @@ export const MembershipPage: React.FC<MembershipPageProps> = ({
 
                   <div className="pt-4 border-t border-slate-100">
                     {isCurrentTier ? (
-                      <div className="w-full py-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold text-center">
-                        ✓ Your Current Membership
+                      <div className="w-full py-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold text-center flex items-center justify-center gap-1.5">
+                        <Check className="w-3.5 h-3.5" />
+                        <span>Your Current Membership</span>
                       </div>
                     ) : (
                       <button
