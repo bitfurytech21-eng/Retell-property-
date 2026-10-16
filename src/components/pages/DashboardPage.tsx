@@ -547,28 +547,62 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
             {activeTab === 'support' && (
               <div className="bg-white p-8 rounded-3xl border border-[#E3E8E3] shadow-sm space-y-6 animate-in fade-in duration-200 max-w-3xl mx-auto">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-[#EEF1EC] text-[#27845D] flex items-center justify-center">
+                  <div className="w-12 h-12 rounded-2xl bg-[#EEF1EC] text-[#27845D] flex items-center justify-center shrink-0">
                     <HelpCircle className="w-6 h-6" />
                   </div>
-                  <div>
-                    <h2 className="text-2xl font-black text-[#18211F]">Investor Support & Help Center</h2>
-                    <p className="text-xs text-[#69736F]">Dedicated European Real Estate Advisory & Technical Support</p>
+                  <div className="flex-1 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                      <h2 className="text-2xl font-black text-[#18211F]">Investor Support & Help Center</h2>
+                      <p className="text-xs text-[#69736F]">Powered by Smartsupp Customer Support · Email: <strong className="text-[#182D2A]">info@kretz.site</strong></p>
+                    </div>
+                    <button
+                      onClick={() => {
+                        if (typeof window !== 'undefined' && window.smartsupp) {
+                          try { window.smartsupp('chat:open'); } catch { }
+                        }
+                        alert('Smartsupp Live Chat is online! Use the Smartsupp widget at the bottom right or email info@kretz.site for direct assistance.');
+                      }}
+                      className="px-4 py-2.5 rounded-xl bg-[#182D2A] text-white font-bold text-xs hover:bg-[#24423C] transition-all flex items-center justify-center gap-2 shadow-xs cursor-pointer shrink-0"
+                    >
+                      <Bell className="w-3.5 h-3.5 text-[#B7E36A]" />
+                      <span>Start Smartsupp Live Chat</span>
+                    </button>
                   </div>
                 </div>
 
-                <div className="space-y-4 text-xs">
+                <div className="space-y-4 text-xs text-left">
+                  {/* Smartsupp Support Banner */}
+                  <div className="p-5 rounded-2xl bg-[#182D2A] text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
+                        <h3 className="font-bold text-sm text-white">Smartsupp Live Support Active</h3>
+                      </div>
+                      <p className="text-xs text-slate-300">
+                        Our specialized real estate advisors respond in under 2 minutes. You can also send formal documentation directly to <strong className="text-[#B7E36A]">info@kretz.site</strong>.
+                      </p>
+                    </div>
+                    <a
+                      href="mailto:info@kretz.site"
+                      className="px-4 py-2 rounded-xl bg-[#24423C] hover:bg-[#2e544c] border border-emerald-500/30 text-[#B7E36A] font-bold text-xs whitespace-nowrap cursor-pointer"
+                    >
+                      info@kretz.site
+                    </a>
+                  </div>
+
                   <div className="p-5 rounded-2xl bg-[#F6F7F4] border border-[#E3E8E3] space-y-2">
                     <h3 className="font-bold text-[#18211F] text-sm">Frequently Asked Questions</h3>
                     <ul className="space-y-2 text-[#69736F]">
                       <li>• <strong>When are rental dividends paid?</strong> Dividends are credited automatically to your available balance on the 1st of every month.</li>
                       <li>• <strong>How do I withdraw funds?</strong> Go to your wallet balance and click Withdraw. SEPA transfers take 1-2 business days.</li>
                       <li>• <strong>What is the minimum investment?</strong> All properties have a minimum investment threshold of €1,000.</li>
+                      <li>• <strong>What is the support email?</strong> Our official contact and support email is <strong className="text-[#182D2A]">info@kretz.site</strong>.</li>
                     </ul>
                   </div>
 
                   <div className="p-6 rounded-2xl border border-[#E3E8E3] space-y-4">
-                    <h3 className="font-bold text-[#18211F] text-sm">Contact Investor Relations</h3>
-                    <form onSubmit={(e) => { e.preventDefault(); alert('Support ticket submitted successfully! Our team will respond within 4 hours.'); }} className="space-y-3">
+                    <h3 className="font-bold text-[#18211F] text-sm">Send Ticket to info@kretz.site</h3>
+                    <form onSubmit={(e) => { e.preventDefault(); alert('Inquiry sent to info@kretz.site! An advisor will respond within 2 hours.'); }} className="space-y-3">
                       <div>
                         <label className="block text-[11px] font-semibold text-[#69736F] mb-1">Subject</label>
                         <input type="text" placeholder="e.g. Question about SEPA deposit or SPV deed" required className="w-full px-4 py-2.5 rounded-xl border border-[#E3E8E3] text-xs focus:outline-none focus:border-[#182D2A]" />
@@ -578,7 +612,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
                         <textarea rows={4} placeholder="Describe your inquiry..." required className="w-full px-4 py-2.5 rounded-xl border border-[#E3E8E3] text-xs focus:outline-none focus:border-[#182D2A]" />
                       </div>
                       <button type="submit" className="btn btn-primary text-xs font-bold px-6">
-                        Submit Support Request
+                        Send to info@kretz.site
                       </button>
                     </form>
                   </div>

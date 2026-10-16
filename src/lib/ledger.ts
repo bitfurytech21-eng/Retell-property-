@@ -56,8 +56,8 @@ const DEFAULT_PAYMENT_CONFIG: PaymentConfig = {
     iban: 'ES91 2100 0418 4502 0005 1829',
     bic: 'CAIXESBBXXX',
     bankName: 'CaixaBank Institutional Escrow',
-    supportEmail: 'payments@kretz.com',
-    instructions: 'Include your unique transfer reference in the wire transfer concept and email your transfer confirmation receipt to payments@kretz.com for rapid verification.',
+    supportEmail: 'info@kretz.site',
+    instructions: 'Include your unique transfer reference in the wire transfer concept and email your transfer confirmation receipt to info@kretz.site for rapid verification.',
     routingNumber: 'ES912100'
   },
   cryptoNetworks: [

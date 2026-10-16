@@ -392,7 +392,7 @@ export const TeamPage: React.FC<TeamPageProps> = ({ onExplore, onContact }) => {
                 <div className="text-xs font-bold text-[#B7E36A] uppercase tracking-wide">Paris Office</div>
                 <div className="text-sm font-semibold text-white">43 Rue du Château</div>
                 <div className="text-xs text-white/70">92100 Boulogne-Billancourt, Paris</div>
-                <div className="text-xs text-white/70 pt-2 border-t border-white/10">contact@kretzrealestate.com</div>
+                <div className="text-xs text-[#B7E36A] font-bold pt-2 border-t border-white/10">info@kretz.site</div>
               </div>
             </div>
           </div>

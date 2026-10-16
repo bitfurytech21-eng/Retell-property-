@@ -38,6 +38,7 @@ import { TransactionTable } from './components/dashboard/TransactionTable';
 import { AdminPanel } from './components/admin/AdminPanel';
 import { InvestmentGuidePage } from './components/pages/InvestmentGuidePage';
 import { ProtectedRoute } from './components/layout/ProtectedRoute';
+import { SmartsuppWidget } from './components/support/SmartsuppWidget';
 
 import { ArrowRight, ShieldCheck, UserCheck, Plus, Sparkles } from 'lucide-react';
 
@@ -488,6 +489,9 @@ function MainApp() {
       </div>
 
       {!isDashboardView && <Footer onNavigate={navigateTo} />}
+
+      {/* Global Smartsupp Live Customer Support System */}
+      <SmartsuppWidget />
     </div>
   );
 }

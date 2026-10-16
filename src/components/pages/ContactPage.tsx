@@ -65,9 +65,8 @@ export const ContactPage: React.FC = () => {
                 <div className="flex items-start gap-3">
                   <Mail className="w-4 h-4 text-[#B7E36A] shrink-0 mt-0.5" />
                   <div>
-                    <span className="font-bold block text-white">Email Desk</span>
-                    <span>support@kretz.com</span>
-                    <span className="text-[#A0A8A5] block">compliance@kretz.com</span>
+                    <span className="font-bold block text-white">Official Contact Email</span>
+                    <a href="mailto:info@kretz.site" className="text-[#B7E36A] font-bold hover:underline">info@kretz.site</a>
                   </div>
                 </div>
 
