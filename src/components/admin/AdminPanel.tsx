@@ -22,11 +22,12 @@ import {
   ToggleRight,
   AlertCircle,
   FileText,
-  Crown
+  Activity
 } from 'lucide-react';
 
 import { PropertyDocumentsHub } from '../documents/PropertyDocumentsHub';
-import { AdminMembershipTab } from './AdminMembershipTab';
+import { AdminMonitoringView } from './AdminMonitoringView';
+import { AdminDashboardOverview } from './AdminDashboardOverview';
 
 export const AdminPanel: React.FC = () => {
   const { user } = useAuth();
@@ -38,7 +39,7 @@ export const AdminPanel: React.FC = () => {
     );
   }
 
-  const [activeTab, setActiveTab] = useState<'deposits' | 'withdrawals' | 'manual-payment' | 'kyc' | 'properties' | 'property-documents' | 'membership' | 'audit' | 'payment-settings'>('deposits');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'deposits' | 'withdrawals' | 'manual-payment' | 'kyc' | 'properties' | 'property-documents' | 'audit' | 'payment-settings' | 'logs'>('dashboard');
   const [transactions, setTransactions] = useState(ledger.getTransactions());
   const [properties, setProperties] = useState(ledger.getProperties());
   const [users, setUsers] = useState(ledger.getUsers());
@@ -419,6 +420,16 @@ export const AdminPanel: React.FC = () => {
         {/* Navigation Tabs */}
         <div className="flex border-b border-[#E3E8E3] mb-8 gap-5 text-xs sm:text-sm font-bold overflow-x-auto pb-1">
           <button
+            onClick={() => setActiveTab('dashboard')}
+            className={`pb-3 border-b-2 flex items-center gap-2 whitespace-nowrap cursor-pointer transition-colors ${
+              activeTab === 'dashboard' ? 'border-[#182D2A] text-[#182D2A]' : 'border-transparent text-[#69736F] hover:text-[#18211F]'
+            }`}
+          >
+            <Activity className="w-4 h-4 text-emerald-700" />
+            <span>Admin Dashboard</span>
+          </button>
+
+          <button
             onClick={() => setActiveTab('deposits')}
             className={`pb-3 border-b-2 flex items-center gap-2 whitespace-nowrap cursor-pointer transition-colors ${
               activeTab === 'deposits' ? 'border-[#182D2A] text-[#182D2A]' : 'border-transparent text-[#69736F] hover:text-[#18211F]'
@@ -494,16 +505,6 @@ export const AdminPanel: React.FC = () => {
           </button>
 
           <button
-            onClick={() => setActiveTab('membership')}
-            className={`pb-3 border-b-2 flex items-center gap-2 whitespace-nowrap cursor-pointer transition-colors ${
-              activeTab === 'membership' ? 'border-[#182D2A] text-[#182D2A]' : 'border-transparent text-[#69736F] hover:text-[#18211F]'
-            }`}
-          >
-            <Crown className="w-4 h-4 text-[#D4AF37]" />
-            Membership Club
-          </button>
-
-          <button
             onClick={() => setActiveTab('audit')}
             className={`pb-3 border-b-2 flex items-center gap-2 whitespace-nowrap cursor-pointer transition-colors ${
               activeTab === 'audit' ? 'border-[#182D2A] text-[#182D2A]' : 'border-transparent text-[#69736F] hover:text-[#18211F]'
@@ -512,9 +513,39 @@ export const AdminPanel: React.FC = () => {
             <ClipboardList className="w-4 h-4" />
             Ledger Audit Logs
           </button>
+
+          <button
+            onClick={() => setActiveTab('logs')}
+            className={`pb-3 border-b-2 flex items-center gap-2 whitespace-nowrap cursor-pointer transition-colors ${
+              activeTab === 'logs' ? 'border-[#182D2A] text-[#182D2A]' : 'border-transparent text-[#69736F] hover:text-[#18211F]'
+            }`}
+          >
+            <Activity className="w-4 h-4 text-emerald-600" />
+            <span>API Logs & System Monitoring</span>
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          </button>
         </div>
 
-        {/* Tab 0: Deposit Approvals */}
+        {/* Tab 0: Admin Executive Command Dashboard */}
+        {activeTab === 'dashboard' && (
+          <AdminDashboardOverview
+            properties={properties}
+            transactions={transactions}
+            users={users}
+            auditLogs={auditLogs}
+            paymentConfig={paymentConfig}
+            onNavigateTab={(tab) => setActiveTab(tab)}
+            onOpenNewPropertyModal={() => setShowNewPropertyModal(true)}
+            onRefreshAll={refreshAll}
+            onQuickCreditSuccess={(msg) => {
+              setActionSuccess(msg);
+              setTimeout(() => setActionSuccess(null), 3000);
+            }}
+            onTogglePropertyStatus={handleTogglePropertyStatus}
+          />
+        )}
+
+        {/* Tab 1: Deposit Approvals */}
         {activeTab === 'deposits' && (
           <div className="bg-white p-6 sm:p-8 rounded-3xl border border-[#E3E8E3] shadow-sm">
             <div className="flex justify-between items-center mb-5">
@@ -1443,13 +1474,6 @@ export const AdminPanel: React.FC = () => {
           </div>
         )}
 
-        {/* Tab: Membership Club Management */}
-        {activeTab === 'membership' && (
-          <div className="animate-in fade-in duration-200">
-            <AdminMembershipTab />
-          </div>
-        )}
-
         {/* Tab 6: Audit Logs */}
         {activeTab === 'audit' && (
           <div className="bg-white p-6 rounded-3xl border border-[#E3E8E3] shadow-sm">
@@ -1469,6 +1493,9 @@ export const AdminPanel: React.FC = () => {
             </div>
           </div>
         )}
+
+        {/* Tab 7: API Logs & System Monitoring */}
+        {activeTab === 'logs' && <AdminMonitoringView />}
       </div>
 
       {/* New Property Modal */}

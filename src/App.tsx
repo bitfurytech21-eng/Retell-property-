@@ -36,6 +36,7 @@ import { DashboardPage } from './components/pages/DashboardPage';
 import { PortfolioOverview } from './components/dashboard/PortfolioOverview';
 import { TransactionTable } from './components/dashboard/TransactionTable';
 import { AdminPanel } from './components/admin/AdminPanel';
+import { AdminLoginPortal } from './components/admin/AdminLoginPortal';
 import { InvestmentGuidePage } from './components/pages/InvestmentGuidePage';
 import { ProtectedRoute } from './components/layout/ProtectedRoute';
 import { SmartsuppWidget } from './components/support/SmartsuppWidget';
@@ -44,43 +45,61 @@ import { ArrowRight, ShieldCheck, UserCheck, Plus, Sparkles } from 'lucide-react
 
 function MainApp() {
   const { user, isConfigured, quickDemoSession } = useAuth();
-  const [currentPath, setCurrentPath] = useState<string>('/');
+  // Resolve initial path from location pathname or hash
+  const getPathFromLocation = (): string => {
+    if (typeof window === 'undefined') return '/';
+    const rawHash = window.location.hash.replace('#', '').trim();
+    if (rawHash && rawHash !== '/') {
+      return rawHash.startsWith('/') ? rawHash : `/${rawHash}`;
+    }
+    const path = window.location.pathname || '/';
+    return path;
+  };
+
+  const [currentPath, setCurrentPath] = useState<string>(getPathFromLocation);
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
   const [pendingInvestmentProperty, setPendingInvestmentProperty] = useState<Property | null>(null);
   const [returnDestination, setReturnDestination] = useState<string | null>(null);
   const [properties, setProperties] = useState<Property[]>(ledger.getProperties());
 
-  // Listen to popstate and initial hash navigation (handles Supabase recovery redirects)
+  // Listen to popstate and hashchange navigation
   useEffect(() => {
-    const handlePopState = () => {
-      const rawHash = window.location.hash.replace('#', '').trim();
-      const hash = !rawHash || rawHash === '/' ? '/' : (rawHash.startsWith('/') ? rawHash : `/${rawHash}`);
-      if (hash.includes('type=recovery') || hash.startsWith('reset-password') || hash.startsWith('/reset-password')) {
+    const handleRouteSync = () => {
+      const p = getPathFromLocation();
+      if (p.includes('type=recovery') || p.startsWith('reset-password') || p.startsWith('/reset-password')) {
         setCurrentPath('/reset-password');
         return;
       }
-      if (hash.startsWith('/property/')) {
-        const slug = hash.replace('/property/', '');
+      if (p.startsWith('/property/')) {
+        const slug = p.replace('/property/', '');
         const currentList = ledger.getProperties();
-        const found = currentList.find(p => p.slug === slug || p.id === slug);
+        const found = currentList.find(prop => prop.slug === slug || prop.id === slug);
         if (found) setSelectedProperty(found);
       }
-      setCurrentPath(hash);
+      setCurrentPath(p);
     };
 
-    window.addEventListener('popstate', handlePopState);
-    if (window.location.hash) {
-      handlePopState();
-    } else {
-      setCurrentPath('/');
-    }
-    return () => window.removeEventListener('popstate', handlePopState);
+    window.addEventListener('popstate', handleRouteSync);
+    window.addEventListener('hashchange', handleRouteSync);
+    handleRouteSync();
+
+    return () => {
+      window.removeEventListener('popstate', handleRouteSync);
+      window.removeEventListener('hashchange', handleRouteSync);
+    };
   }, []);
 
   const navigateTo = (path: string) => {
     const cleanPath = !path || path === '/' ? '/' : (path.startsWith('/') ? path : `/${path}`);
     setCurrentPath(cleanPath);
-    window.location.hash = cleanPath;
+    if (window.location.hash || window.location.hash === '') {
+      window.location.hash = cleanPath;
+    }
+    try {
+      window.history.pushState({}, '', cleanPath);
+    } catch {
+      // safe fallback
+    }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -132,7 +151,8 @@ function MainApp() {
 
   // Render appropriate view based on currentPath
   const renderContent = () => {
-    const basePath = currentPath.split('#')[0] || '/';
+    const rawPath = currentPath.split('#')[0].split('?')[0] || '/';
+    const basePath = rawPath.length > 1 ? rawPath.replace(/\/$/, '') : rawPath;
 
     // Property detail view
     if (basePath.startsWith('/property/')) {
@@ -345,13 +365,23 @@ function MainApp() {
         );
       }
 
+      case '/admin/login':
+      case '/admin-login':
+        return (
+          <AdminLoginPortal
+            onLoginSuccess={() => navigateTo('/admin')}
+            onNavigateCustomerLogin={() => navigateTo('/login')}
+            onNavigateHome={() => navigateTo('/')}
+          />
+        );
+
       case '/admin':
         return (
           <ProtectedRoute
             requireAdmin={true}
             onNavigateLogin={() => {
               setReturnDestination('/admin');
-              navigateTo('/login');
+              navigateTo('/admin/login');
             }}
           >
             <AdminPanel />
@@ -471,24 +501,28 @@ function MainApp() {
     }
   };
 
-  const currentBasePath = currentPath.split('#')[0] || '/';
+  const rawBasePath = (currentPath.split('#')[0] || '/').split('?')[0];
+  const currentBasePath = rawBasePath.length > 1 ? rawBasePath.replace(/\/$/, '') : rawBasePath;
   const isDashboardView = [
     '/dashboard', '/portfolio', '/transactions', '/distributions', 
     '/wallet', '/deposit', '/documents', '/referrals', '/notifications', 
     '/profile', '/support'
   ].includes(currentBasePath) || currentBasePath.startsWith('/dashboard');
 
+  const isAdminView = currentBasePath === '/admin' || currentBasePath.startsWith('/admin');
+  const isAdminLoginPage = currentBasePath === '/admin/login' || currentBasePath === '/admin-login';
+
   return (
     <div className={`flex flex-col bg-white ${isDashboardView ? 'h-screen overflow-hidden' : 'min-h-screen'}`}>
 
-
-      {!isDashboardView && <Header currentPath={currentPath} onNavigate={navigateTo} />}
+      {!isDashboardView && !isAdminLoginPage && <Header currentPath={currentPath} onNavigate={navigateTo} />}
 
       <div className={`flex-1 flex flex-col ${isDashboardView ? 'overflow-hidden' : ''}`}>
         {renderContent()}
       </div>
 
-      {!isDashboardView && <Footer onNavigate={navigateTo} />}
+      {/* Exclude public website footer on private investor dashboard, admin control panel, and admin login portal */}
+      {!isDashboardView && !isAdminView && !isAdminLoginPage && <Footer onNavigate={navigateTo} />}
 
       {/* Global Smartsupp Live Customer Support System */}
       <SmartsuppWidget />
